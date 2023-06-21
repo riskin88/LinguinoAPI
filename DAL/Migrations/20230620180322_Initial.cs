@@ -1,12 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace LinguinoAPI.Migrations
+namespace DAL.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialDatabase : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,12 +15,11 @@ namespace LinguinoAPI.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
-                    Username = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Streak = table.Column<long>(type: "bigint", nullable: false),
                     Cash = table.Column<long>(type: "bigint", nullable: false),
-                    Premium = table.Column<bool>(type: "boolean", nullable: false)
+                    Premium = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {

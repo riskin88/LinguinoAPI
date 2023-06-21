@@ -1,6 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DAL.Models;
+using Microsoft.EntityFrameworkCore;
 
-namespace LinguinoAPI.Models
+namespace DAL.Data
 {
     public class DataContext : DbContext
     {
@@ -10,9 +11,8 @@ namespace LinguinoAPI.Models
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.UseSerialColumns();
         }
 
-        public DbSet<User> Users { get; set; } = null!;
+        public DbSet<User> Users { get; set; }
     }
 }
