@@ -1,4 +1,4 @@
-﻿using DAL.Models;
+﻿using DAL.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Data
@@ -14,5 +14,8 @@ namespace DAL.Data
         }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Course> Courses { get; set; }
+        public DbSet<Topic> Topics { get; set; }
+        public DbSet<CourseProgress> CourseProgresses { get; set; }
     }
 }

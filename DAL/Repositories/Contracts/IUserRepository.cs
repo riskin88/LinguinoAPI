@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using DAL.Models;
+using DAL.Entities;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 
 namespace DAL.Repositories.Contracts

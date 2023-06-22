@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using BLL.Services.Contracts;
-using DAL.Models;
+using DAL.Entities;
 using DAL.Repositories.Contracts;
 
 namespace BLL.Services
@@ -17,12 +17,12 @@ namespace BLL.Services
         {
             _repository = repository;   
         }
-        public async Task<User> GetUserAsync(Guid id)
+        public async Task<User> GetUserAsync(long id)
         {
             return await _repository.GetById(id);
         }
 
-        public Guid CreateUser(User user)
+        public long CreateUser(User user)
         {
             _repository.Add(user);
             //save

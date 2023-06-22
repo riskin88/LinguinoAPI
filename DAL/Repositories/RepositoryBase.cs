@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using DAL.Data;
-using DAL.Models;
+using DAL.Entities;
 using DAL.Repositories.Contracts;
 using Microsoft.EntityFrameworkCore;
 
@@ -42,7 +42,7 @@ namespace DAL.Repositories
 
         }
 
-        public async Task<TEntity> GetById(Guid id)
+        public async Task<TEntity> GetById(long id)
         {
             return await dataContext.Set<TEntity>().FirstOrDefaultAsync(e => e.Id == id);
         }

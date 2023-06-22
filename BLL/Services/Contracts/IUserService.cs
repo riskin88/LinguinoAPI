@@ -4,15 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using DAL.Models;
+using DAL.Entities;
 using DAL.Repositories.Contracts;
 
 namespace BLL.Services.Contracts
 {
     public interface IUserService
     {
-        Task<User> GetUserAsync(Guid id);
-        Guid CreateUser(User user);
+        Task<User> GetUserAsync(long id);
+        long CreateUser(User user);
 
         /// <summary>
         /// Updates entity

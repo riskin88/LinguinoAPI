@@ -5,12 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DAL.Models
+namespace DAL.Entities
 {
     public abstract class EntityBase
 
     {
         [Key]
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public long Id { get; set; }
     }
 }

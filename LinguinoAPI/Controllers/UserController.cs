@@ -1,6 +1,6 @@
 using BLL.Services;
 using BLL.Services.Contracts;
-using DAL.Models;
+using DAL.Entities;
 using DAL.Repositories.Contracts;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,10 +20,10 @@ namespace LinguinoAPI.Controllers
             _userService = userService;
         }
 
-        //[HttpGet]
-       // public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        //[httppost]
+        //public task<actionresult<user>> registeruser(user user)
         //{
-            //return _userService
-       // }
+        //    return ok(user);
+        //}
     }
 }
