@@ -1,13 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DAL.Entities
 {
+    [Table("CourseProgress")]
     public class CourseProgress : EntityBase
     {
         public long UserId { get; set; }
-        public User User { get; set; }
+        public User User { get; set; } = null!;
         public long CourseId { get; set; }
-        public Course Course { get; set; }
+        public Course Course { get; set; } = null!;
         [Required]
         public long PositionOnMap { get; set; } = 0;
     }

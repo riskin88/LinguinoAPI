@@ -7,26 +7,28 @@ using System.Threading.Tasks;
 using BLL.Services.Contracts;
 using DAL.Entities;
 using DAL.Repositories.Contracts;
+using DAL.UnitOfWork;
 
 namespace BLL.Services
 {
     public class UserService : IUserService
     {
-        private readonly IUserRepository _repository;
-        public UserService(IUserRepository repository)
+        private readonly IUnitOfWork _unitOfWork;
+        public UserService(IUnitOfWork unitOfWork)
         {
-            _repository = repository;   
+            _unitOfWork = unitOfWork;   
         }
         public async Task<User> GetUserAsync(long id)
         {
-            return await _repository.GetById(id);
+            return await _unitOfWork.UserRepository.GetById(id);
         }
 
-        public long CreateUser(User user)
+        public User CreateUser(User user)
         {
-            _repository.Add(user);
-            //save
-            return user.Id;
+            _unitOfWork.UserRepository.Add(user);
+            _unitOfWork.SaveChanges();
+            // save
+            return user;
         }
     }
 }

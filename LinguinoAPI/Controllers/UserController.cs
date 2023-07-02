@@ -20,10 +20,12 @@ namespace LinguinoAPI.Controllers
             _userService = userService;
         }
 
-        //[httppost]
-        //public task<actionresult<user>> registeruser(user user)
-        //{
-        //    return ok(user);
-        //}
+        [HttpPost]
+        public ActionResult<User> RegisterUser(User user)
+        {
+            var created = _userService.CreateUser(user);
+
+            return Ok(created);
+        }
     }
 }
