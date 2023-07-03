@@ -9,10 +9,10 @@ using DAL.Repositories.Contracts;
 
 namespace BLL.Services.Contracts
 {
-    public interface IUserService
+    public interface IUserAuthService
     {
-        Task<User> GetUserAsync(long id);
-        long CreateUser(User user);
+        Task<User> GetUserByIdAsync(long id);
+        User RegisterUser(User user);
 
         /// <summary>
         /// Updates entity

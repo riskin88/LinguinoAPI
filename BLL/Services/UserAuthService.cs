@@ -11,19 +11,19 @@ using DAL.UnitOfWork;
 
 namespace BLL.Services
 {
-    public class UserService : IUserService
+    public class UserAuthService : IUserAuthService
     {
         private readonly IUnitOfWork _unitOfWork;
-        public UserService(IUnitOfWork unitOfWork)
+        public UserAuthService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;   
         }
-        public async Task<User> GetUserAsync(long id)
+        public async Task<User> GetUserByIdAsync(long id)
         {
             return await _unitOfWork.UserRepository.GetById(id);
         }
 
-        public User CreateUser(User user)
+        public User RegisterUser(User user)
         {
             _unitOfWork.UserRepository.Add(user);
             _unitOfWork.SaveChanges();

@@ -7,23 +7,23 @@ using Microsoft.AspNetCore.Mvc;
 namespace LinguinoAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]/users")]
-    public class UserController : ControllerBase
+    public class UserAuthController : ControllerBase
     {
 
-        private readonly ILogger<UserController> _logger;
-        private readonly IUserService _userService;
+        private readonly ILogger<UserAuthController> _logger;
+        private readonly IUserAuthService _userService;
 
-        public UserController(ILogger<UserController> logger, IUserService userService)
+        public UserAuthController(ILogger<UserAuthController> logger, IUserAuthService userService)
         {
             _logger = logger;
             _userService = userService;
         }
 
         [HttpPost]
+        [Route("signup")]
         public ActionResult<User> RegisterUser(User user)
         {
-            var created = _userService.CreateUser(user);
+            var created = _userService.RegisterUser(user);
 
             return Ok(created);
         }

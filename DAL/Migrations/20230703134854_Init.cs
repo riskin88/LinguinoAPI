@@ -5,27 +5,27 @@
 namespace DAL.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Courses",
+                name: "Course",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    LanguageFrom = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LanguageTo = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    LanguageFrom = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LanguageTo = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Courses", x => x.Id);
+                    table.PrimaryKey("PK_Course", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Topics",
+                name: "Topic",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
@@ -37,11 +37,11 @@ namespace DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Topics", x => x.Id);
+                    table.PrimaryKey("PK_Topic", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Users",
+                name: "User",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
@@ -54,11 +54,11 @@ namespace DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.Id);
+                    table.PrimaryKey("PK_User", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "CourseProgresses",
+                name: "CourseProgress",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
@@ -69,29 +69,29 @@ namespace DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CourseProgresses", x => x.Id);
+                    table.PrimaryKey("PK_CourseProgress", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CourseProgresses_Courses_CourseId",
+                        name: "FK_CourseProgress_Course_CourseId",
                         column: x => x.CourseId,
-                        principalTable: "Courses",
+                        principalTable: "Course",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CourseProgresses_Users_UserId",
+                        name: "FK_CourseProgress_User_UserId",
                         column: x => x.UserId,
-                        principalTable: "Users",
+                        principalTable: "User",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_CourseProgresses_CourseId",
-                table: "CourseProgresses",
+                name: "IX_CourseProgress_CourseId",
+                table: "CourseProgress",
                 column: "CourseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CourseProgresses_UserId",
-                table: "CourseProgresses",
+                name: "IX_CourseProgress_UserId",
+                table: "CourseProgress",
                 column: "UserId");
         }
 
@@ -99,16 +99,16 @@ namespace DAL.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "CourseProgresses");
+                name: "CourseProgress");
 
             migrationBuilder.DropTable(
-                name: "Topics");
+                name: "Topic");
 
             migrationBuilder.DropTable(
-                name: "Courses");
+                name: "Course");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "User");
         }
     }
 }
