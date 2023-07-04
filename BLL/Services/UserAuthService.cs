@@ -3,32 +3,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using BLL.DTO;
 using BLL.Services.Contracts;
 using DAL.Entities;
 using DAL.Repositories.Contracts;
 using DAL.UnitOfWork;
+using Microsoft.AspNetCore.Identity;
 
 namespace BLL.Services
 {
     public class UserAuthService : IUserAuthService
     {
         private readonly IUnitOfWork _unitOfWork;
-        public UserAuthService(IUnitOfWork unitOfWork)
+        private readonly UserManager<User> _userManager;
+        public UserAuthService(IUnitOfWork unitOfWork, UserManager<User> userManager)
         {
-            _unitOfWork = unitOfWork;   
-        }
-        public async Task<User> GetUserByIdAsync(long id)
-        {
-            return await _unitOfWork.UserRepository.GetById(id);
+            _unitOfWork = unitOfWork;
+            _userManager = userManager;
         }
 
-        public User RegisterUser(User user)
+        public async Task<CreateUserRespDTO> RegisterUser(CreateUserDTO userDTO)
         {
-            _unitOfWork.UserRepository.Add(user);
-            _unitOfWork.SaveChanges();
-            // save
-            return user;
+            var result = await _userManager.CreateAsync(new User() { UserName = userDTO.UserName, Email = userDTO.Email }, userDTO.Password);
+            return new CreateUserRespDTO();
         }
     }
 }

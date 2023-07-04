@@ -1,3 +1,4 @@
+using BLL.DTO;
 using BLL.Services;
 using BLL.Services.Contracts;
 using DAL.Entities;
@@ -21,7 +22,7 @@ namespace LinguinoAPI.Controllers
 
         [HttpPost]
         [Route("signup")]
-        public ActionResult<User> RegisterUser(User user)
+        public ActionResult<CreateUserRespDTO> RegisterUser(CreateUserDTO user)
         {
             var created = _userService.RegisterUser(user);
 

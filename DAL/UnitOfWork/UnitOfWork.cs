@@ -17,7 +17,7 @@ namespace DAL.UnitOfWork
         public UnitOfWork(DataContext db)
         {
             _dbContext = db;
-            UserRepository = new UserRepository(db);
+            UserRepository = new UserRepository();
         }
 
         public void Dispose()

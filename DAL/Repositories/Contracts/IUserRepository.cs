@@ -9,8 +9,7 @@ using Microsoft.EntityFrameworkCore.Migrations.Operations;
 
 namespace DAL.Repositories.Contracts
 {
-    public interface IUserRepository : IRepositoryBase<User>
+    public interface IUserRepository
     {
-        Task<User> GetByEmail(string email);
     }
 }

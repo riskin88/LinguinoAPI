@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using BLL.DTO;
 using DAL.Entities;
 using DAL.Repositories.Contracts;
 
@@ -11,8 +11,7 @@ namespace BLL.Services.Contracts
 {
     public interface IUserAuthService
     {
-        Task<User> GetUserByIdAsync(long id);
-        User RegisterUser(User user);
+        Task<CreateUserRespDTO> RegisterUser(CreateUserDTO user);
 
         /// <summary>
         /// Updates entity

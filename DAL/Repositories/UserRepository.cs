@@ -12,13 +12,7 @@ using System.Linq.Expressions;
 
 namespace DAL.Repositories
 {
-    public class UserRepository : RepositoryBase<User>, IUserRepository
+    public class UserRepository : IUserRepository
     {
-        public UserRepository(DataContext _dataContext) : base(_dataContext) { }
-
-        public async Task<User> GetByEmail(string email)
-        {
-            return await dataContext.Set<User>().FirstOrDefaultAsync(x => x.Username == email);
-        }
     }
 }

@@ -6,7 +6,7 @@ namespace DAL.Entities
     [Table("CourseProgress")]
     public class CourseProgress : EntityBase
     {
-        public long UserId { get; set; }
+        public string UserId { get; set; }
         public User User { get; set; } = null!;
         public long CourseId { get; set; }
         public Course Course { get; set; } = null!;

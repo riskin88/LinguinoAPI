@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using DAL.Data;
 using DAL.Entities;
 using DAL.Repositories.Contracts;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Repositories
