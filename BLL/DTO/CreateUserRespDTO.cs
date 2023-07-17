@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DAL.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,10 @@ namespace BLL.DTO
 {
     public class CreateUserRespDTO
     {
-        public string Id { get; set; }
+        public string? id { get; set; }
+        public string? username { get; set; }
+        public long? streak { get; set; }
+        public long? balance { get; set; }
+        public bool? accountInitialized { get; set; }
     }
 }

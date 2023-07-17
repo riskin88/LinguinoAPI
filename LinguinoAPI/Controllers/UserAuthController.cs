@@ -1,12 +1,16 @@
+using System.Net;
+using System.Net.Http;
 using BLL.DTO;
 using BLL.Services;
 using BLL.Services.Contracts;
 using DAL.Entities;
 using DAL.Repositories.Contracts;
+using LinguinoAPI.Filters;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LinguinoAPI.Controllers
 {
+    //[ErrorHandlingFilter]
     [ApiController]
     public class UserAuthController : ControllerBase
     {
@@ -22,10 +26,14 @@ namespace LinguinoAPI.Controllers
 
         [HttpPost]
         [Route("signup")]
-        public ActionResult<CreateUserRespDTO> RegisterUser(CreateUserDTO user)
+        public async Task<ActionResult<CreateUserRespDTO>> RegisterUser(CreateUserDTO user)
         {
-            var created = _userService.RegisterUser(user);
-
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(modelState: ModelState);
+            }
+            
+            var created = await _userService.RegisterUser(user);
             return Ok(created);
         }
     }
