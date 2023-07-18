@@ -5,13 +5,10 @@ using BLL.Services;
 using BLL.Services.Contracts;
 using DAL.Entities;
 using DAL.Repositories.Contracts;
-using LinguinoAPI.Filters;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LinguinoAPI.Controllers
-{
-    //[ErrorHandlingFilter]
-    [ApiController]
+{    [ApiController]
     public class UserAuthController : ControllerBase
     {
 

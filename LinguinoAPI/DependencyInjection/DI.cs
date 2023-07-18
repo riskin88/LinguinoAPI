@@ -1,4 +1,5 @@
 ﻿using BLL.Services;
+using BLL.Services.Auth;
 using BLL.Services.Contracts;
 using DAL.Data;
 using DAL.Entities;
@@ -22,8 +23,11 @@ namespace LinguinoAPI.DependencyInjection
                 options.Password.RequireLowercase = false;
             })
             .AddEntityFrameworkStores<DataContext>();
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 
             services.AddScoped<IUserAuthService, UserAuthService>();
+            services.AddScoped<IJwtService, JwtService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 

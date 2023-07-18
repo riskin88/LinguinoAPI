@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BLL.DTO;
 using BLL.Exceptions.User;
+using BLL.Services.Auth;
 using BLL.Services.Contracts;
 using DAL.Entities;
 using DAL.Repositories.Contracts;
@@ -18,10 +19,12 @@ namespace BLL.Services
     {
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
-        public UserAuthService(IMapper mapper, UserManager<User> userManager)
+        private readonly IJwtService _jwtService;
+        public UserAuthService(IMapper mapper, UserManager<User> userManager, IJwtService jwtService)
         {
             _mapper = mapper;
             _userManager = userManager;
+            _jwtService = jwtService;
         }
 
         public async Task<CreateUserRespDTO> RegisterUser(CreateUserDTO createUserDTO)
@@ -30,7 +33,9 @@ namespace BLL.Services
             if (result.Succeeded)
             {
                 var user = await _userManager.FindByNameAsync(createUserDTO.UserName);
-                return _mapper.Map<CreateUserRespDTO>(user);
+                var resp = _mapper.Map<CreateUserRespDTO>(user);
+                resp.idToken = _jwtService.CreateToken(user);
+                return resp;
             }
             else throw new SignupErrorException(result.Errors.First().Code);
         }
