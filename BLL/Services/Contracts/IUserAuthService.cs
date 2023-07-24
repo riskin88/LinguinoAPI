@@ -12,6 +12,9 @@ namespace BLL.Services.Contracts
     public interface IUserAuthService
     {
         Task<CreateUserRespDTO> RegisterUser(CreateUserDTO user);
+        Task<CreateUserRespDTO> LoginUser(LoginUserDTO loginUserDTO);
+        Task ResetPasswordToken(string email);
+        Task ResetPassword(ResetPasswordDTO resetPassword);
 
         /// <summary>
         /// Updates entity

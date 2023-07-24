@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 using AutoMapper;
+using Azure.Core;
 using BLL.DTO;
 using BLL.Exceptions.User;
+using BLL.Helpers;
 using BLL.Services.Auth;
 using BLL.Services.Contracts;
 using DAL.Entities;
 using DAL.Repositories.Contracts;
 using DAL.UnitOfWork;
 using Microsoft.AspNetCore.Identity;
+
 
 namespace BLL.Services
 {
@@ -20,11 +19,14 @@ namespace BLL.Services
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
         private readonly IJwtService _jwtService;
-        public UserAuthService(IMapper mapper, UserManager<User> userManager, IJwtService jwtService)
+        private readonly EmailHelper _emailHelper;
+
+        public UserAuthService(IMapper mapper, UserManager<User> userManager, IJwtService jwtService, EmailHelper emailHelper)
         {
             _mapper = mapper;
             _userManager = userManager;
             _jwtService = jwtService;
+            _emailHelper = emailHelper;
         }
 
         public async Task<CreateUserRespDTO> RegisterUser(CreateUserDTO createUserDTO)
@@ -39,5 +41,45 @@ namespace BLL.Services
             }
             else throw new SignupErrorException(result.Errors.First().Code);
         }
+
+        public async Task<CreateUserRespDTO> LoginUser(LoginUserDTO loginUserDTO)
+        {
+            var user = await _userManager.FindByEmailAsync(loginUserDTO.Email);
+            if (user != null)
+            {
+                if (await _userManager.CheckPasswordAsync(user, loginUserDTO.Password))
+                {
+                    var resp = _mapper.Map<CreateUserRespDTO>(user);
+                    resp.idToken = _jwtService.CreateToken(user);
+                    return resp;
+                }
+
+            }
+            throw new SignupErrorException("WRONG_EMAIL_OR_PASSWORD");
+        }
+
+        public async Task ResetPasswordToken(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user != null)
+            {
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                _emailHelper.SendEmailPasswordReset(email, token);
+            }
+            else throw new SignupErrorException("WRONG_EMAIL");
+        }
+
+        public async Task ResetPassword(ResetPasswordDTO resetPasswordDTO)
+        {
+            var user = await _userManager.FindByEmailAsync(resetPasswordDTO.Email);
+            if (user != null)
+            {
+                var result = await _userManager.ResetPasswordAsync(user, resetPasswordDTO.Token, resetPasswordDTO.Password);
+                if (!result.Succeeded)
+                    throw new SignupErrorException(result.Errors.First().Code);
+            }
+            else throw new SignupErrorException("WRONG_EMAIL");
+        }
     }
 }
+

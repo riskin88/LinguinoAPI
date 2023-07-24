@@ -22,7 +22,11 @@ namespace LinguinoAPI.DependencyInjection
                 options.Password.RequireUppercase = false;
                 options.Password.RequireLowercase = false;
             })
-            .AddEntityFrameworkStores<DataContext>();
+            .AddEntityFrameworkStores<DataContext>().
+            AddDefaultTokenProviders();
+            services.Configure<DataProtectionTokenProviderOptions>(opts => opts.TokenLifespan = TimeSpan.FromHours(10));
+
+
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 
