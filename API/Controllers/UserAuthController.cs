@@ -1,13 +1,7 @@
-using System.Net;
-using System.Net.Http;
 using BLL.DTO;
 using BLL.Helpers;
 using BLL.Services.Contracts;
-using DAL.Entities;
-using DAL.Repositories.Contracts;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Controllers;
 
 namespace LinguinoAPI.Controllers
 {
@@ -17,13 +11,11 @@ namespace LinguinoAPI.Controllers
 
         private readonly ILogger<UserAuthController> _logger;
         private readonly IUserAuthService _userService;
-        private readonly EmailHelper _emailHelper;
 
-        public UserAuthController(ILogger<UserAuthController> logger, IUserAuthService userService, EmailHelper emailHelper)
+        public UserAuthController(ILogger<UserAuthController> logger, IUserAuthService userService)
         {
             _logger = logger;
             _userService = userService;
-            _emailHelper = emailHelper;
         }
 
         [HttpPost]

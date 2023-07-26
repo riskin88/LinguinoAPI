@@ -1,0 +1,26 @@
+version: '3.4'
+
+services:
+  api:
+    image: ${DOCKER_REGISTRY-}api
+    build:
+      context: .
+      dockerfile: API/Dockerfile
+    depends_on: [ mssql ]        
+    ports:
+      - "8080:80"
+  mssql:
+    image: "mcr.microsoft.com/mssql/server:latest"
+    container_name: mssql
+    hostname: mssql
+    environment:
+      SA_PASSWORD: "Password1"
+      ACCEPT_EULA: "Y"
+    volumes:
+      - vol:/var/opt/mssql
+    restart: unless-stopped    
+    ports:
+      - "1433:1433"
+volumes:
+  vol:
+    external: true
