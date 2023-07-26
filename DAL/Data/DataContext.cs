@@ -14,6 +14,8 @@ namespace DAL.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<IdentityRole>().HasData(new IdentityRole { Name = "USER" }, new IdentityRole { Name = "PREMIUM_USER" }, new IdentityRole { Name = "ADMIN" });
+
         }
         public DbSet<Course> Courses { get; set; }
         public DbSet<Topic> Topics { get; set; }

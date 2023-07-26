@@ -4,6 +4,7 @@ using DAL.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230725162710_isSelected")]
+    partial class isSelected
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,18 +34,9 @@ namespace DAL.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("LanguageFrom")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LanguageTo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ThumbnailURL")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -210,17 +204,17 @@ namespace DAL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "af7c643b-5925-4314-8287-38da3ce67482",
+                            Id = "584c3ae1-264f-4dec-812c-710e134d5a96",
                             Name = "USER"
                         },
                         new
                         {
-                            Id = "d29abb07-9164-4d0d-9e0b-50ce4569534c",
+                            Id = "547f8c87-2911-4a39-80fa-3ab51b64ff73",
                             Name = "PREMIUM_USER"
                         },
                         new
                         {
-                            Id = "a7e93ec0-8579-46a5-8bc5-4728cecdb351",
+                            Id = "fdc95b32-d44f-469e-a7b1-ca0e2096cdd2",
                             Name = "ADMIN"
                         });
                 });

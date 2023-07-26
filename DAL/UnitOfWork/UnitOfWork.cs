@@ -13,11 +13,13 @@ namespace DAL.UnitOfWork
     {
         private readonly DataContext _dbContext;
         public IUserRepository UserRepository { get; set; }
+        public ICourseRepository CourseRepository { get; set; }
 
         public UnitOfWork(DataContext db)
         {
             _dbContext = db;
             UserRepository = new UserRepository();
+            CourseRepository = new CourseRepository(db);
         }
 
         public void Dispose()

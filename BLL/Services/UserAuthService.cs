@@ -18,13 +18,15 @@ namespace BLL.Services
     {
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IJwtService _jwtService;
         private readonly EmailHelper _emailHelper;
 
-        public UserAuthService(IMapper mapper, UserManager<User> userManager, IJwtService jwtService, EmailHelper emailHelper)
+        public UserAuthService(IMapper mapper, UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IJwtService jwtService, EmailHelper emailHelper)
         {
             _mapper = mapper;
             _userManager = userManager;
+            _roleManager = roleManager;
             _jwtService = jwtService;
             _emailHelper = emailHelper;
         }
@@ -35,8 +37,11 @@ namespace BLL.Services
             if (result.Succeeded)
             {
                 var user = await _userManager.FindByNameAsync(createUserDTO.UserName);
+                await _userManager.AddToRoleAsync(user, "USER");
+
+                var roles = await _userManager.GetRolesAsync(user);
                 var resp = _mapper.Map<CreateUserRespDTO>(user);
-                resp.idToken = _jwtService.CreateToken(user);
+                resp.idToken = _jwtService.CreateToken(user, roles);
                 return resp;
             }
             else throw new SignupErrorException(result.Errors.First().Code);
@@ -49,8 +54,9 @@ namespace BLL.Services
             {
                 if (await _userManager.CheckPasswordAsync(user, loginUserDTO.Password))
                 {
+                    var roles = await _userManager.GetRolesAsync(user);
                     var resp = _mapper.Map<CreateUserRespDTO>(user);
-                    resp.idToken = _jwtService.CreateToken(user);
+                    resp.idToken = _jwtService.CreateToken(user, roles);
                     return resp;
                 }
 

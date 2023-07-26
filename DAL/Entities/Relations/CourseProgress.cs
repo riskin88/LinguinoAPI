@@ -12,5 +12,6 @@ namespace DAL.Entities
         public Course Course { get; set; } = null!;
         [Required]
         public long PositionOnMap { get; set; } = 0;
+        public bool IsSelected { get; set; }
     }
 }

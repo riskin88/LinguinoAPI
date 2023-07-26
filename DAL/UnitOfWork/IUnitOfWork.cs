@@ -10,6 +10,8 @@ namespace DAL.UnitOfWork
     public interface IUnitOfWork : IDisposable
     {
         IUserRepository UserRepository { get; set;  }
+        ICourseRepository CourseRepository { get; set; }
+
         public void SaveChanges();
     }
 }

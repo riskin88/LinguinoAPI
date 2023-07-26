@@ -22,10 +22,10 @@ namespace BLL.Services.Auth
             _configuration = configuration;
         }
 
-        public string CreateToken(User user)
+        public string CreateToken(User user, IList<string> roles)
         {
             var token = CreateJwtToken(
-                CreateClaims(user),
+                CreateClaims(user, roles),
                 CreateSigningCredentials(),
                 DateTime.UtcNow.AddMinutes(Double.Parse(_configuration["Jwt:ExpiryMinutes"]))
             );
@@ -35,7 +35,7 @@ namespace BLL.Services.Auth
             return tokenHandler.WriteToken(token);
         }
 
-        private JwtSecurityToken CreateJwtToken(Claim[] claims, SigningCredentials credentials, DateTime expiration) =>
+        private JwtSecurityToken CreateJwtToken(List<Claim> claims, SigningCredentials credentials, DateTime expiration) =>
             new JwtSecurityToken(
                 _configuration["Jwt:Issuer"],
                 _configuration["Jwt:Audience"],
@@ -44,14 +44,20 @@ namespace BLL.Services.Auth
                 signingCredentials: credentials
             );
 
-        private Claim[] CreateClaims(IdentityUser user) =>
-            new[] {
+        private static List<Claim> CreateClaims(IdentityUser user, IList<string> roles)
+        {
+            var claims = new List<Claim> {
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.Email, user.Email)
             };
+            foreach (var role in roles)
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            return claims;
+        }
+
 
         private SigningCredentials CreateSigningCredentials() =>
             new SigningCredentials(
