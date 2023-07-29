@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using BLL.Helpers;
+using DAL.Identity;
+using API.Identity;
 
 namespace LinguinoAPI.DependencyInjection
 {
@@ -60,6 +62,7 @@ namespace LinguinoAPI.DependencyInjection
             services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<IJwtService, JwtService>();
             services.AddScoped<EmailHelper>();
+            services.AddScoped<IRoleGuard, RoleGuard>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 

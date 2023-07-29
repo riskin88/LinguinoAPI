@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using DAL.Entities;
-using Microsoft.EntityFrameworkCore.Migrations.Operations;
+﻿using DAL.Entities;
 
 namespace DAL.Repositories.Contracts
 {
     public interface IUserRepository
     {
+        public User GetUser();
     }
 }

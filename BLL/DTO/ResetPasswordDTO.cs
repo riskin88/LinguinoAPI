@@ -5,7 +5,7 @@ namespace BLL.DTO
     public class ResetPasswordDTO
     {
         [Required]
-        public string Token { get; set; }
+        public string ResetToken { get; set; }
         [Required]
         public string Email { get; set; }
         [Required]

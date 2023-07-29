@@ -17,31 +17,30 @@ namespace BLL.Services
     public class UserAuthService : IUserAuthService
     {
         private readonly IMapper _mapper;
-        private readonly UserManager<User> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IJwtService _jwtService;
         private readonly EmailHelper _emailHelper;
 
-        public UserAuthService(IMapper mapper, UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IJwtService jwtService, EmailHelper emailHelper)
+        public UserAuthService(IMapper mapper, IUnitOfWork unitOfWork, IJwtService jwtService, EmailHelper emailHelper)
         {
             _mapper = mapper;
-            _userManager = userManager;
-            _roleManager = roleManager;
+             _unitOfWork = unitOfWork;
             _jwtService = jwtService;
             _emailHelper = emailHelper;
         }
 
         public async Task<CreateUserRespDTO> RegisterUser(CreateUserDTO createUserDTO)
         {
-            var result = await _userManager.CreateAsync(new User() { UserName = createUserDTO.UserName, Email = createUserDTO.Email }, createUserDTO.Password);
+            var result = await _unitOfWork.UserManager.CreateAsync(new User() { UserName = createUserDTO.UserName, Email = createUserDTO.Email }, createUserDTO.Password);
             if (result.Succeeded)
             {
-                var user = await _userManager.FindByNameAsync(createUserDTO.UserName);
-                await _userManager.AddToRoleAsync(user, "USER");
+                var user = await _unitOfWork.UserManager.FindByNameAsync(createUserDTO.UserName);
+                await _unitOfWork.UserManager.AddToRoleAsync(user, "USER");
 
-                var roles = await _userManager.GetRolesAsync(user);
+                var roles = await _unitOfWork.UserManager.GetRolesAsync(user);
                 var resp = _mapper.Map<CreateUserRespDTO>(user);
                 resp.idToken = _jwtService.CreateToken(user, roles);
+                _unitOfWork.SaveChanges();
                 return resp;
             }
             else throw new SignupErrorException(result.Errors.First().Code);
@@ -49,12 +48,12 @@ namespace BLL.Services
 
         public async Task<CreateUserRespDTO> LoginUser(LoginUserDTO loginUserDTO)
         {
-            var user = await _userManager.FindByEmailAsync(loginUserDTO.Email);
+            var user = await _unitOfWork.UserManager.FindByEmailAsync(loginUserDTO.Email);
             if (user != null)
             {
-                if (await _userManager.CheckPasswordAsync(user, loginUserDTO.Password))
+                if (await _unitOfWork.UserManager.CheckPasswordAsync(user, loginUserDTO.Password))
                 {
-                    var roles = await _userManager.GetRolesAsync(user);
+                    var roles = await _unitOfWork.UserManager.GetRolesAsync(user);
                     var resp = _mapper.Map<CreateUserRespDTO>(user);
                     resp.idToken = _jwtService.CreateToken(user, roles);
                     return resp;
@@ -66,10 +65,10 @@ namespace BLL.Services
 
         public async Task ResetPasswordToken(string email)
         {
-            var user = await _userManager.FindByEmailAsync(email);
+            var user = await _unitOfWork.UserManager.FindByEmailAsync(email);
             if (user != null)
             {
-                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var token = await _unitOfWork.UserManager.GeneratePasswordResetTokenAsync(user);
                 _emailHelper.SendEmailPasswordReset(email, token);
             }
             else throw new SignupErrorException("WRONG_EMAIL");
@@ -77,10 +76,11 @@ namespace BLL.Services
 
         public async Task ResetPassword(ResetPasswordDTO resetPasswordDTO)
         {
-            var user = await _userManager.FindByEmailAsync(resetPasswordDTO.Email);
+            var user = await _unitOfWork.UserManager.FindByEmailAsync(resetPasswordDTO.Email);
             if (user != null)
             {
-                var result = await _userManager.ResetPasswordAsync(user, resetPasswordDTO.Token, resetPasswordDTO.Password);
+                var result = await _unitOfWork.UserManager.ResetPasswordAsync(user, resetPasswordDTO.ResetToken, resetPasswordDTO.Password);
+                _unitOfWork.SaveChanges();
                 if (!result.Succeeded)
                     throw new SignupErrorException(result.Errors.First().Code);
             }

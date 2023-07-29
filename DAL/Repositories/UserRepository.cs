@@ -1,18 +1,19 @@
-﻿using DAL.Repositories.Contracts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using DAL.Entities;
-using DAL.Data;
-using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
+﻿using DAL.Entities;
+using DAL.Identity;
+using DAL.Repositories.Contracts;
 
 namespace DAL.Repositories
 {
     public class UserRepository : IUserRepository
     {
+        private readonly IRoleGuard _roleGuard;
+        public UserRepository(IRoleGuard roleGuard)
+        {
+            _roleGuard = roleGuard;
+        }
+        public User GetUser()
+        {
+            return _roleGuard.user;
+        }
     }
 }

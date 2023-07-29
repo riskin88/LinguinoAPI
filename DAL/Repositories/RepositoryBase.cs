@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 using DAL.Data;
 using DAL.Entities;
+using DAL.Identity;
 using DAL.Repositories.Contracts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -32,12 +33,12 @@ namespace DAL.Repositories
 
         }
 
-        public async Task<IEnumerable<TEntity>> FindByCondition(Expression<Func<TEntity, bool>> condition, bool trackChanges)
+        public async Task<IEnumerable<TEntity>> FindByCondition(Expression<Func<TEntity, bool>> condition)
         {
             return await dataContext.Set<TEntity>().Where(condition).ToListAsync();
         }
 
-        public async Task<IEnumerable<TEntity>> GetAll(bool trackChanges)
+        public async Task<IEnumerable<TEntity>> GetAll()
         {
             return await dataContext.Set<TEntity>().ToListAsync();
 

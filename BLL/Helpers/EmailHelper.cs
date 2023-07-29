@@ -25,7 +25,7 @@ namespace BLL.Helpers
             mailMessage.To.Add(new MailAddress(userEmail));
 
             NameValueCollection queryString = System.Web.HttpUtility.ParseQueryString("Email:ResetPasswordUrl");
-            queryString.Add("token", token);
+            queryString.Add("resetToken", token);
             queryString.Add("email", userEmail);
             var link = queryString.ToString();
 
@@ -34,9 +34,10 @@ namespace BLL.Helpers
             mailMessage.Body = link;
 
             SmtpClient client = new SmtpClient();
-            client.Credentials = new System.Net.NetworkCredential(_configuration["Email:Adress"], _configuration["Email:Password"]);
+            client.Credentials = new System.Net.NetworkCredential(_configuration["Email:Address"], _configuration["Email:Password"]);
             client.Host = _configuration["Email:Host"];
             client.Port = Int32.Parse(_configuration["Email:Port"]);
+            client.EnableSsl = true;
 
             try
             {

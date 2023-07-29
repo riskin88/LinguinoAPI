@@ -17,14 +17,9 @@ namespace LinguinoAPI.Controllers
 
         [HttpGet, Authorize]
         [Route("user")]
-        public async Task<ActionResult<GetUserRespDTO>> GetUser()
+        public ActionResult<GetUserRespDTO> GetUser()
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(modelState: ModelState);
-            }
-
-            return Ok(await _userService.GetUser());
+            return Ok(_userService.GetUser());
         }
     }
 }

@@ -4,6 +4,6 @@ namespace BLL.Services.Contracts
 {
     public interface IUserService
     {
-        Task<GetUserRespDTO> GetUser();
+        GetUserRespDTO GetUser();
     }
 }

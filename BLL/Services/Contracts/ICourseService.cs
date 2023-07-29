@@ -1,9 +1,12 @@
 ﻿using DAL.Entities;
+using DAL.Filters;
 
 namespace BLL.Services.Contracts
 {
     public interface ICourseService
     {
-        Task CreateCourse(Course createCourseDTO);
+        void CreateCourse(Course createCourseDTO);
+        public Task<IEnumerable<Course>> GetCourses(CourseFilter filter);
+        public Task<IEnumerable<Course>> GetUserCourses(string id);
     }
 }

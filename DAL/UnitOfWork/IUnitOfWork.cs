@@ -1,4 +1,6 @@
-﻿using DAL.Repositories.Contracts;
+﻿using DAL.Entities;
+using DAL.Repositories.Contracts;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +11,9 @@ namespace DAL.UnitOfWork
 {
     public interface IUnitOfWork : IDisposable
     {
-        IUserRepository UserRepository { get; set;  }
+        IUserRepository UserRepository { get; set; }
         ICourseRepository CourseRepository { get; set; }
+        UserManager<User> UserManager { get; set; }
 
         public void SaveChanges();
     }

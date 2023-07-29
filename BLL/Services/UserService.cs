@@ -1,36 +1,25 @@
 ﻿using AutoMapper;
 using BLL.DTO;
-using BLL.Exceptions.User;
 using BLL.Services.Contracts;
-using DAL.Entities;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
+using DAL.Identity;
+using DAL.UnitOfWork;
 
 namespace BLL.Services
 {
     public class UserService : IUserService
     {
-        private readonly UserManager<User> _userManager;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly IHttpContextAccessor _contextAccessor;
 
-        public UserService(UserManager<User> userManager, IMapper mapper, IHttpContextAccessor contextAccessor)
+        public UserService(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _userManager = userManager;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _contextAccessor = contextAccessor;
         }
 
-        public async Task<GetUserRespDTO> GetUser()
+        public GetUserRespDTO GetUser()
         {
-            var id = _contextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = await _userManager.FindByIdAsync(id);
+            var user = _unitOfWork.UserRepository.GetUser();
             return _mapper.Map<GetUserRespDTO>(user);
         }
 

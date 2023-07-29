@@ -22,11 +22,6 @@ namespace LinguinoAPI.Controllers
         [Route("signup")]
         public async Task<ActionResult<CreateUserRespDTO>> RegisterUser(CreateUserDTO user)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(modelState: ModelState);
-            }
-            
             var resp = await _userService.RegisterUser(user);
             return Ok(resp);
         }
@@ -35,11 +30,6 @@ namespace LinguinoAPI.Controllers
         [Route("login")]
         public async Task<ActionResult<CreateUserRespDTO>> LoginUser(LoginUserDTO user)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(modelState: ModelState);
-            }
-
             var resp = await _userService.LoginUser(user);
             return Ok(resp);
         }
@@ -48,11 +38,6 @@ namespace LinguinoAPI.Controllers
         [Route("reset-password")]
         public async Task<ActionResult> ResetPassword(string email)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(modelState: ModelState);
-            }
-
             await _userService.ResetPasswordToken(email);
             return Ok();
         }
@@ -61,11 +46,6 @@ namespace LinguinoAPI.Controllers
         [Route("change-password")]
         public async Task<ActionResult> ChangePassword(ResetPasswordDTO resetPassword)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(modelState: ModelState);
-            }
-
             await _userService.ResetPassword(resetPassword);
             return Ok();
         }

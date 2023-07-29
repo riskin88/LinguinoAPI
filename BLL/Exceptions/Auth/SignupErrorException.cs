@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BLL.Exceptions.User
+namespace BLL.Exceptions.Auth
 {
     public class SignupErrorException : Exception
     {

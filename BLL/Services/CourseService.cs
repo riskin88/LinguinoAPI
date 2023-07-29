@@ -1,17 +1,8 @@
 ﻿using AutoMapper;
-using BLL.DTO;
-using BLL.Exceptions.User;
 using BLL.Services.Contracts;
 using DAL.Entities;
+using DAL.Filters;
 using DAL.UnitOfWork;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BLL.Services
 {
@@ -19,20 +10,25 @@ namespace BLL.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly IHttpContextAccessor _contextAccessor;
 
-        public CourseService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor contextAccessor)
+        public CourseService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
-            _contextAccessor = contextAccessor;
-        }
+            _mapper = mapper;        }
 
-        public async Task CreateCourse(Course createCourseDTO)
+        public void CreateCourse(Course createCourseDTO)
         {
             _unitOfWork.CourseRepository.Add(createCourseDTO);
             _unitOfWork.SaveChanges();
         }
+        public async Task<IEnumerable<Course>> GetCourses(CourseFilter filter)
+        {
+            return await _unitOfWork.CourseRepository.FindByFilter(filter);
+        }
 
+        public async Task<IEnumerable<Course>> GetUserCourses(string id)
+        {
+            return await _unitOfWork.CourseRepository.GetOwn(id);
+        }
     }
 }
