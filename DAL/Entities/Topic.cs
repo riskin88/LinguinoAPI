@@ -8,7 +8,7 @@ namespace DAL.Entities
     {
         [Required]
         public string? Name { get; set; }
-        public string? Description { get; set; }
+        public string? ThumbnailURL { get; set; }
         [Required]
         public bool IsFeatured { get; set; } = true;
         [Required]

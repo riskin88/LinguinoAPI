@@ -13,6 +13,7 @@ namespace DAL.UnitOfWork
     {
         IUserRepository UserRepository { get; set; }
         ICourseRepository CourseRepository { get; set; }
+        ITopicRepository TopicRepository { get; set; }
         UserManager<User> UserManager { get; set; }
 
         public void SaveChanges();

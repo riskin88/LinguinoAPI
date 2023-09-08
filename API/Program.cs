@@ -50,13 +50,18 @@ builder.Services.AddSwaggerGen(option =>
 
 var app = builder.Build();
 app.UseMiddleware<ErrorHandlingMiddleware>();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+using (var serviceScope = app.Services.GetService<IServiceScopeFactory>().CreateScope())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    var context = serviceScope.ServiceProvider.GetRequiredService<DataContext>();
+    context.Database.Migrate();
 }
+
+    // Configure the HTTP request pipeline.
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
 
 app.UseHttpsRedirection();
 

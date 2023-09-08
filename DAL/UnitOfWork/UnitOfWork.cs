@@ -18,13 +18,15 @@ namespace DAL.UnitOfWork
         public UserManager<User> UserManager { get; set; }
         public IUserRepository UserRepository { get; set; }
         public ICourseRepository CourseRepository { get; set; }
+        public ITopicRepository TopicRepository { get; set; }
 
         public UnitOfWork(DataContext db, UserManager<User> userManager, IRoleGuard roleGuard)
         {
             _dbContext = db;
             UserManager = userManager;
             UserRepository = new UserRepository(roleGuard);
-            CourseRepository = new CourseRepository(db);
+            CourseRepository = new CourseRepository(db, roleGuard);
+            TopicRepository = new TopicRepository(db);
         }
 
         public void Dispose()

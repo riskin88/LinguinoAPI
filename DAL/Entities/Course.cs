@@ -21,5 +21,6 @@ namespace DAL.Entities
         public string? ThumbnailURL { get; set; }
         public List<User> Users { get; set; } = new();
         public List<CourseProgress> CourseProgresses { get; set; } = new();
+        public List<Topic> Topics { get; set; } = new();
     }
 }

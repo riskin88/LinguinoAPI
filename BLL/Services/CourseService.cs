@@ -1,4 +1,7 @@
 ﻿using AutoMapper;
+using BLL.DTO;
+using BLL.Exceptions;
+using BLL.Exceptions.Auth;
 using BLL.Services.Contracts;
 using DAL.Entities;
 using DAL.Filters;
@@ -14,13 +17,28 @@ namespace BLL.Services
         public CourseService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
-            _mapper = mapper;        }
+            _mapper = mapper;
+        }
 
         public void CreateCourse(Course createCourseDTO)
         {
             _unitOfWork.CourseRepository.Add(createCourseDTO);
             _unitOfWork.SaveChanges();
         }
+
+        public async Task CreateTopic(long id, Topic createTopicDTO)
+        {
+
+            var course = await _unitOfWork.CourseRepository.GetById(id);
+            if (course != null)
+            {
+                _unitOfWork.TopicRepository.Add(createTopicDTO);
+                course.Topics.Add(createTopicDTO);
+                _unitOfWork.SaveChanges();
+            }
+            else throw new InvalidIDException("Course does not exist.");
+        }
+
         public async Task<IEnumerable<Course>> GetCourses(CourseFilter filter)
         {
             return await _unitOfWork.CourseRepository.FindByFilter(filter);

@@ -1,12 +1,7 @@
-﻿using BLL.Exceptions.User;
+﻿using BLL.Exceptions.Auth;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
 using System.Net.Mail;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BLL.Helpers
 {

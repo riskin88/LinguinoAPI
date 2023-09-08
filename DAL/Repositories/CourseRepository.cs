@@ -1,5 +1,4 @@
-﻿using D.Exceptions.Auth;
-using DAL.Data;
+﻿using DAL.Data;
 using DAL.Entities;
 using DAL.Exceptions;
 using DAL.Filters;
@@ -8,7 +7,7 @@ using DAL.Repositories.Contracts;
 
 namespace DAL.Repositories
 {
-    
+
     public class CourseRepository : RepositoryBase<Course>, ICourseRepository
     {
         private readonly IRoleGuard _roleGuard;
