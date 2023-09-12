@@ -10,7 +10,8 @@ namespace BLL.AutoMapper
         public AutoMapperProfile() 
         {
             CreateMap<User, CreateUserRespDTO>();
-            CreateMap<User, GetUserRespDTO>();   
+            CreateMap<User, GetUserRespDTO>();
+            CreateMap<Course, CourseRespDTO>();
         }
     }
 }

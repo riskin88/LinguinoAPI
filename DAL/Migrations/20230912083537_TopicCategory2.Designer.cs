@@ -4,6 +4,7 @@ using DAL.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230912083537_TopicCategory2")]
+    partial class TopicCategory2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -48,6 +51,36 @@ namespace DAL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Course");
+                });
+
+            modelBuilder.Entity("DAL.Entities.CourseProgress", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("CourseId")
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("IsSelected")
+                        .HasColumnType("bit");
+
+                    b.Property<long>("PositionOnMap")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("CourseProgress");
                 });
 
             modelBuilder.Entity("DAL.Entities.Topic", b =>
@@ -156,66 +189,6 @@ namespace DAL.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("DAL.Entities.UserCourse", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("CourseId")
-                        .HasColumnType("bigint");
-
-                    b.Property<bool>("IsSelected")
-                        .HasColumnType("bit");
-
-                    b.Property<long>("PositionOnMap")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CourseId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserCourse");
-                });
-
-            modelBuilder.Entity("DAL.Entities.UserTopic", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("LessonsActive")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("LessonsTotal")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("TopicId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TopicId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserTopic");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -245,17 +218,17 @@ namespace DAL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "c84f5df6-24c5-4991-adb6-158acc87b102",
+                            Id = "deb0af60-11e0-45e9-9a10-a7d8a9f95fe8",
                             Name = "USER"
                         },
                         new
                         {
-                            Id = "2e545565-2a2a-4601-b37d-48c8da081548",
+                            Id = "826d0888-9fb4-408b-aa05-0d069018bebe",
                             Name = "PREMIUM_USER"
                         },
                         new
                         {
-                            Id = "0fc259bb-8d7f-4d02-8cf0-676541d120db",
+                            Id = "8ea71490-223c-4ca4-8aa2-94faf9b0b76d",
                             Name = "ADMIN"
                         });
                 });
@@ -366,23 +339,16 @@ namespace DAL.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("DAL.Entities.Topic", b =>
-                {
-                    b.HasOne("DAL.Entities.Course", null)
-                        .WithMany("Topics")
-                        .HasForeignKey("CourseId");
-                });
-
-            modelBuilder.Entity("DAL.Entities.UserCourse", b =>
+            modelBuilder.Entity("DAL.Entities.CourseProgress", b =>
                 {
                     b.HasOne("DAL.Entities.Course", "Course")
-                        .WithMany("UserCourses")
+                        .WithMany("CourseProgresses")
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("DAL.Entities.User", "User")
-                        .WithMany("UserCourses")
+                        .WithMany("CourseProgresses")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -392,23 +358,11 @@ namespace DAL.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("DAL.Entities.UserTopic", b =>
+            modelBuilder.Entity("DAL.Entities.Topic", b =>
                 {
-                    b.HasOne("DAL.Entities.Topic", "Topic")
-                        .WithMany("UserTopics")
-                        .HasForeignKey("TopicId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DAL.Entities.User", "User")
-                        .WithMany("UserTopics")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Topic");
-
-                    b.Navigation("User");
+                    b.HasOne("DAL.Entities.Course", null)
+                        .WithMany("Topics")
+                        .HasForeignKey("CourseId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -464,21 +418,14 @@ namespace DAL.Migrations
 
             modelBuilder.Entity("DAL.Entities.Course", b =>
                 {
+                    b.Navigation("CourseProgresses");
+
                     b.Navigation("Topics");
-
-                    b.Navigation("UserCourses");
-                });
-
-            modelBuilder.Entity("DAL.Entities.Topic", b =>
-                {
-                    b.Navigation("UserTopics");
                 });
 
             modelBuilder.Entity("DAL.Entities.User", b =>
                 {
-                    b.Navigation("UserCourses");
-
-                    b.Navigation("UserTopics");
+                    b.Navigation("CourseProgresses");
                 });
 #pragma warning restore 612, 618
         }

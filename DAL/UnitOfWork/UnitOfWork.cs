@@ -26,7 +26,7 @@ namespace DAL.UnitOfWork
             UserManager = userManager;
             UserRepository = new UserRepository(roleGuard);
             CourseRepository = new CourseRepository(db, roleGuard);
-            TopicRepository = new TopicRepository(db);
+            TopicRepository = new TopicRepository(db, roleGuard);
         }
 
         public void Dispose()

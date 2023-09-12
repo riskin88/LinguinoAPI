@@ -4,6 +4,7 @@ using BLL.Exceptions;
 using BLL.Exceptions.Auth;
 using BLL.Services.Contracts;
 using DAL.Entities;
+using DAL.Exceptions;
 using DAL.Filters;
 using DAL.UnitOfWork;
 
@@ -39,14 +40,39 @@ namespace BLL.Services
             else throw new InvalidIDException("Course does not exist.");
         }
 
-        public async Task<IEnumerable<Course>> GetCourses(CourseFilter filter)
+        public async Task<IEnumerable<CourseRespDTO>> GetCourses(CourseFilter filter)
         {
-            return await _unitOfWork.CourseRepository.FindByFilter(filter);
+            var res = await _unitOfWork.CourseRepository.FindByFilter(filter);
+            List<CourseRespDTO> resp = new();
+            foreach (var course in res)
+            {
+                resp.Add(_mapper.Map<CourseRespDTO>(course));
+            }
+            return resp;
         }
 
-        public async Task<IEnumerable<Course>> GetUserCourses(string id)
+        public async Task<IEnumerable<CourseRespDTO>> GetUserCourses(string id)
         {
-            return await _unitOfWork.CourseRepository.GetOwn(id);
+            var res = await _unitOfWork.CourseRepository.GetOwn(id);
+            List<CourseRespDTO> resp = new();
+            foreach (var course in res)
+            {
+                resp.Add(_mapper.Map<CourseRespDTO>(course));
+            }
+            return resp;
+        }
+
+        public async Task<CourseRespDTO> AddUser(AddCourseDTO courseDTO, string userId)
+        {
+            var course = await _unitOfWork.CourseRepository.AddUser(courseDTO.CourseId, userId);
+            List<long> ids = new();
+            foreach (var e in courseDTO.SelectedTopics)
+            {
+                ids.Add(e.Id);
+            }
+            await _unitOfWork.TopicRepository.AddUserToMany(ids, userId);
+            _unitOfWork.SaveChanges();
+            return _mapper.Map<CourseRespDTO>(course);
         }
     }
 }

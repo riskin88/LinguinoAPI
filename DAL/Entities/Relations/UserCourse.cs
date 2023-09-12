@@ -3,8 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DAL.Entities
 {
-    [Table("CourseProgress")]
-    public class CourseProgress : EntityBase
+    [Table("UserCourse")]
+    public class UserCourse : EntityBase
     {
         public string UserId { get; set; }
         public User User { get; set; } = null!;

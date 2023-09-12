@@ -19,6 +19,7 @@ namespace DAL.Data
         }
         public DbSet<Course> Courses { get; set; }
         public DbSet<Topic> Topics { get; set; }
-        public DbSet<CourseProgress> CourseProgresses { get; set; }
+        public DbSet<UserCourse> UserCourses { get; set; }
+        public DbSet<UserTopic> UserTopics { get; set; }
     }
 }

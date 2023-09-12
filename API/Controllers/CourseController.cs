@@ -27,14 +27,14 @@ namespace LinguinoAPI.Controllers
 
         [HttpGet, Authorize]
         [Route("courses")]
-        public async Task<ActionResult<IEnumerable<Course>>> GetCourses([FromQuery] CourseFilter filter)
+        public async Task<ActionResult<IEnumerable<CourseRespDTO>>> GetCourses([FromQuery] CourseFilter filter)
         {                      
             return Ok(await _courseService.GetCourses(filter));
         }
 
         [HttpGet, Authorize]
         [Route("users/{userId}/courses")]
-        public async Task<ActionResult<IEnumerable<Course>>> GetUserCourses(string userId)
+        public async Task<ActionResult<IEnumerable<CourseRespDTO>>> GetUserCourses(string userId)
         {
             return Ok(await _courseService.GetUserCourses(userId));
         }
@@ -47,12 +47,11 @@ namespace LinguinoAPI.Controllers
             return Ok();
         }
 
-        //[HttpPost]
-        //[Route("users/{userId}/courses")]
-        //public ActionResult AddCourse(AddCourseDTO course)
-        //{
-        //    var resp = _courseService.AddCourse(course);
-        //    return Ok(resp);
-        //}
+        [HttpPost]
+        [Route("users/{userId}/courses")]
+        public async Task<ActionResult<Course>> AddCourse(AddCourseDTO course, string userId)
+        {
+            return Ok(await _courseService.AddUser(course, userId));
+        }
     }
 }

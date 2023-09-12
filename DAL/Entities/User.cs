@@ -15,7 +15,9 @@ namespace DAL.Entities
         [Required]
         public bool? AccountInitialized { get; set; } = false;
         public List<Course> Courses { get; set; } = new();
-        public List<CourseProgress> CourseProgresses { get; set; } = new();
+        public List<UserCourse> UserCourses { get; set; } = new();
+        public List<Topic> Topics { get; set; } = new();
+        public List<UserTopic> UserTopics { get; set; } = new();
 
     }
 }

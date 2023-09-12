@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using DAL.Entities.Enums;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DAL.Entities
@@ -11,8 +12,10 @@ namespace DAL.Entities
         public string? ThumbnailURL { get; set; }
         [Required]
         public bool IsFeatured { get; set; } = true;
-        [Required]
-        public bool IsMain { get; set; } = true;
+        public TopicCategory? Category { get; set; }
+        public List<User> Users { get; set; } = new();
+        public List<UserTopic> UserTopics { get; set; } = new();
+
 
     }
 }

@@ -1,6 +1,8 @@
-﻿using DAL.Entities;
+﻿using Azure;
+using DAL.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +17,12 @@ namespace DAL.Configs
         {
             builder.HasMany(u => u.Courses)
             .WithMany(c => c.Users)
-            .UsingEntity<CourseProgress>();
+            .UsingEntity<UserCourse>();
+            builder.HasMany(u => u.Topics)
+            .WithMany(t => t.Users)
+            .UsingEntity<UserTopic>(
+                l => l.HasOne<Topic>(e => e.Topic).WithMany(e => e.UserTopics), r => r.HasOne<User>(e => e.User).WithMany(e => e.UserTopics)
+           );
         }
     }
 }
