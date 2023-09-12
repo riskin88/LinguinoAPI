@@ -8,5 +8,7 @@ namespace DAL.Repositories.Contracts
         public Task<IEnumerable<Course>> FindByFilter(CourseFilter filter);
         public Task<IEnumerable<Course>> GetOwn(string id);
         public Task<Course> AddUser(long courseId, string userId);
+        public Task<IEnumerable<Topic>> GetTopics(long courseId, TopicFilter filter);
+
     }
 }

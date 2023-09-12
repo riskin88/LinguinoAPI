@@ -12,6 +12,8 @@ namespace BLL.AutoMapper
             CreateMap<User, CreateUserRespDTO>();
             CreateMap<User, GetUserRespDTO>();
             CreateMap<Course, CourseRespDTO>();
+            CreateMap<Topic, TopicRespDTO>();
+
         }
     }
 }

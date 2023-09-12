@@ -74,5 +74,20 @@ namespace BLL.Services
             _unitOfWork.SaveChanges();
             return _mapper.Map<CourseRespDTO>(course);
         }
+
+        public async Task<IEnumerable<TopicRespDTO>> GetTopics(long courseId, TopicFilter filter)
+        {
+            var courseTopics = await _unitOfWork.CourseRepository.GetTopics(courseId, filter);
+            var userTopics = await _unitOfWork.TopicRepository.GetOwn();
+            List<TopicRespDTO> resp = new();
+            foreach (var topic in courseTopics)
+            {
+                var tmp = _mapper.Map<TopicRespDTO>(topic);
+                if (userTopics.Contains(topic))
+                    tmp.Enabled = true;
+                resp.Add(tmp);
+            }
+            return resp;
+        }
     }
 }

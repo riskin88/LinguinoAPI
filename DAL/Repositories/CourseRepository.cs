@@ -4,6 +4,7 @@ using DAL.Exceptions;
 using DAL.Filters;
 using DAL.Identity;
 using DAL.Repositories.Contracts;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.SqlServer.Server;
 
 namespace DAL.Repositories
@@ -45,7 +46,7 @@ namespace DAL.Repositories
             {
                 if (userId == _roleGuard.user.Id)
                 {
-                     course.Users.Add(_roleGuard.user);
+                    course.Users.Add(_roleGuard.user);
                     return course;
                 }
 
@@ -53,5 +54,27 @@ namespace DAL.Repositories
             }
             else throw new InvalidIDException("Course does not exist.");
         }
+
+        public async Task<IEnumerable<Topic>> GetTopics(long courseId, TopicFilter filter)
+        {
+            var course = await GetById(courseId);
+            if (course != null)
+            {
+                var topics = course.Topics;
+
+                if (filter.IsFeatured != null && filter.Category != null)
+                    return topics.AsQueryable().Where(c => c.IsFeatured == filter.IsFeatured && c.Category == filter.Category);
+                if (filter.IsFeatured != null)
+                    return topics.AsQueryable().Where(c => c.IsFeatured == filter.IsFeatured);
+                if (filter.Category != null)
+                    return topics.AsQueryable().Where(c => c.Category == filter.Category);
+
+                return topics;
+            }
+
+            else throw new InvalidIDException("Course does not exist.");
+        }
     }
+
+
 }

@@ -11,5 +11,7 @@ namespace BLL.Services.Contracts
         public Task<IEnumerable<CourseRespDTO>> GetUserCourses(string id);
         public Task CreateTopic(long id, Topic createTopicDTO);
         public Task<CourseRespDTO> AddUser(AddCourseDTO courseDTO, string userId);
+        public Task<IEnumerable<TopicRespDTO>> GetTopics(long courseId, TopicFilter filter);
+
     }
 }

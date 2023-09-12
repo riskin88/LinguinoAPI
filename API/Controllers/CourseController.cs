@@ -39,19 +39,27 @@ namespace LinguinoAPI.Controllers
             return Ok(await _courseService.GetUserCourses(userId));
         }
 
-        [HttpPost, Authorize (Roles = "ADMIN")]
+
+        [HttpPost, Authorize]
+        [Route("users/{userId}/courses")]
+        public async Task<ActionResult<Course>> AddCourse(AddCourseDTO course, string userId)
+        {
+            return Ok(await _courseService.AddUser(course, userId));
+        }
+
+        [HttpPost, Authorize(Roles = "ADMIN")]
         [Route("courses/{courseId}/topics")]
-        public async Task<ActionResult> CreateTopic(long courseId, Topic topic) 
+        public async Task<ActionResult> CreateTopic(long courseId, Topic topic)
         {
             await _courseService.CreateTopic(courseId, topic);
             return Ok();
         }
 
-        [HttpPost]
-        [Route("users/{userId}/courses")]
-        public async Task<ActionResult<Course>> AddCourse(AddCourseDTO course, string userId)
+        [HttpGet, Authorize]
+        [Route("courses/{courseId}/topics")]
+        public async Task<ActionResult<IEnumerable<TopicRespDTO>>> GetTopics(long courseId, [FromQuery] TopicFilter filter)
         {
-            return Ok(await _courseService.AddUser(course, userId));
+            return Ok(await _courseService.GetTopics(courseId, filter));
         }
     }
 }

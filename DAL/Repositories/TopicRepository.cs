@@ -31,5 +31,10 @@ namespace DAL.Repositories
             }
             else throw new AccessDeniedException("Not authorized to do this.");
         }
+
+        public async Task<IEnumerable<Topic>> GetOwn()
+        {
+            return await FindByCondition(c => c.Users.Contains(_roleGuard.user));
+        }
     }
 }
