@@ -15,7 +15,8 @@ namespace DAL.Entities
         public TopicCategory? Category { get; set; }
         public List<User> Users { get; set; } = new();
         public List<UserTopic> UserTopics { get; set; } = new();
-
+        public long CourseId { get; set; }
+        public Course Course { get; set; } = null!;
 
     }
 }

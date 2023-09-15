@@ -5,6 +5,7 @@ using DAL.Filters;
 using DAL.Identity;
 using DAL.Migrations;
 using DAL.Repositories.Contracts;
+using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Repositories
 {
@@ -18,23 +19,64 @@ namespace DAL.Repositories
             _roleGuard = roleGuard;
         }
 
-        public async Task AddUserToMany(IEnumerable<long> topicId, string userId)
+        private async Task<Topic?> GetWithUsers(long topicId)
         {
-            if (userId == _roleGuard.user.Id)
+            return await dataContext.Set<Topic>().Include(t => t.Users).FirstOrDefaultAsync(e => e.Id == topicId);
+        }
+
+        public async Task AddUserToOne(string userId, long topicId)
+        {
+            var topic = await GetById(topicId);
+            if (topic != null)
             {
-                var user = _roleGuard.user;
-                foreach (long id in topicId)
+                if (!await IsEnabled(topicId))
                 {
-                    var topic = await GetById(id);
-                    topic.Users.Add(user);
+                    if (userId == _roleGuard.user.Id)
+                    {
+                        topic.Users.Add(_roleGuard.user);
+                    }
+                    else throw new AccessDeniedException("Not authorized to do this.");
                 }
+                
             }
-            else throw new AccessDeniedException("Not authorized to do this.");
+            else throw new InvalidIDException("Topic " + topicId + " does not exist.");
+        }
+
+        public async Task RemoveUserFromOne(string userId, long topicId)
+        {
+            var topic = await GetWithUsers(topicId);
+            if (topic != null)
+                if (userId == _roleGuard.user.Id)
+                {
+                    topic.Users.Remove(_roleGuard.user);
+                }
+                else throw new AccessDeniedException("Not authorized to do this.");
+            
+            else throw new InvalidIDException("Topic does not exist.");
         }
 
         public async Task<IEnumerable<Topic>> GetOwn()
         {
             return await FindByCondition(c => c.Users.Contains(_roleGuard.user));
         }
+
+        public async Task<bool> IsEnabled(long topicId)
+        {
+            var topic = await GetWithUsers(topicId);
+            if (topic != null)
+            {
+                if (topic.Users.Contains(_roleGuard.user))
+                    return true;
+                else return false;
+            }
+            else throw new InvalidIDException("Topic does not exist.");
+        }
+
+        public async Task<Topic?> GetWithCourse(long topicId)
+        {
+            return await dataContext.Set<Topic>().Include(t => t.Course).FirstOrDefaultAsync(e => e.Id == topicId);
+        }
     }
+
+
 }

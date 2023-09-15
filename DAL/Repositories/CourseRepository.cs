@@ -3,9 +3,9 @@ using DAL.Entities;
 using DAL.Exceptions;
 using DAL.Filters;
 using DAL.Identity;
+using DAL.Migrations;
 using DAL.Repositories.Contracts;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.SqlServer.Server;
 
 namespace DAL.Repositories
 {
@@ -16,6 +16,11 @@ namespace DAL.Repositories
         public CourseRepository(DataContext _dataContext, IRoleGuard roleGuard) : base(_dataContext)
         {
             _roleGuard = roleGuard;
+        }
+
+        private async Task<Course?> GetWithTopics(long courseId)
+        {
+            return await dataContext.Set<Course>().Include(c => c.Topics).FirstOrDefaultAsync(e => e.Id == courseId);
         }
 
         public async Task<IEnumerable<Course>> FindByFilter(CourseFilter filter)
@@ -55,9 +60,34 @@ namespace DAL.Repositories
             else throw new InvalidIDException("Course does not exist.");
         }
 
+        public async Task<bool> HasUser(long courseId, string userId)
+        {
+            if (userId == _roleGuard.user.Id)
+            {
+                var course = await dataContext.Set<Course>().Include(c => c.Users).FirstOrDefaultAsync(e => e.Id == courseId);
+                if (course != null && course.Users.Contains(_roleGuard.user))
+                    return true;
+                else return false;
+            }
+            else throw new AccessDeniedException("Not authorized to view this data.");
+
+        }
+        public async Task AddTopic(long courseId, Topic topic)
+        {
+            var course = await GetWithTopics(courseId);
+            if (course != null)
+            {
+                if (!course.Topics.Contains(topic))
+                {
+                    course.Topics.Add(topic);
+                }
+                
+            }
+            else throw new InvalidIDException("Course does not exist.");
+        }
         public async Task<IEnumerable<Topic>> GetTopics(long courseId, TopicFilter filter)
         {
-            var course = await GetById(courseId);
+            var course = await GetWithTopics(courseId);
             if (course != null)
             {
                 var topics = course.Topics;

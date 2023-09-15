@@ -13,6 +13,7 @@ namespace BLL.AutoMapper
             CreateMap<User, GetUserRespDTO>();
             CreateMap<Course, CourseRespDTO>();
             CreateMap<Topic, TopicRespDTO>();
+            CreateMap<CreateTopicDTO, Topic>();
 
         }
     }

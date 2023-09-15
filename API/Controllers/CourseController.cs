@@ -44,12 +44,12 @@ namespace LinguinoAPI.Controllers
         [Route("users/{userId}/courses")]
         public async Task<ActionResult<Course>> AddCourse(AddCourseDTO course, string userId)
         {
-            return Ok(await _courseService.AddUser(course, userId));
+            return Ok(await _courseService.AddUserWithTopics(course, userId));
         }
 
         [HttpPost, Authorize(Roles = "ADMIN")]
         [Route("courses/{courseId}/topics")]
-        public async Task<ActionResult> CreateTopic(long courseId, Topic topic)
+        public async Task<ActionResult> CreateTopic(long courseId, CreateTopicDTO topic)
         {
             await _courseService.CreateTopic(courseId, topic);
             return Ok();
@@ -60,6 +60,13 @@ namespace LinguinoAPI.Controllers
         public async Task<ActionResult<IEnumerable<TopicRespDTO>>> GetTopics(long courseId, [FromQuery] TopicFilter filter)
         {
             return Ok(await _courseService.GetTopics(courseId, filter));
+        }
+
+        [HttpPatch, Authorize]
+        [Route("users/{userId}/courses/{courseId}/topics/{topicId}")]
+        public async Task<ActionResult<TopicRespDTO>> ToggleTopic(string userId, long courseId, long topicId, ToggleTopicDTO topic)
+        {
+            return Ok(await _courseService.ToggleTopic(userId, courseId, topicId, topic));
         }
     }
 }
