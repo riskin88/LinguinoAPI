@@ -1,4 +1,5 @@
-﻿using DAL.Entities;
+﻿using AutoMapper;
+using DAL.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,13 +8,15 @@ using System.Threading.Tasks;
 
 namespace BLL.DTO
 {
+    [AutoMap(typeof(User))]
+
     public class CreateUserRespDTO
     {
-        public string? id { get; set; }
-        public string? username { get; set; }
-        public string? idToken { get; set; }
-        public long? streak { get; set; }
-        public long? balance { get; set; }
-        public bool? accountInitialized { get; set; }
+        public string? Id { get; set; }
+        public string? Username { get; set; }
+        public string? IdToken { get; set; }
+        public long? Streak { get; set; }
+        public long? Balance { get; set; }
+        public bool? AccountInitialized { get; set; }
     }
 }

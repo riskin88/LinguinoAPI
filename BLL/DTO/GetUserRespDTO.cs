@@ -1,11 +1,16 @@
-﻿namespace BLL.DTO
+﻿using AutoMapper;
+using DAL.Entities;
+
+namespace BLL.DTO
 {
+    [AutoMap(typeof(User))]
+
     public class GetUserRespDTO
     {
-        public string? id { get; set; }
-        public string? username { get; set; }
-        public long? streak { get; set; }
-        public long? balance { get; set; }
-        public bool? accountInitialized { get; set; }
+        public string? Id { get; set; }
+        public string? Username { get; set; }
+        public long? Streak { get; set; }
+        public long? Balance { get; set; }
+        public bool? AccountInitialized { get; set; }
     }
 }

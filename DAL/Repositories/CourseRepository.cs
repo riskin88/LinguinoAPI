@@ -3,9 +3,9 @@ using DAL.Entities;
 using DAL.Exceptions;
 using DAL.Filters;
 using DAL.Identity;
-using DAL.Migrations;
 using DAL.Repositories.Contracts;
 using Microsoft.EntityFrameworkCore;
+
 
 namespace DAL.Repositories
 {
@@ -34,7 +34,7 @@ namespace DAL.Repositories
 
             return await GetAll();
 
-        }
+        }   
 
         public async Task<IEnumerable<Course>> GetOwn(string id)
         {
@@ -42,6 +42,11 @@ namespace DAL.Repositories
                 return await FindByCondition(c => c.Users.Contains(_roleGuard.user));
             else throw new AccessDeniedException("Not authorized to view this data.");
 
+        }
+
+        public async Task<Course?> GetWithFeaturedTopics(long courseId)
+        {
+            return await dataContext.Set<Course>().Include(c => c.Topics.Where(t => t.IsFeatured)).FirstOrDefaultAsync(e => e.Id == courseId);
         }
 
         public async Task<Course> AddUser(long courseId, string userId)

@@ -58,6 +58,16 @@ namespace BLL.Services
             return resp;
         }
 
+        public async Task<CourseWithFeaturedDTO> GetWithFeaturedTopics(long courseId)
+        {
+            var course = await _unitOfWork.CourseRepository.GetWithFeaturedTopics(courseId);
+            if (course != null)
+            {
+                return _mapper.Map<CourseWithFeaturedDTO>(course);
+            }
+            else throw new InvalidIDException("Course does not exist.");
+        }
+
         public async Task<CourseRespDTO> AddUserWithTopics(AddCourseDTO courseDTO, string userId)
         {
             var course = await _unitOfWork.CourseRepository.AddUser(courseDTO.CourseId, userId);

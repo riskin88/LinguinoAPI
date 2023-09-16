@@ -11,5 +11,6 @@ namespace DAL.Repositories.Contracts
         public Task<IEnumerable<Topic>> GetTopics(long courseId, TopicFilter filter);
         public Task AddTopic(long courseId, Topic topic);
         public Task<bool> HasUser(long courseId, string userId);
+        public Task<Course?> GetWithFeaturedTopics(long courseId);
     }
 }

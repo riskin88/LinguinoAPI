@@ -47,6 +47,13 @@ namespace LinguinoAPI.Controllers
             return Ok(await _courseService.AddUserWithTopics(course, userId));
         }
 
+        [HttpGet, Authorize]
+        [Route("courses/{courseId}")]
+        public async Task<ActionResult<CourseWithFeaturedDTO>> GetCourseWithFeaturedTopics(long courseId)
+        {
+            return Ok(await _courseService.GetWithFeaturedTopics(courseId));
+        }
+
         [HttpPost, Authorize(Roles = "ADMIN")]
         [Route("courses/{courseId}/topics")]
         public async Task<ActionResult> CreateTopic(long courseId, CreateTopicDTO topic)

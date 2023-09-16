@@ -39,7 +39,7 @@ namespace BLL.Services
 
                 var roles = await _unitOfWork.UserManager.GetRolesAsync(user);
                 var resp = _mapper.Map<CreateUserRespDTO>(user);
-                resp.idToken = _jwtService.CreateToken(user, roles);
+                resp.IdToken = _jwtService.CreateToken(user, roles);
                 _unitOfWork.SaveChanges();
                 return resp;
             }
@@ -55,7 +55,7 @@ namespace BLL.Services
                 {
                     var roles = await _unitOfWork.UserManager.GetRolesAsync(user);
                     var resp = _mapper.Map<CreateUserRespDTO>(user);
-                    resp.idToken = _jwtService.CreateToken(user, roles);
+                    resp.IdToken = _jwtService.CreateToken(user, roles);
                     return resp;
                 }
 

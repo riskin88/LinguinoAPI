@@ -13,6 +13,7 @@ namespace BLL.Services.Contracts
         public Task<CourseRespDTO> AddUserWithTopics(AddCourseDTO courseDTO, string userId);
         public Task<IEnumerable<TopicRespDTO>> GetTopics(long courseId, TopicFilter filter);
         public Task<TopicRespDTO> ToggleTopic(string userId, long courseId, long topicId, ToggleTopicDTO topicDTO);
+        public Task<CourseWithFeaturedDTO> GetWithFeaturedTopics(long courseId);
 
     }
 }
