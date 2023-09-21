@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230725162958_course")]
-    partial class course
+    [Migration("20230920152329_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -53,7 +53,7 @@ namespace DAL.Migrations
                     b.ToTable("Course");
                 });
 
-            modelBuilder.Entity("DAL.Entities.CourseProgress", b =>
+            modelBuilder.Entity("DAL.Entities.Lesson", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -61,26 +61,32 @@ namespace DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<long>("CourseId")
-                        .HasColumnType("bigint");
-
-                    b.Property<bool>("IsSelected")
-                        .HasColumnType("bit");
-
-                    b.Property<long>("PositionOnMap")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
+                    b.Property<string>("AuthorId")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<long?>("CourseId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("Level")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("Type")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AuthorId");
+
                     b.HasIndex("CourseId");
 
-                    b.HasIndex("UserId");
-
-                    b.ToTable("CourseProgress");
+                    b.ToTable("Lesson");
                 });
 
             modelBuilder.Entity("DAL.Entities.Topic", b =>
@@ -91,22 +97,50 @@ namespace DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("Category")
+                        .HasColumnType("int");
+
+                    b.Property<long>("CourseId")
+                        .HasColumnType("bigint");
 
                     b.Property<bool>("IsFeatured")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsMain")
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ThumbnailURL")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("CourseId");
+
                     b.ToTable("Topic");
+                });
+
+            modelBuilder.Entity("DAL.Entities.TopicLesson", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("LessonId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("TopicId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LessonId");
+
+                    b.HasIndex("TopicId");
+
+                    b.ToTable("TopicLesson");
                 });
 
             modelBuilder.Entity("DAL.Entities.User", b =>
@@ -184,6 +218,102 @@ namespace DAL.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("DAL.Entities.UserCourse", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("CourseId")
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("IsSelected")
+                        .HasColumnType("bit");
+
+                    b.Property<long>("PositionOnMap")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserCourse");
+                });
+
+            modelBuilder.Entity("DAL.Entities.UserLesson", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<bool>("IsFavorite")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsVisible")
+                        .HasColumnType("bit");
+
+                    b.Property<long>("ItemsDone")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("ItemsTotal")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("LessonId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LessonId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserLesson");
+                });
+
+            modelBuilder.Entity("DAL.Entities.UserTopic", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("LessonsActive")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("LessonsTotal")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("TopicId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TopicId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserTopic");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -213,17 +343,17 @@ namespace DAL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "af7c643b-5925-4314-8287-38da3ce67482",
+                            Id = "13a21b37-d84b-4ab9-83ec-b9ab16a29e7c",
                             Name = "USER"
                         },
                         new
                         {
-                            Id = "d29abb07-9164-4d0d-9e0b-50ce4569534c",
+                            Id = "c627e4b4-3290-4d24-a6df-2d3f1c350979",
                             Name = "PREMIUM_USER"
                         },
                         new
                         {
-                            Id = "a7e93ec0-8579-46a5-8bc5-4728cecdb351",
+                            Id = "aa4da2a9-05d1-412b-bbe9-b8f1542f5b89",
                             Name = "ADMIN"
                         });
                 });
@@ -334,21 +464,104 @@ namespace DAL.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("DAL.Entities.CourseProgress", b =>
+            modelBuilder.Entity("DAL.Entities.Lesson", b =>
+                {
+                    b.HasOne("DAL.Entities.User", "Author")
+                        .WithMany("LessonsCreated")
+                        .HasForeignKey("AuthorId");
+
+                    b.HasOne("DAL.Entities.Course", "Course")
+                        .WithMany("Lessons")
+                        .HasForeignKey("CourseId");
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Course");
+                });
+
+            modelBuilder.Entity("DAL.Entities.Topic", b =>
                 {
                     b.HasOne("DAL.Entities.Course", "Course")
-                        .WithMany("CourseProgresses")
+                        .WithMany("Topics")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+                });
+
+            modelBuilder.Entity("DAL.Entities.TopicLesson", b =>
+                {
+                    b.HasOne("DAL.Entities.Lesson", "Lesson")
+                        .WithMany("TopicLessons")
+                        .HasForeignKey("LessonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DAL.Entities.Topic", "Topic")
+                        .WithMany("TopicLessons")
+                        .HasForeignKey("TopicId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Lesson");
+
+                    b.Navigation("Topic");
+                });
+
+            modelBuilder.Entity("DAL.Entities.UserCourse", b =>
+                {
+                    b.HasOne("DAL.Entities.Course", "Course")
+                        .WithMany("UserCourses")
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("DAL.Entities.User", "User")
-                        .WithMany("CourseProgresses")
+                        .WithMany("UserCourses")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Course");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("DAL.Entities.UserLesson", b =>
+                {
+                    b.HasOne("DAL.Entities.Lesson", "Lesson")
+                        .WithMany("UserLessons")
+                        .HasForeignKey("LessonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DAL.Entities.User", "User")
+                        .WithMany("UserLessons")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Lesson");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("DAL.Entities.UserTopic", b =>
+                {
+                    b.HasOne("DAL.Entities.Topic", "Topic")
+                        .WithMany("UserTopics")
+                        .HasForeignKey("TopicId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DAL.Entities.User", "User")
+                        .WithMany("UserTopics")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Topic");
 
                     b.Navigation("User");
                 });
@@ -406,12 +619,36 @@ namespace DAL.Migrations
 
             modelBuilder.Entity("DAL.Entities.Course", b =>
                 {
-                    b.Navigation("CourseProgresses");
+                    b.Navigation("Lessons");
+
+                    b.Navigation("Topics");
+
+                    b.Navigation("UserCourses");
+                });
+
+            modelBuilder.Entity("DAL.Entities.Lesson", b =>
+                {
+                    b.Navigation("TopicLessons");
+
+                    b.Navigation("UserLessons");
+                });
+
+            modelBuilder.Entity("DAL.Entities.Topic", b =>
+                {
+                    b.Navigation("TopicLessons");
+
+                    b.Navigation("UserTopics");
                 });
 
             modelBuilder.Entity("DAL.Entities.User", b =>
                 {
-                    b.Navigation("CourseProgresses");
+                    b.Navigation("LessonsCreated");
+
+                    b.Navigation("UserCourses");
+
+                    b.Navigation("UserLessons");
+
+                    b.Navigation("UserTopics");
                 });
 #pragma warning restore 612, 618
         }

@@ -3,7 +3,6 @@ using DAL.Entities;
 using DAL.Exceptions;
 using DAL.Filters;
 using DAL.Identity;
-using DAL.Migrations;
 using DAL.Repositories.Contracts;
 using Microsoft.EntityFrameworkCore;
 

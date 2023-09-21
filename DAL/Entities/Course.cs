@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+﻿using DAL.Entities.Relations;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -22,5 +23,6 @@ namespace DAL.Entities
         public List<User> Users { get; set; } = new();
         public List<UserCourse> UserCourses { get; set; } = new();
         public List<Topic> Topics { get; set; } = new();
+        public List<Lesson> Lessons { get; set; } = new();
     }
 }

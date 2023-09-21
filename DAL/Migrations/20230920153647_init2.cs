@@ -7,7 +7,7 @@
 namespace DAL.Migrations
 {
     /// <inheritdoc />
-    public partial class TopicCategory2 : Migration
+    public partial class init2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,34 +15,26 @@ namespace DAL.Migrations
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "37548003-49e0-4b91-bc6d-4aabe7025173");
+                keyValue: "13a21b37-d84b-4ab9-83ec-b9ab16a29e7c");
 
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "5fca7bdd-02a9-49f6-808b-94117c18d9f6");
+                keyValue: "aa4da2a9-05d1-412b-bbe9-b8f1542f5b89");
 
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "be9b5d43-5f10-4bac-8c9d-bb4dfd5b2e86");
-
-            migrationBuilder.AlterColumn<int>(
-                name: "Category",
-                table: "Topic",
-                type: "int",
-                nullable: true,
-                oldClrType: typeof(int),
-                oldType: "int");
+                keyValue: "c627e4b4-3290-4d24-a6df-2d3f1c350979");
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "826d0888-9fb4-408b-aa05-0d069018bebe", null, "PREMIUM_USER", null },
-                    { "8ea71490-223c-4ca4-8aa2-94faf9b0b76d", null, "ADMIN", null },
-                    { "deb0af60-11e0-45e9-9a10-a7d8a9f95fe8", null, "USER", null }
+                    { "3cf4378a-3fca-45d5-8782-db69e9bd5259", null, "USER", "USER" },
+                    { "7521910b-749d-4fbd-bf8e-dfddb9aa4fd6", null, "ADMIN", "ADMIN" },
+                    { "d05744d9-00ed-4cb8-8224-eb1e4abf31ba", null, "PREMIUM_USER", "PREMIUM_USER" }
                 });
         }
 
@@ -52,36 +44,26 @@ namespace DAL.Migrations
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "826d0888-9fb4-408b-aa05-0d069018bebe");
+                keyValue: "3cf4378a-3fca-45d5-8782-db69e9bd5259");
 
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "8ea71490-223c-4ca4-8aa2-94faf9b0b76d");
+                keyValue: "7521910b-749d-4fbd-bf8e-dfddb9aa4fd6");
 
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "deb0af60-11e0-45e9-9a10-a7d8a9f95fe8");
-
-            migrationBuilder.AlterColumn<int>(
-                name: "Category",
-                table: "Topic",
-                type: "int",
-                nullable: false,
-                defaultValue: 0,
-                oldClrType: typeof(int),
-                oldType: "int",
-                oldNullable: true);
+                keyValue: "d05744d9-00ed-4cb8-8224-eb1e4abf31ba");
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "37548003-49e0-4b91-bc6d-4aabe7025173", null, "USER", null },
-                    { "5fca7bdd-02a9-49f6-808b-94117c18d9f6", null, "ADMIN", null },
-                    { "be9b5d43-5f10-4bac-8c9d-bb4dfd5b2e86", null, "PREMIUM_USER", null }
+                    { "13a21b37-d84b-4ab9-83ec-b9ab16a29e7c", null, "USER", null },
+                    { "aa4da2a9-05d1-412b-bbe9-b8f1542f5b89", null, "ADMIN", null },
+                    { "c627e4b4-3290-4d24-a6df-2d3f1c350979", null, "PREMIUM_USER", null }
                 });
         }
     }

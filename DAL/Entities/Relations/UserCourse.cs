@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace DAL.Entities
+namespace DAL.Entities.Relations
 {
     [Table("UserCourse")]
     public class UserCourse : EntityBase

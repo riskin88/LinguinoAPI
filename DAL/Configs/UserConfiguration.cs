@@ -1,5 +1,6 @@
 ﻿using Azure;
 using DAL.Entities;
+using DAL.Entities.Relations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.Extensions.Hosting;

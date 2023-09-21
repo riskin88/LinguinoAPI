@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace DAL.Migrations
 {
     /// <inheritdoc />
@@ -59,28 +61,14 @@ namespace DAL.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    LanguageFrom = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LanguageTo = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    LanguageFrom = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LanguageTo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ThumbnailURL = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Course", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Topic",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsFeatured = table.Column<bool>(type: "bit", nullable: false),
-                    IsMain = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Topic", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -190,30 +178,176 @@ namespace DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CourseProgress",
+                name: "Lesson",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Type = table.Column<int>(type: "int", nullable: true),
+                    Level = table.Column<int>(type: "int", nullable: true),
+                    CourseId = table.Column<long>(type: "bigint", nullable: true),
+                    AuthorId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Lesson", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Lesson_AspNetUsers_AuthorId",
+                        column: x => x.AuthorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Lesson_Course_CourseId",
+                        column: x => x.CourseId,
+                        principalTable: "Course",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Topic",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ThumbnailURL = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsFeatured = table.Column<bool>(type: "bit", nullable: false),
+                    Category = table.Column<int>(type: "int", nullable: true),
+                    CourseId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Topic", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Topic_Course_CourseId",
+                        column: x => x.CourseId,
+                        principalTable: "Course",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserCourse",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CourseId = table.Column<long>(type: "bigint", nullable: false),
-                    PositionOnMap = table.Column<long>(type: "bigint", nullable: false)
+                    PositionOnMap = table.Column<long>(type: "bigint", nullable: false),
+                    IsSelected = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CourseProgress", x => x.Id);
+                    table.PrimaryKey("PK_UserCourse", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CourseProgress_AspNetUsers_UserId",
+                        name: "FK_UserCourse_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CourseProgress_Course_CourseId",
+                        name: "FK_UserCourse_Course_CourseId",
                         column: x => x.CourseId,
                         principalTable: "Course",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserLesson",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    LessonId = table.Column<long>(type: "bigint", nullable: false),
+                    ItemsDone = table.Column<long>(type: "bigint", nullable: false),
+                    ItemsTotal = table.Column<long>(type: "bigint", nullable: false),
+                    IsVisible = table.Column<bool>(type: "bit", nullable: false),
+                    IsFavorite = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserLesson", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserLesson_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserLesson_Lesson_LessonId",
+                        column: x => x.LessonId,
+                        principalTable: "Lesson",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TopicLesson",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TopicId = table.Column<long>(type: "bigint", nullable: false),
+                    LessonId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TopicLesson", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TopicLesson_Lesson_LessonId",
+                        column: x => x.LessonId,
+                        principalTable: "Lesson",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TopicLesson_Topic_TopicId",
+                        column: x => x.TopicId,
+                        principalTable: "Topic",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserTopic",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    TopicId = table.Column<long>(type: "bigint", nullable: false),
+                    LessonsActive = table.Column<long>(type: "bigint", nullable: false),
+                    LessonsTotal = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserTopic", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserTopic_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserTopic_Topic_TopicId",
+                        column: x => x.TopicId,
+                        principalTable: "Topic",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "13a21b37-d84b-4ab9-83ec-b9ab16a29e7c", null, "USER", null },
+                    { "aa4da2a9-05d1-412b-bbe9-b8f1542f5b89", null, "ADMIN", null },
+                    { "c627e4b4-3290-4d24-a6df-2d3f1c350979", null, "PREMIUM_USER", null }
                 });
 
             migrationBuilder.CreateIndex(
@@ -256,13 +390,58 @@ namespace DAL.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CourseProgress_CourseId",
-                table: "CourseProgress",
+                name: "IX_Lesson_AuthorId",
+                table: "Lesson",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Lesson_CourseId",
+                table: "Lesson",
                 column: "CourseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CourseProgress_UserId",
-                table: "CourseProgress",
+                name: "IX_Topic_CourseId",
+                table: "Topic",
+                column: "CourseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TopicLesson_LessonId",
+                table: "TopicLesson",
+                column: "LessonId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TopicLesson_TopicId",
+                table: "TopicLesson",
+                column: "TopicId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserCourse_CourseId",
+                table: "UserCourse",
+                column: "CourseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserCourse_UserId",
+                table: "UserCourse",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserLesson_LessonId",
+                table: "UserLesson",
+                column: "LessonId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserLesson_UserId",
+                table: "UserLesson",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserTopic_TopicId",
+                table: "UserTopic",
+                column: "TopicId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserTopic_UserId",
+                table: "UserTopic",
                 column: "UserId");
         }
 
@@ -285,13 +464,25 @@ namespace DAL.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "CourseProgress");
+                name: "TopicLesson");
 
             migrationBuilder.DropTable(
-                name: "Topic");
+                name: "UserCourse");
+
+            migrationBuilder.DropTable(
+                name: "UserLesson");
+
+            migrationBuilder.DropTable(
+                name: "UserTopic");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Lesson");
+
+            migrationBuilder.DropTable(
+                name: "Topic");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
