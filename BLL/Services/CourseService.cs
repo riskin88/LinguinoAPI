@@ -104,7 +104,7 @@ namespace BLL.Services
             {
                 if (topic.CourseId == courseId)
                 {
-                    if (await _unitOfWork.CourseRepository.HasUser(courseId, userId))
+                    if (await _unitOfWork.CourseRepository.IsEnrolled(courseId))
                     {
                         if (topicDTO.Enabled)
                             await _unitOfWork.TopicRepository.AddUserToOne(userId, topicId);

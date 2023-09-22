@@ -34,7 +34,7 @@ namespace DAL.Repositories
 
             return await GetAll();
 
-        }   
+        }
 
         public async Task<IEnumerable<Course>> GetOwn(string id)
         {
@@ -65,16 +65,12 @@ namespace DAL.Repositories
             else throw new InvalidIDException("Course does not exist.");
         }
 
-        public async Task<bool> HasUser(long courseId, string userId)
+        public async Task<bool> IsEnrolled(long courseId)
         {
-            if (userId == _roleGuard.user.Id)
-            {
-                var course = await dataContext.Set<Course>().Include(c => c.Users).FirstOrDefaultAsync(e => e.Id == courseId);
-                if (course != null && course.Users.Contains(_roleGuard.user))
-                    return true;
-                else return false;
-            }
-            else throw new AccessDeniedException("Not authorized to view this data.");
+            var course = await dataContext.Set<Course>().Include(c => c.Users).FirstOrDefaultAsync(e => e.Id == courseId);
+            if (course != null && course.Users.Contains(_roleGuard.user))
+                return true;
+            else return false;
 
         }
         public async Task AddTopic(long courseId, Topic topic)
@@ -86,7 +82,7 @@ namespace DAL.Repositories
                 {
                     course.Topics.Add(topic);
                 }
-                
+
             }
             else throw new InvalidIDException("Course does not exist.");
         }

@@ -19,6 +19,8 @@ namespace DAL.UnitOfWork
         public IUserRepository UserRepository { get; set; }
         public ICourseRepository CourseRepository { get; set; }
         public ITopicRepository TopicRepository { get; set; }
+        public ILessonItemRepository LessonItemRepository { get; set; }
+        public ILessonRepository LessonRepository { get; set; }
 
         public UnitOfWork(DataContext db, UserManager<User> userManager, IRoleGuard roleGuard)
         {
@@ -27,6 +29,8 @@ namespace DAL.UnitOfWork
             UserRepository = new UserRepository(roleGuard);
             CourseRepository = new CourseRepository(db, roleGuard);
             TopicRepository = new TopicRepository(db, roleGuard);
+            LessonItemRepository = new LessonItemRepository(db);
+            LessonRepository = new LessonRepository(db, roleGuard);
         }
 
         public void Dispose()
