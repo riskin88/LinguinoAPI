@@ -23,6 +23,11 @@ namespace DAL.Repositories
             return await dataContext.Set<Course>().Include(c => c.Topics).FirstOrDefaultAsync(e => e.Id == courseId);
         }
 
+        private async Task<Course?> GetWithUsers(long courseId)
+        {
+            return await dataContext.Set<Course>().Include(c => c.Users).FirstOrDefaultAsync(e => e.Id == courseId);
+        }
+
         public async Task<IEnumerable<Course>> FindByFilter(CourseFilter filter)
         {
             if (filter.LanguageFrom != null && filter.LanguageTo != null)
@@ -51,7 +56,7 @@ namespace DAL.Repositories
 
         public async Task<Course> AddUser(long courseId, string userId)
         {
-            var course = await GetById(courseId);
+            var course = await GetWithUsers(courseId);
             if (course != null)
             {
                 if (userId == _roleGuard.user.Id)
@@ -67,7 +72,7 @@ namespace DAL.Repositories
 
         public async Task<bool> IsEnrolled(long courseId)
         {
-            var course = await dataContext.Set<Course>().Include(c => c.Users).FirstOrDefaultAsync(e => e.Id == courseId);
+            var course = await GetWithUsers(courseId);
             if (course != null && course.Users.Contains(_roleGuard.user))
                 return true;
             else return false;

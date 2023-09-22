@@ -41,10 +41,10 @@ namespace LinguinoAPI.Controllers
 
 
         [HttpPost, Authorize]
-        [Route("users/{userId}/courses")]
-        public async Task<ActionResult<Course>> AddCourse(AddCourseDTO course, string userId)
+        [Route("users/{userId}/courses/{courseId}")]
+        public async Task<ActionResult<Course>> AddCourse(AddCourseDTO course, long courseId, string userId)
         {
-            return Ok(await _courseService.AddUserWithTopics(course, userId));
+            return Ok(await _courseService.AddUserWithTopics(course, courseId, userId));
         }
 
         [HttpGet, Authorize]
@@ -69,11 +69,19 @@ namespace LinguinoAPI.Controllers
             return Ok(await _courseService.GetTopics(courseId, filter));
         }
 
-        [HttpPatch, Authorize]
+        [HttpPut, Authorize]
         [Route("users/{userId}/courses/{courseId}/topics/{topicId}")]
-        public async Task<ActionResult<TopicRespDTO>> ToggleTopic(string userId, long courseId, long topicId, ToggleTopicDTO topic)
+        public async Task<ActionResult<TopicRespDTO>> AddTopicToUser(string userId, long courseId, long topicId)
         {
-            return Ok(await _courseService.ToggleTopic(userId, courseId, topicId, topic));
+            return Ok(await _courseService.AddTopicToUser(userId, courseId, topicId));
+        }
+
+        [HttpDelete, Authorize]
+        [Route("users/{userId}/courses/{courseId}/topics/{topicId}")]
+        public async Task<ActionResult> RemoveTopicFromUser(string userId, long courseId, long topicId)
+        {
+            await _courseService.RemoveTopicFromUser(userId, courseId, topicId);
+            return NoContent();
         }
     }
 }

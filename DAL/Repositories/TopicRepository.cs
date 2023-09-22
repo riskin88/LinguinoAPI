@@ -23,7 +23,7 @@ namespace DAL.Repositories
             return await dataContext.Set<Topic>().Include(t => t.Users).FirstOrDefaultAsync(e => e.Id == topicId);
         }
 
-        public async Task AddUserToOne(string userId, long topicId)
+        public async Task AddUser(string userId, long topicId)
         {
             var topic = await GetById(topicId);
             if (topic != null)
@@ -41,7 +41,7 @@ namespace DAL.Repositories
             else throw new InvalidIDException("Topic " + topicId + " does not exist.");
         }
 
-        public async Task RemoveUserFromOne(string userId, long topicId)
+        public async Task RemoveUser(string userId, long topicId)
         {
             var topic = await GetWithUsers(topicId);
             if (topic != null)

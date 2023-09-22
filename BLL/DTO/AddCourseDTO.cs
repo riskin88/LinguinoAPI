@@ -10,8 +10,6 @@ namespace BLL.DTO
 {
     public class AddCourseDTO
     {
-        [Required]
-        public long CourseId { get; set; }
         public List<IdDTO> SelectedTopics { get; set; }
     }
 }
