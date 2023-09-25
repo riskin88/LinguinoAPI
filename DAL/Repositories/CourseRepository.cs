@@ -110,6 +110,17 @@ namespace DAL.Repositories
 
             else throw new InvalidIDException("Course does not exist.");
         }
+
+        public async Task<IEnumerable<Topic>> GetDefaultTopics(long courseId)
+        {
+            var course = await GetWithTopics(courseId);
+            if (course != null)
+            {
+                return course.Topics.AsQueryable().Where(t => t.IsDefault);
+            }
+
+            else throw new InvalidIDException("Course does not exist.");
+        }
     }
 
 

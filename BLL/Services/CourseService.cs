@@ -72,11 +72,16 @@ namespace BLL.Services
         {
             var course = await _unitOfWork.CourseRepository.AddUser(courseId, userId);
             _unitOfWork.SaveChanges();
+            var defaultTopics = await _unitOfWork.CourseRepository.GetDefaultTopics(courseId);
+            foreach (var topic in defaultTopics)
+            {
+                await _unitOfWork.TopicRepository.AddUser(topic, userId);
+            }
             foreach (var topicDTO in courseDTO.SelectedTopics)
             {
                 var topic = await _unitOfWork.TopicRepository.GetWithCourse(topicDTO.Id);
                 if (topic != null && topic.CourseId == course.Id)
-                    await _unitOfWork.TopicRepository.AddUser(userId, topicDTO.Id);
+                    await _unitOfWork.TopicRepository.AddUser(topic, userId);
                 else throw new InvalidIDException("Topic " + topicDTO.Id + " does not exist in this course.");
             }
             _unitOfWork.SaveChanges();
@@ -90,7 +95,7 @@ namespace BLL.Services
             foreach (var topic in courseTopics)
             {
                 var tmp = _mapper.Map<TopicRespDTO>(topic);
-                if (await _unitOfWork.TopicRepository.IsEnabled(topic.Id))
+                if (_unitOfWork.TopicRepository.IsEnabled(topic))
                     tmp.Enabled = true;
                 resp.Add(tmp);
             }
@@ -99,38 +104,37 @@ namespace BLL.Services
 
         public async Task<TopicRespDTO> AddTopicToUser(string userId, long courseId, long topicId)
         {
-            var topic = await _unitOfWork.TopicRepository.GetWithCourse(topicId);
+            var topic = await _unitOfWork.TopicRepository.GetWithUsers(topicId);
             if (topic != null)
             {
                 if (topic.CourseId == courseId)
                 {
                     if (await _unitOfWork.CourseRepository.IsEnrolled(courseId))
                     {
-                        await _unitOfWork.TopicRepository.AddUser(userId, topicId);
+                        await _unitOfWork.TopicRepository.AddUser(topic, userId);
                         _unitOfWork.SaveChanges();
 
                         var resp = _mapper.Map<TopicRespDTO>(topic);
-                        if (await _unitOfWork.TopicRepository.IsEnabled(topicId))
-                            resp.Enabled = true;
+                        resp.Enabled = true;
                         return resp;
                     }
                     else throw new InvalidIDException("There is no such course registered for this user.");
                 }
                 else throw new InvalidIDException("There is no such topic in this course.");
             }
-            else throw new InvalidIDException("Topic does not exist.");
+            else throw new InvalidIDException("Topic " + topicId + " does not exist.");
         }
 
         public async Task RemoveTopicFromUser(string userId, long courseId, long topicId)
         {
-            var topic = await _unitOfWork.TopicRepository.GetWithCourse(topicId);
+            var topic = await _unitOfWork.TopicRepository.GetWithUsers(topicId);
             if (topic != null)
             {
                 if (topic.CourseId == courseId)
                 {
                     if (await _unitOfWork.CourseRepository.IsEnrolled(courseId))
                     {
-                        await _unitOfWork.TopicRepository.RemoveUser(userId, topicId);
+                        await _unitOfWork.TopicRepository.RemoveUser(topic, userId);
                         _unitOfWork.SaveChanges();
                     }
                     else throw new InvalidIDException("There is no such course registered for this user.");
