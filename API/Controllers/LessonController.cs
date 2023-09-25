@@ -27,14 +27,14 @@ namespace LinguinoAPI.Controllers
 
         [HttpPost, Authorize(Roles = "ADMIN")]
         [Route("courses/{courseId}/lessons/builtin")]
-        public async Task<ActionResult<LessonRespDTO>> CreateBuiltinLesson(CreateBuiltinLessonDTO lessonDTO, long courseId)
+        public async Task<ActionResult<CreateLessonRespDTO>> CreateBuiltinLesson(CreateBuiltinLessonDTO lessonDTO, long courseId)
         {
             return Ok(await _lessonService.CreateBuiltinLesson(lessonDTO, courseId));
         }
 
         [HttpPost, Authorize]
         [Route("courses/{courseId}/lessons")]
-        public async Task<ActionResult<LessonRespDTO>> CreateCustomLesson(CreateCustomLessonDTO lessonDTO, long courseId)
+        public async Task<ActionResult<CreateLessonRespDTO>> CreateCustomLesson(CreateCustomLessonDTO lessonDTO, long courseId)
         {
             return Ok(await _lessonService.CreateCustomLesson(lessonDTO, courseId));
         }
@@ -55,5 +55,11 @@ namespace LinguinoAPI.Controllers
             return NoContent();
         }
 
+        [HttpGet, Authorize]
+        [Route("courses/{courseId}/lessons")]
+        public async Task<ActionResult<IEnumerable<GetLessonDTO>>> GetLessons(long courseId, [FromQuery] LessonFilter filter)
+        {
+            return Ok(await _lessonService.GetLessonsInCourse(courseId, filter));
+        }
     }
 }

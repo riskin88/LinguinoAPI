@@ -29,7 +29,7 @@ namespace BLL.Services
             _unitOfWork.SaveChanges();
         }
 
-        public async Task<LessonRespDTO> CreateBuiltinLesson(CreateBuiltinLessonDTO builtinLessonDTO, long courseId)
+        public async Task<CreateLessonRespDTO> CreateBuiltinLesson(CreateBuiltinLessonDTO builtinLessonDTO, long courseId)
         {
             var course = await _unitOfWork.CourseRepository.GetById(courseId);
             if (course != null)
@@ -46,13 +46,13 @@ namespace BLL.Services
                     else throw new InvalidIDException("Item " + itemDTO.Id + " does not exist.");
                 }
                 _unitOfWork.SaveChanges();
-                return _mapper.Map<LessonRespDTO>(lesson);
+                return _mapper.Map<CreateLessonRespDTO>(lesson);
             }
             else throw new InvalidIDException("Course does not exist.");
         }
 
         // TODO: CHECK if all items are vocab
-        public async Task<LessonRespDTO> CreateCustomLesson(CreateCustomLessonDTO customLessonDTO, long courseId)
+        public async Task<CreateLessonRespDTO> CreateCustomLesson(CreateCustomLessonDTO customLessonDTO, long courseId)
         {
             var course = await _unitOfWork.CourseRepository.GetById(courseId);
             if (course != null)
@@ -72,7 +72,7 @@ namespace BLL.Services
                         else throw new InvalidIDException("Item " + itemDTO.Id + " does not exist.");
                     }
                     _unitOfWork.SaveChanges();
-                    return _mapper.Map<LessonRespDTO>(lesson);
+                    return _mapper.Map<CreateLessonRespDTO>(lesson);
                 }
                 else throw new InvalidIDException("You are not enrolled in this course.");
             }
@@ -99,6 +99,20 @@ namespace BLL.Services
                 _unitOfWork.SaveChanges();
             }
             else throw new InvalidIDException("Topic does not exist.");
+        }
+
+        public async Task<IEnumerable<GetLessonDTO>> GetLessonsInCourse(long courseId, LessonFilter filter)
+        {
+            var courseLessons = await _unitOfWork.LessonRepository.GetLessonsFromCourse(courseId, filter);
+            List<GetLessonDTO> resp = new();
+            foreach (var lesson in courseLessons)
+            {
+                var tmp = _mapper.Map<GetLessonDTO>(lesson);
+                if (_unitOfWork.LessonRepository.IsFavorite(lesson))
+                    tmp.isFavorite = true;
+                resp.Add(tmp);
+            }
+            return resp;
         }
     }
 }

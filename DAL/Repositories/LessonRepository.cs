@@ -1,6 +1,7 @@
 ﻿using DAL.Data;
 using DAL.Entities;
 using DAL.Exceptions;
+using DAL.Filters;
 using DAL.Identity;
 using DAL.Repositories.Contracts;
 using Microsoft.EntityFrameworkCore;
@@ -65,6 +66,38 @@ namespace DAL.Repositories
                 lesson.Topics.Remove(topic);
             }
             else throw new InvalidIDException("Lesson does not exist.");
+        }
+
+        public async Task<IEnumerable<Lesson>> GetLessonsFromCourse(long courseId, LessonFilter filter)
+        {
+            var lessons = await dataContext.Set<Lesson>().Include(l => l.Author).Where(
+                l => l.CourseId == courseId &&
+            (filter.Type == null || filter.Type == l.Type) &&
+            (filter.Level == null || filter.Level == l.Level)).ToListAsync();
+            if (filter.Favorite != null)
+            {
+                lessons = lessons.Where(l => filter.Favorite == IsFavorite(l)).ToList();
+            }
+            if (filter.Custom != null)
+            {
+                if (filter.Custom == false)
+                    return lessons.Where(l => !l.IsCustom).ToList();
+
+                return lessons.Where(l => l.IsCustom && l.Author == _roleGuard.user).ToList();
+            }
+
+            return lessons.Where(l => !l.IsCustom || (l.IsCustom && l.Author == _roleGuard.user)).ToList();
+
+        }
+         
+        public bool IsFavorite(Lesson lesson)
+        {
+            var userLesson = lesson.UserLessons.AsQueryable().FirstOrDefault(ul => ul.User == _roleGuard.user);
+            if (userLesson != null)
+            {
+                return userLesson.IsFavorite;
+            }
+            return false;
         }
     }
 

@@ -12,6 +12,6 @@ namespace DAL.Entities.Relations
         public long ItemsDone { get; set; }
         public long ItemsTotal { get; set; }
         public bool IsVisible { get; set; } = true;
-        public bool IsFavorite { get; set; } = true;
+        public bool IsFavorite { get; set; } = false;
     }
 }

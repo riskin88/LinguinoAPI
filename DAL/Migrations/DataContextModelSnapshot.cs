@@ -47,7 +47,7 @@ namespace DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Course");
+                    b.ToTable("Course", (string)null);
                 });
 
             modelBuilder.Entity("DAL.Entities.Lesson", b =>
@@ -89,7 +89,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("CourseId");
 
-                    b.ToTable("Lesson");
+                    b.ToTable("Lesson", (string)null);
                 });
 
             modelBuilder.Entity("DAL.Entities.LessonItem", b =>
@@ -106,7 +106,7 @@ namespace DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("LessonItem");
+                    b.ToTable("LessonItem", (string)null);
                 });
 
             modelBuilder.Entity("DAL.Entities.Relations.LessonItemLesson", b =>
@@ -129,7 +129,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("LessonItemId");
 
-                    b.ToTable("LessonItemLesson");
+                    b.ToTable("LessonItemLesson", (string)null);
                 });
 
             modelBuilder.Entity("DAL.Entities.Relations.TopicLesson", b =>
@@ -152,7 +152,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("TopicId");
 
-                    b.ToTable("TopicLesson");
+                    b.ToTable("TopicLesson", (string)null);
                 });
 
             modelBuilder.Entity("DAL.Entities.Relations.UserCourse", b =>
@@ -182,7 +182,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserCourse");
+                    b.ToTable("UserCourse", (string)null);
                 });
 
             modelBuilder.Entity("DAL.Entities.Relations.UserLesson", b =>
@@ -218,7 +218,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserLesson");
+                    b.ToTable("UserLesson", (string)null);
                 });
 
             modelBuilder.Entity("DAL.Entities.Relations.UserTopic", b =>
@@ -248,7 +248,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserTopic");
+                    b.ToTable("UserTopic", (string)null);
                 });
 
             modelBuilder.Entity("DAL.Entities.Topic", b =>
@@ -282,7 +282,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("CourseId");
 
-                    b.ToTable("Topic");
+                    b.ToTable("Topic", (string)null);
                 });
 
             modelBuilder.Entity("DAL.Entities.User", b =>
