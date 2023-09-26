@@ -16,6 +16,7 @@ namespace DAL.Entities
         [Required]
         public bool IsFeatured { get; set; } = true;
         public TopicCategory? Category { get; set; }
+        public long LessonsTotal { get; set; } = 0;
         public List<User> Users { get; set; } = new();
         public List<UserTopic> UserTopics { get; set; } = new();
         public List<Lesson> Lessons { get; set; } = new();

@@ -10,7 +10,7 @@ namespace DAL.Entities.Relations
         public User User { get; set; } = null!;
         public long TopicId { get; set; }
         public Topic Topic { get; set; } = null!;
-        public long LessonsActive { get; set; }
-        public long LessonsTotal { get; set; }
+        public long LessonsActive { get; set; } = 0;
+        public bool IsEnabled { get; set; } = false;
     }
 }

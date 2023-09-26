@@ -1,4 +1,5 @@
 ﻿using DAL.Entities;
+using DAL.Entities.Relations;
 using DAL.Filters;
 
 namespace DAL.Repositories.Contracts
@@ -10,6 +11,7 @@ namespace DAL.Repositories.Contracts
         Task AddTopic(long lessonId, Topic topic);
         Task RemoveTopic(long lessonId, Topic topic);
         public Task<IEnumerable<Lesson>> GetLessonsFromCourse(long courseId, LessonFilter filter);
-        public bool IsFavorite(Lesson lesson);
+        public bool IsFavorite(long id);
+        public Task<IEnumerable<UserTopic>> GetUserTopics(long lessonId, string userId);
     }
 }

@@ -12,8 +12,8 @@ namespace BLL.Services.Contracts
         public Task CreateTopic(long id, CreateTopicDTO createTopicDTO);
         public Task<CourseRespDTO> AddUserWithTopics(AddCourseDTO courseDTO, long courseId, string userId);
         public Task<IEnumerable<TopicRespDTO>> GetTopics(long courseId, TopicFilter filter);
-        public Task<TopicRespDTO> AddTopicToUser(string userId, long courseId, long topicId);
-        public Task RemoveTopicFromUser(string userId, long courseId, long topicId);
+        public Task<TopicRespDTO> EnableTopic(string userId, long courseId, long topicId);
+        public Task DisableTopic(string userId, long courseId, long topicId);
         public Task<CourseWithFeaturedDTO> GetWithFeaturedTopics(long courseId);
 
     }

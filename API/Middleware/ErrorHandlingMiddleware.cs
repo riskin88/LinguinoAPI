@@ -31,6 +31,7 @@ namespace LinguinoAPI.Middleware
             if (exception is EmailErrorException) statusCode = (int)HttpStatusCode.InternalServerError;
             if (exception is InvalidIDException) statusCode = (int)HttpStatusCode.NotFound;
             if (exception is AccessDeniedException) statusCode = (int)HttpStatusCode.Forbidden;
+            if (exception is MyBadException) statusCode = (int)HttpStatusCode.InternalServerError;
 
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = statusCode;

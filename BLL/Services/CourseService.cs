@@ -3,9 +3,11 @@ using BLL.DTO;
 using BLL.Exceptions;
 using BLL.Exceptions.Auth;
 using BLL.Services.Contracts;
+using DAL.Data;
 using DAL.Entities;
 using DAL.Exceptions;
 using DAL.Filters;
+using DAL.Identity;
 using DAL.UnitOfWork;
 
 namespace BLL.Services
@@ -71,17 +73,18 @@ namespace BLL.Services
         public async Task<CourseRespDTO> AddUserWithTopics(AddCourseDTO courseDTO, long courseId, string userId)
         {
             var course = await _unitOfWork.CourseRepository.AddUser(courseId, userId);
+            await _unitOfWork.CourseRepository.InitAllInCourse(courseId);
             _unitOfWork.SaveChanges();
             var defaultTopics = await _unitOfWork.CourseRepository.GetDefaultTopics(courseId);
             foreach (var topic in defaultTopics)
             {
-                await _unitOfWork.TopicRepository.AddUser(topic, userId);
+                await AddUserToTopic(topic.Id, userId);
             }
             foreach (var topicDTO in courseDTO.SelectedTopics)
             {
                 var topic = await _unitOfWork.TopicRepository.GetWithCourse(topicDTO.Id);
                 if (topic != null && topic.CourseId == course.Id)
-                    await _unitOfWork.TopicRepository.AddUser(topic, userId);
+                    await AddUserToTopic(topic.Id, userId);
                 else throw new InvalidIDException("Topic " + topicDTO.Id + " does not exist in this course.");
             }
             _unitOfWork.SaveChanges();
@@ -102,16 +105,16 @@ namespace BLL.Services
             return resp;
         }
 
-        public async Task<TopicRespDTO> AddTopicToUser(string userId, long courseId, long topicId)
+        public async Task<TopicRespDTO> EnableTopic(string userId, long courseId, long topicId)
         {
-            var topic = await _unitOfWork.TopicRepository.GetWithUsers(topicId);
+            var topic = await _unitOfWork.TopicRepository.GetById(topicId);
             if (topic != null)
             {
                 if (topic.CourseId == courseId)
                 {
                     if (await _unitOfWork.CourseRepository.IsEnrolled(courseId))
                     {
-                        await _unitOfWork.TopicRepository.AddUser(topic, userId);
+                        await AddUserToTopic(topicId, userId);
                         _unitOfWork.SaveChanges();
 
                         var resp = _mapper.Map<TopicRespDTO>(topic);
@@ -125,16 +128,16 @@ namespace BLL.Services
             else throw new InvalidIDException("Topic " + topicId + " does not exist.");
         }
 
-        public async Task RemoveTopicFromUser(string userId, long courseId, long topicId)
+        public async Task DisableTopic(string userId, long courseId, long topicId)
         {
-            var topic = await _unitOfWork.TopicRepository.GetWithUsers(topicId);
+            var topic = await _unitOfWork.TopicRepository.GetById(topicId);
             if (topic != null)
             {
                 if (topic.CourseId == courseId)
                 {
                     if (await _unitOfWork.CourseRepository.IsEnrolled(courseId))
                     {
-                        await _unitOfWork.TopicRepository.RemoveUser(topic, userId);
+                        await RemoveUserFromTopic(topicId, userId);
                         _unitOfWork.SaveChanges();
                     }
                     else throw new InvalidIDException("There is no such course registered for this user.");
@@ -142,6 +145,42 @@ namespace BLL.Services
                 else throw new InvalidIDException("There is no such topic in this course.");
             }
             else throw new InvalidIDException("Topic does not exist.");
+        }
+
+        private async Task AddUserToTopic(long topicId, string userId)
+        {
+            var userTopic = await _unitOfWork.TopicRepository.GetUserTopic(topicId, userId);
+            userTopic.IsEnabled = true;
+            userTopic.LessonsActive = userTopic.Topic.LessonsTotal;
+
+            var userLessons = await _unitOfWork.TopicRepository.GetUserLessons(topicId, userId);
+            foreach (var userLesson in userLessons)
+            {
+                    userLesson.IsVisible = true;
+            }
+        }
+
+        private async Task RemoveUserFromTopic(long topicId, string userId)
+        {
+            var userTopic = await _unitOfWork.TopicRepository.GetUserTopic(topicId, userId);
+            userTopic.IsEnabled = false;
+
+            var userLessons = await _unitOfWork.TopicRepository.GetUserLessons(topicId, userId);
+            foreach (var userLesson in userLessons)
+            {
+                var userTopics = await _unitOfWork.LessonRepository.GetUserTopics(userLesson.Lesson.Id, userId);
+                bool hide = true;
+                foreach (var ut in userTopics)
+                {
+                    if (ut.IsEnabled)
+                    {
+                        hide = false;
+                        break;
+                    }
+                }
+                if (hide)
+                    userLesson.IsVisible = false;
+            }
         }
     }
 }

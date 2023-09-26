@@ -62,7 +62,8 @@ namespace DAL.Repositories
             {
                 if (userId == _roleGuard.user.Id)
                 {
-                    course.Users.Add(_roleGuard.user);
+                    if (!course.Users.Contains(_roleGuard.user))
+                        course.Users.Add(_roleGuard.user);
                     return course;
                 }
 
@@ -120,6 +121,27 @@ namespace DAL.Repositories
                 return course.Topics.AsQueryable().Where(t => t.IsDefault);
             }
 
+            else throw new InvalidIDException("Course does not exist.");
+        }
+
+        public async Task InitAllInCourse(long courseId)
+        {
+            var course = await dataContext.Set<Course>().Include(c => c.Topics).ThenInclude(t => t.Users).Include(c => c.Lessons).ThenInclude(l => l.Users).FirstOrDefaultAsync(c => c.Id == courseId);
+            if (course != null)
+            {
+                foreach (var topic in course.Topics)
+                {
+
+                    if (!topic.Users.Contains(_roleGuard.user))
+                        topic.Users.Add(_roleGuard.user);
+
+                }
+                foreach (var lesson in course.Lessons)
+                {
+                    if (!lesson.IsCustom && !lesson.Users.Contains(_roleGuard.user))
+                        lesson.Users.Add(_roleGuard.user);
+                }
+            }
             else throw new InvalidIDException("Course does not exist.");
         }
 

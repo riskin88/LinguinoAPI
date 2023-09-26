@@ -13,5 +13,6 @@ namespace DAL.Repositories.Contracts
         public Task<bool> IsEnrolled(long courseId);
         public Task<Course?> GetWithFeaturedTopics(long courseId);
         Task<IEnumerable<Topic>> GetDefaultTopics(long courseId);
+        Task InitAllInCourse(long courseId);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using DAL.Data;
 using DAL.Entities;
+using DAL.Entities.Relations;
 using DAL.Exceptions;
 using DAL.Filters;
 using DAL.Identity;
@@ -18,42 +19,21 @@ namespace DAL.Repositories
             _roleGuard = roleGuard;
         }
 
-        public async Task<Topic?> GetWithUsers(long topicId)
-        {
-            return await dataContext.Set<Topic>().Include(t => t.Users).FirstOrDefaultAsync(e => e.Id == topicId);
-        }
-
-        public async Task AddUser(Topic topic, string userId)
+        public async Task<UserTopic> GetUserTopic(long topicId, string userId)
         {
             if (userId == _roleGuard.user.Id)
             {
-                if (!topic.Users.Contains(_roleGuard.user))
-                    topic.Users.Add(_roleGuard.user);
-
-                var lessons = await GetLessons(topic.Id);
-                foreach (var lesson in lessons)
+                var userTopic = await dataContext.Set<UserTopic>().Include(ut => ut.Topic).FirstOrDefaultAsync(e => e.TopicId == topicId && e.UserId == userId);
+                if (userTopic != null)
                 {
-                    if (!lesson.Users.Contains(_roleGuard.user))
-                        lesson.Users.Add(_roleGuard.user);
+                    return userTopic;
                 }
+                else throw new InvalidIDException("Topic does not exist.");
             }
             else throw new AccessDeniedException("Not authorized to do this.");
-        }
-
-        public async Task RemoveUser(Topic topic, string userId)
-        {
-                if (userId == _roleGuard.user.Id)
-                {
-                    topic.Users.Remove(_roleGuard.user);
-                var lessons = await GetLessons(topic.Id);
-                foreach (var lesson in lessons)
-                {
-                    lesson.Users.Remove(_roleGuard.user);
-                }
-            }
-                else throw new AccessDeniedException("Not authorized to do this.");
 
         }
+
 
         public async Task<IEnumerable<Topic>> GetOwn()
         {
@@ -74,12 +54,20 @@ namespace DAL.Repositories
             return await dataContext.Set<Topic>().Include(t => t.Course).FirstOrDefaultAsync(e => e.Id == topicId);
         }
 
-        private async Task<IEnumerable<Lesson>> GetLessons(long topicId)
+        public async Task<IEnumerable<UserLesson>> GetUserLessons(long topicId, string userId)
         {
-            var topic = await dataContext.Set<Topic>().Include(t => t.Lessons).FirstOrDefaultAsync(e => e.Id == topicId);
-            if (topic != null)
-                return topic.Lessons;
-            else return new List<Lesson>();
+            if (userId == _roleGuard.user.Id)
+            {
+                var topic = await dataContext.Set<Topic>().Include(t => t.Lessons).ThenInclude(l => l.UserLessons).FirstOrDefaultAsync(e => e.Id == topicId);
+                if (topic != null)
+                {
+                    return topic.Lessons.AsQueryable().SelectMany(l => l.UserLessons).Include(ul => ul.Lesson).Where(ul => ul.UserId == userId).ToList();
+
+                }
+                else throw new InvalidIDException("Topic does not exist.");
+
+            }
+            else throw new AccessDeniedException("Not authorized to do this.");
         }
     }
 

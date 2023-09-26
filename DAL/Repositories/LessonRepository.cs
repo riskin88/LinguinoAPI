@@ -1,5 +1,6 @@
 ﻿using DAL.Data;
 using DAL.Entities;
+using DAL.Entities.Relations;
 using DAL.Exceptions;
 using DAL.Filters;
 using DAL.Identity;
@@ -76,7 +77,7 @@ namespace DAL.Repositories
             (filter.Level == null || filter.Level == l.Level)).ToListAsync();
             if (filter.Favorite != null)
             {
-                lessons = lessons.Where(l => filter.Favorite == IsFavorite(l)).ToList();
+                lessons = lessons.Where(l => filter.Favorite == IsFavorite(l.Id)).ToList();
             }
             if (filter.Custom != null)
             {
@@ -90,14 +91,36 @@ namespace DAL.Repositories
 
         }
          
-        public bool IsFavorite(Lesson lesson)
+        public bool IsFavorite(long id)
         {
-            var userLesson = lesson.UserLessons.AsQueryable().FirstOrDefault(ul => ul.User == _roleGuard.user);
-            if (userLesson != null)
+            var lesson = dataContext.Set<Lesson>().Include(l => l.UserLessons).FirstOrDefault(l => l.Id == id);
+            if (lesson != null)
             {
-                return userLesson.IsFavorite;
+                var userLesson = lesson.UserLessons.AsQueryable().FirstOrDefault(ul => ul.User == _roleGuard.user);
+
+                if (userLesson != null)
+                {
+                    return userLesson.IsFavorite;
+                }
+                return false;
             }
-            return false;
+            else throw new InvalidIDException("Lesson does not exist.");
+        }
+
+        public async Task<IEnumerable<UserTopic>> GetUserTopics(long lessonId, string userId)
+        {
+            if (userId == _roleGuard.user.Id)
+            {
+                var lesson = await dataContext.Set<Lesson>().Include(l => l.Topics).ThenInclude(t => t.UserTopics).FirstOrDefaultAsync(e => e.Id == lessonId);
+                if (lesson != null)
+                {
+                    return await lesson.Topics.AsQueryable().SelectMany(t => t.UserTopics).Include(ut => ut.Topic).Where(ut => ut.UserId == userId).ToListAsync();
+
+                }
+                else throw new InvalidIDException("Lesson does not exist.");
+
+            }
+            else throw new AccessDeniedException("Not authorized to do this.");
         }
     }
 

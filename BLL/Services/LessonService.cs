@@ -85,6 +85,7 @@ namespace BLL.Services
             if (topic != null)
             {
                 await _unitOfWork.LessonRepository.AddTopic(lessonId, topic);
+                topic.LessonsTotal++;
                 _unitOfWork.SaveChanges();
             }
             else throw new InvalidIDException("Topic does not exist.");
@@ -108,7 +109,7 @@ namespace BLL.Services
             foreach (var lesson in courseLessons)
             {
                 var tmp = _mapper.Map<GetLessonDTO>(lesson);
-                if (_unitOfWork.LessonRepository.IsFavorite(lesson))
+                if (_unitOfWork.LessonRepository.IsFavorite(lesson.Id))
                     tmp.isFavorite = true;
                 resp.Add(tmp);
             }
