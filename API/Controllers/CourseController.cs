@@ -33,18 +33,18 @@ namespace LinguinoAPI.Controllers
         }
 
         [HttpGet, Authorize]
-        [Route("users/{userId}/courses")]
-        public async Task<ActionResult<IEnumerable<CourseRespDTO>>> GetUserCourses(string userId)
+        [Route("user/courses")]
+        public async Task<ActionResult<IEnumerable<CourseRespDTO>>> GetUserCourses()
         {
-            return Ok(await _courseService.GetUserCourses(userId));
+            return Ok(await _courseService.GetUserCourses());
         }
 
 
         [HttpPut, Authorize]
-        [Route("users/{userId}/courses/{courseId}")]
-        public async Task<ActionResult<Course>> AddCourse(AddCourseDTO course, long courseId, string userId)
+        [Route("user/courses/{courseId}")]
+        public async Task<ActionResult<Course>> AddCourse(AddCourseDTO course, long courseId)
         {
-            return Ok(await _courseService.AddUserWithTopics(course, courseId, userId));
+            return Ok(await _courseService.AddUserWithTopics(course, courseId));
         }
 
         [HttpGet, Authorize]
@@ -70,17 +70,18 @@ namespace LinguinoAPI.Controllers
         }
 
         [HttpPut, Authorize]
-        [Route("users/{userId}/courses/{courseId}/topics/{topicId}")]
-        public async Task<ActionResult<TopicRespDTO>> AddTopicToUser(string userId, long courseId, long topicId)
+        [Route("user/courses/{courseId}/topics/{topicId}")]
+        public async Task<ActionResult<TopicRespDTO>> AddTopicToUser(long courseId, long topicId)
         {
-            return Ok(await _courseService.EnableTopic(userId, courseId, topicId));
+            await _courseService.EnableTopic(courseId, topicId);
+            return NoContent();
         }
 
         [HttpDelete, Authorize]
-        [Route("users/{userId}/courses/{courseId}/topics/{topicId}")]
-        public async Task<ActionResult> RemoveTopicFromUser(string userId, long courseId, long topicId)
+        [Route("user/courses/{courseId}/topics/{topicId}")]
+        public async Task<ActionResult> RemoveTopicFromUser(long courseId, long topicId)
         {
-            await _courseService.DisableTopic(userId, courseId, topicId);
+            await _courseService.DisableTopic(courseId, topicId);
             return NoContent();
         }
     }

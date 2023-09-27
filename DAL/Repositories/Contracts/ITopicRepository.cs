@@ -9,7 +9,7 @@ namespace DAL.Repositories.Contracts
         public Task<IEnumerable<Topic>> GetOwn();
         public bool IsEnabled(Topic topic);
         public Task<Topic?> GetWithCourse(long topicId);
-        public Task<UserTopic> GetUserTopic(long topicId, string userId);
-        public Task<IEnumerable<UserLesson>> GetUserLessons(long topicId, string userId);
+        public Task<UserTopic> GetUserTopic(long topicId);
+        public Task<IEnumerable<UserLesson>> GetUserLessons(long topicId);
     }
 }

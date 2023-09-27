@@ -1,13 +1,10 @@
 ﻿using AutoMapper;
 using BLL.DTO;
-using BLL.Exceptions;
-using BLL.Exceptions.Auth;
 using BLL.Services.Contracts;
 using DAL.Entities;
 using DAL.Exceptions;
 using DAL.Filters;
 using DAL.UnitOfWork;
-using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace BLL.Services
 {
@@ -114,6 +111,37 @@ namespace BLL.Services
                 resp.Add(tmp);
             }
             return resp;
+        }
+
+        public async Task EnableLesson(long lessonId)
+
+        {
+            if (await _unitOfWork.LessonRepository.AddUser(lessonId))
+            {
+                var userTopics = await _unitOfWork.LessonRepository.GetUserTopics(lessonId);
+                foreach (var ut in userTopics)
+                {
+                    ut.LessonsActive++;
+                    if (ut.LessonsActive == ut.Topic.LessonsTotal)
+                        ut.IsEnabled = true;
+                }
+            }
+            _unitOfWork.SaveChanges();
+        }
+
+        public async Task DisableLesson(long lessonId)
+        {
+            if (await _unitOfWork.LessonRepository.RemoveUser(lessonId))
+            {
+                var userTopics = await _unitOfWork.LessonRepository.GetUserTopics(lessonId);
+                foreach (var ut in userTopics)
+                {
+                    ut.LessonsActive--;
+                    if (ut.LessonsActive == 0)
+                        ut.IsEnabled = false;
+                }
+            }
+            _unitOfWork.SaveChanges();
         }
     }
 }

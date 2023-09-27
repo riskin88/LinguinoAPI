@@ -6,6 +6,7 @@ using DAL.Filters;
 using DAL.Identity;
 using DAL.Repositories.Contracts;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration.UserSecrets;
 
 namespace DAL.Repositories
 {
@@ -90,7 +91,7 @@ namespace DAL.Repositories
             return lessons.Where(l => !l.IsCustom || (l.IsCustom && l.Author == _roleGuard.user)).ToList();
 
         }
-         
+
         public bool IsFavorite(long id)
         {
             var lesson = dataContext.Set<Lesson>().Include(l => l.UserLessons).FirstOrDefault(l => l.Id == id);
@@ -107,20 +108,49 @@ namespace DAL.Repositories
             else throw new InvalidIDException("Lesson does not exist.");
         }
 
-        public async Task<IEnumerable<UserTopic>> GetUserTopics(long lessonId, string userId)
+        public async Task<IEnumerable<UserTopic>> GetUserTopics(long lessonId)
         {
-            if (userId == _roleGuard.user.Id)
+            var lesson = await dataContext.Set<Lesson>().Include(l => l.Topics).ThenInclude(t => t.UserTopics).FirstOrDefaultAsync(e => e.Id == lessonId);
+            if (lesson != null)
             {
-                var lesson = await dataContext.Set<Lesson>().Include(l => l.Topics).ThenInclude(t => t.UserTopics).FirstOrDefaultAsync(e => e.Id == lessonId);
-                if (lesson != null)
-                {
-                    return await lesson.Topics.AsQueryable().SelectMany(t => t.UserTopics).Include(ut => ut.Topic).Where(ut => ut.UserId == userId).ToListAsync();
-
-                }
-                else throw new InvalidIDException("Lesson does not exist.");
+                string userId = _roleGuard.user.Id;
+                return lesson.Topics.AsQueryable().SelectMany(t => t.UserTopics).Include(ut => ut.Topic).Where(ut => ut.UserId == userId).ToList();
 
             }
-            else throw new AccessDeniedException("Not authorized to do this.");
+            else throw new InvalidIDException("Lesson does not exist.");
+
+        }
+
+        public async Task<bool> AddUser(long lessonId)
+        {
+            string userId = _roleGuard.user.Id;
+            var userLesson = await dataContext.Set<UserLesson>().FirstOrDefaultAsync(e => e.LessonId == lessonId && e.UserId == userId);
+            if (userLesson != null)
+            {
+                if (userLesson.IsVisible)
+                {
+                    return false;
+                }
+                userLesson.IsVisible = true;
+                return true;
+            }
+            else throw new InvalidIDException("Lesson could not be found.");
+        }
+
+        public async Task<bool> RemoveUser(long lessonId)
+        {
+            string userId = _roleGuard.user.Id;
+            var userLesson = await dataContext.Set<UserLesson>().FirstOrDefaultAsync(e => e.LessonId == lessonId && e.UserId == userId);
+            if (userLesson != null)
+            {
+                if (!userLesson.IsVisible)
+                {
+                    return false;
+                }
+                userLesson.IsVisible = false;
+                return true;
+            }
+            else throw new InvalidIDException("Lesson could not be found.");
         }
     }
 

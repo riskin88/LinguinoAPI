@@ -42,11 +42,9 @@ namespace DAL.Repositories
 
         }
 
-        public async Task<IEnumerable<Course>> GetOwn(string id)
+        public async Task<IEnumerable<Course>> GetOwn()
         {
-            if (id == _roleGuard.user.Id)
-                return await FindByCondition(c => c.Users.Contains(_roleGuard.user));
-            else throw new AccessDeniedException("Not authorized to view this data.");
+            return await FindByCondition(c => c.Users.Contains(_roleGuard.user));
 
         }
 
@@ -55,19 +53,15 @@ namespace DAL.Repositories
             return await dataContext.Set<Course>().Include(c => c.Topics.Where(t => t.IsFeatured)).FirstOrDefaultAsync(e => e.Id == courseId);
         }
 
-        public async Task<Course> AddUser(long courseId, string userId)
+        public async Task<Course> AddUser(long courseId)
         {
             var course = await GetWithUsers(courseId);
             if (course != null)
             {
-                if (userId == _roleGuard.user.Id)
-                {
-                    if (!course.Users.Contains(_roleGuard.user))
-                        course.Users.Add(_roleGuard.user);
-                    return course;
-                }
+                if (!course.Users.Contains(_roleGuard.user))
+                    course.Users.Add(_roleGuard.user);
+                return course;
 
-                else throw new AccessDeniedException("Not authorized to do this.");
             }
             else throw new InvalidIDException("Course does not exist.");
         }

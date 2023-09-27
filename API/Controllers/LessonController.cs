@@ -44,7 +44,7 @@ namespace LinguinoAPI.Controllers
         public async Task<ActionResult> AddLessonToTopic(long topicId, long lessonId)
         {
             await _lessonService.AddLessonToTopic(topicId, lessonId);
-            return Ok();
+            return NoContent();
         }
 
         [HttpDelete, Authorize(Roles = "ADMIN")]
@@ -60,6 +60,22 @@ namespace LinguinoAPI.Controllers
         public async Task<ActionResult<IEnumerable<GetLessonDTO>>> GetLessons(long courseId, [FromQuery] LessonFilter filter)
         {
             return Ok(await _lessonService.GetLessonsInCourse(courseId, filter));
+        }
+
+        [HttpPut, Authorize]
+        [Route("/user/lessons/{lessonId}")]
+        public async Task<ActionResult> EnableLesson(long lessonId)
+        {
+            await _lessonService.EnableLesson(lessonId);
+            return NoContent();
+        }
+
+        [HttpDelete, Authorize]
+        [Route("/user/lessons/{lessonId}")]
+        public async Task<ActionResult> DisableLesson(long lessonId)
+        {
+            await _lessonService.DisableLesson(lessonId);
+            return NoContent();
         }
     }
 }

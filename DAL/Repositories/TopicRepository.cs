@@ -19,18 +19,16 @@ namespace DAL.Repositories
             _roleGuard = roleGuard;
         }
 
-        public async Task<UserTopic> GetUserTopic(long topicId, string userId)
+        public async Task<UserTopic> GetUserTopic(long topicId)
         {
-            if (userId == _roleGuard.user.Id)
+            string userId = _roleGuard.user.Id;
+            var userTopic = await dataContext.Set<UserTopic>().Include(ut => ut.Topic).FirstOrDefaultAsync(e => e.TopicId == topicId && e.UserId == userId);
+            if (userTopic != null)
             {
-                var userTopic = await dataContext.Set<UserTopic>().Include(ut => ut.Topic).FirstOrDefaultAsync(e => e.TopicId == topicId && e.UserId == userId);
-                if (userTopic != null)
-                {
-                    return userTopic;
-                }
-                else throw new InvalidIDException("Topic does not exist.");
+                return userTopic;
             }
-            else throw new AccessDeniedException("Not authorized to do this.");
+            else throw new InvalidIDException("Topic does not exist.");
+
 
         }
 
@@ -54,20 +52,17 @@ namespace DAL.Repositories
             return await dataContext.Set<Topic>().Include(t => t.Course).FirstOrDefaultAsync(e => e.Id == topicId);
         }
 
-        public async Task<IEnumerable<UserLesson>> GetUserLessons(long topicId, string userId)
+        public async Task<IEnumerable<UserLesson>> GetUserLessons(long topicId)
         {
-            if (userId == _roleGuard.user.Id)
+            string userId = _roleGuard.user.Id;
+            var topic = await dataContext.Set<Topic>().Include(t => t.Lessons).ThenInclude(l => l.UserLessons).FirstOrDefaultAsync(e => e.Id == topicId);
+            if (topic != null)
             {
-                var topic = await dataContext.Set<Topic>().Include(t => t.Lessons).ThenInclude(l => l.UserLessons).FirstOrDefaultAsync(e => e.Id == topicId);
-                if (topic != null)
-                {
-                    return topic.Lessons.AsQueryable().SelectMany(l => l.UserLessons).Include(ul => ul.Lesson).Where(ul => ul.UserId == userId).ToList();
-
-                }
-                else throw new InvalidIDException("Topic does not exist.");
+                return topic.Lessons.AsQueryable().SelectMany(l => l.UserLessons).Include(ul => ul.Lesson).Where(ul => ul.UserId == userId).ToList();
 
             }
-            else throw new AccessDeniedException("Not authorized to do this.");
+            else throw new InvalidIDException("Topic does not exist.");
+
         }
     }
 

@@ -11,5 +11,7 @@ namespace BLL.Services.Contracts
         Task AddLessonToTopic(long topicId, long lessonId);
         Task RemoveLessonFromTopic(long topicId, long lessonId);
         Task<IEnumerable<GetLessonDTO>> GetLessonsInCourse(long courseId, LessonFilter filter);
+        Task EnableLesson(long lessonId);
+        Task DisableLesson(long lessonId);
     }
 }
