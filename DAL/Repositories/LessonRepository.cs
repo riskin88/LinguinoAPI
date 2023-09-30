@@ -121,7 +121,7 @@ namespace DAL.Repositories
 
         }
 
-        public async Task<bool> AddUser(long lessonId)
+        public async Task<bool> EnableOwn(long lessonId)
         {
             string userId = _roleGuard.user.Id;
             var userLesson = await dataContext.Set<UserLesson>().FirstOrDefaultAsync(e => e.LessonId == lessonId && e.UserId == userId);
@@ -137,7 +137,22 @@ namespace DAL.Repositories
             else throw new InvalidIDException("Lesson could not be found.");
         }
 
-        public async Task<bool> RemoveUser(long lessonId)
+        public async Task<bool> EnableLesson(string userId, long lessonId)
+        {
+            var userLesson = await dataContext.Set<UserLesson>().FirstOrDefaultAsync(e => e.LessonId == lessonId && e.UserId == userId);
+            if (userLesson != null)
+            {
+                if (userLesson.IsVisible)
+                {
+                    return false;
+                }
+                userLesson.IsVisible = true;
+                return true;
+            }
+            else throw new InvalidIDException("Lesson could not be found.");
+        }
+
+        public async Task<bool> DisableOwn(long lessonId)
         {
             string userId = _roleGuard.user.Id;
             var userLesson = await dataContext.Set<UserLesson>().FirstOrDefaultAsync(e => e.LessonId == lessonId && e.UserId == userId);

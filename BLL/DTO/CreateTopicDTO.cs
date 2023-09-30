@@ -16,6 +16,7 @@ namespace BLL.DTO
         public string Name { get; set; }
         public string ThumbnailURL { get; set; }
         public bool IsFeatured { get; set; }
+        public bool IsDefault { get; set; }
         public TopicCategory Category { get; set; }
     }
 }

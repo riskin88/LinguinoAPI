@@ -29,7 +29,12 @@ namespace DAL.Repositories
             }
             else throw new InvalidIDException("Topic does not exist.");
 
+        }
 
+
+        public async Task<IEnumerable<UserTopic>> GetUserTopics(long topicId)
+        {
+            return await dataContext.Set<UserTopic>().Include(ut => ut.Topic).Where(e => e.TopicId == topicId).ToListAsync();
         }
 
 
@@ -64,6 +69,7 @@ namespace DAL.Repositories
             else throw new InvalidIDException("Topic does not exist.");
 
         }
+
     }
 
 

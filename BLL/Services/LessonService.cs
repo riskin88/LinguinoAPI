@@ -35,6 +35,12 @@ namespace BLL.Services
                 lesson.IsCustom = false;
                 _unitOfWork.LessonRepository.Add(lesson);
                 lesson.Course = course;
+                // add record to the M:N join table
+                var users = await _unitOfWork.CourseRepository.GetUsersWithLessons(courseId);
+                foreach (var user in users)
+                {
+                    user.Lessons.Add(lesson);
+                }
                 foreach (var itemDTO in builtinLessonDTO.Items)
                 {
                     var item = await _unitOfWork.LessonItemRepository.GetById(itemDTO.Id);
@@ -61,6 +67,12 @@ namespace BLL.Services
                     _unitOfWork.LessonRepository.Add(lesson);
                     lesson.Course = course;
                     _unitOfWork.LessonRepository.AddAuthor(lesson);
+                    // add record to the M:N join table
+                    var users = await _unitOfWork.CourseRepository.GetUsersWithLessons(courseId);
+                    foreach (var user in users)
+                    {
+                        user.Lessons.Add(lesson);
+                    }
                     foreach (var itemDTO in customLessonDTO.Items)
                     {
                         var item = await _unitOfWork.LessonItemRepository.GetById(itemDTO.Id);
@@ -82,6 +94,16 @@ namespace BLL.Services
             if (topic != null)
             {
                 await _unitOfWork.LessonRepository.AddTopic(lessonId, topic);
+                var userTopics = await _unitOfWork.TopicRepository.GetUserTopics(topic.Id);
+                foreach(var userTopic in userTopics)
+                {
+                    if (userTopic.IsEnabled)
+                    {
+                        await _unitOfWork.LessonRepository.EnableLesson(userTopic.UserId, lessonId);
+                        userTopic.LessonsActive++;
+                    }
+
+                }
                 topic.LessonsTotal++;
                 _unitOfWork.SaveChanges();
             }
@@ -116,7 +138,7 @@ namespace BLL.Services
         public async Task EnableLesson(long lessonId)
 
         {
-            if (await _unitOfWork.LessonRepository.AddUser(lessonId))
+            if (await _unitOfWork.LessonRepository.EnableOwn(lessonId))
             {
                 var userTopics = await _unitOfWork.LessonRepository.GetUserTopics(lessonId);
                 foreach (var ut in userTopics)
@@ -131,7 +153,7 @@ namespace BLL.Services
 
         public async Task DisableLesson(long lessonId)
         {
-            if (await _unitOfWork.LessonRepository.RemoveUser(lessonId))
+            if (await _unitOfWork.LessonRepository.DisableOwn(lessonId))
             {
                 var userTopics = await _unitOfWork.LessonRepository.GetUserTopics(lessonId);
                 foreach (var ut in userTopics)

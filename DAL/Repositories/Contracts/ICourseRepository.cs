@@ -1,5 +1,6 @@
 ﻿using DAL.Entities;
 using DAL.Filters;
+using System.Threading.Tasks;
 
 namespace DAL.Repositories.Contracts
 {
@@ -14,5 +15,7 @@ namespace DAL.Repositories.Contracts
         public Task<Course?> GetWithFeaturedTopics(long courseId);
         Task<IEnumerable<Topic>> GetDefaultTopics(long courseId);
         Task InitAllInCourse(long courseId);
+        public Task<IEnumerable<User>> GetUsersWithTopics(long courseId);
+        Task<IEnumerable<User>> GetUsersWithLessons(long courseId);
     }
 }

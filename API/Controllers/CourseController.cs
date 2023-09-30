@@ -73,7 +73,7 @@ namespace LinguinoAPI.Controllers
         [Route("user/courses/{courseId}/topics/{topicId}")]
         public async Task<ActionResult<TopicRespDTO>> AddTopicToUser(long courseId, long topicId)
         {
-            await _courseService.EnableTopic(courseId, topicId);
+            await _courseService.EnableTopicInCourse(courseId, topicId);
             return NoContent();
         }
 
@@ -81,7 +81,7 @@ namespace LinguinoAPI.Controllers
         [Route("user/courses/{courseId}/topics/{topicId}")]
         public async Task<ActionResult> RemoveTopicFromUser(long courseId, long topicId)
         {
-            await _courseService.DisableTopic(courseId, topicId);
+            await _courseService.DisableTopicInCourse(courseId, topicId);
             return NoContent();
         }
     }

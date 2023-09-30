@@ -139,6 +139,15 @@ namespace DAL.Repositories
             else throw new InvalidIDException("Course does not exist.");
         }
 
+        public async Task<IEnumerable<User>> GetUsersWithTopics(long courseId)
+        {
+            return await dataContext.Set<Course>().Where(e => e.Id == courseId).Include(c => c.Users).ThenInclude(u => u.Topics).SelectMany(c => c.Users).ToListAsync();
+        }
+
+        public async Task<IEnumerable<User>> GetUsersWithLessons(long courseId)
+        {
+            return await dataContext.Set<Course>().Where(e => e.Id == courseId).Include(c => c.Users).ThenInclude(u => u.Lessons).SelectMany(c => c.Users).ToListAsync();
+        }
     }
 
 

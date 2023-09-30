@@ -34,6 +34,12 @@ namespace BLL.Services
             var topic = _mapper.Map<Topic>(createTopicDTO);
             _unitOfWork.TopicRepository.Add(topic);
             await _unitOfWork.CourseRepository.AddTopic(courseId, topic);
+            // add record to the M:N join table
+            var users = await _unitOfWork.CourseRepository.GetUsersWithTopics(courseId);
+            foreach (var user in users)
+            {
+                user.Topics.Add(topic);
+            }
             _unitOfWork.SaveChanges();
 
         }
@@ -78,13 +84,13 @@ namespace BLL.Services
             var defaultTopics = await _unitOfWork.CourseRepository.GetDefaultTopics(courseId);
             foreach (var topic in defaultTopics)
             {
-                await AddUserToTopic(topic.Id);
+                await EnableTopic(topic.Id);
             }
             foreach (var topicDTO in courseDTO.SelectedTopics)
             {
                 var topic = await _unitOfWork.TopicRepository.GetWithCourse(topicDTO.Id);
                 if (topic != null && topic.CourseId == course.Id)
-                    await AddUserToTopic(topic.Id);
+                    await EnableTopic(topic.Id);
                 else throw new InvalidIDException("Topic " + topicDTO.Id + " does not exist in this course.");
             }
             _unitOfWork.SaveChanges();
@@ -105,7 +111,7 @@ namespace BLL.Services
             return resp;
         }
 
-        public async Task EnableTopic(long courseId, long topicId)
+        public async Task EnableTopicInCourse(long courseId, long topicId)
         {
             var topic = await _unitOfWork.TopicRepository.GetById(topicId);
             if (topic != null)
@@ -114,7 +120,7 @@ namespace BLL.Services
                 {
                     if (await _unitOfWork.CourseRepository.IsEnrolled(courseId))
                     {
-                        await AddUserToTopic(topicId);
+                        await EnableTopic(topicId);
                         _unitOfWork.SaveChanges();
                     }
                     else throw new InvalidIDException("There is no such course registered for this user.");
@@ -124,7 +130,7 @@ namespace BLL.Services
             else throw new InvalidIDException("Topic " + topicId + " does not exist.");
         }
 
-        public async Task DisableTopic(long courseId, long topicId)
+        public async Task DisableTopicInCourse(long courseId, long topicId)
         {
             var topic = await _unitOfWork.TopicRepository.GetById(topicId);
             if (topic != null)
@@ -133,7 +139,7 @@ namespace BLL.Services
                 {
                     if (await _unitOfWork.CourseRepository.IsEnrolled(courseId))
                     {
-                        await RemoveUserFromTopic(topicId);
+                        await DisableTopic(topicId);
                         _unitOfWork.SaveChanges();
                     }
                     else throw new InvalidIDException("There is no such course registered for this user.");
@@ -143,7 +149,7 @@ namespace BLL.Services
             else throw new InvalidIDException("Topic does not exist.");
         }
 
-        private async Task AddUserToTopic(long topicId)
+        private async Task EnableTopic(long topicId)
         {
             var userTopic = await _unitOfWork.TopicRepository.GetUserTopic(topicId);
             userTopic.IsEnabled = true;
@@ -156,7 +162,7 @@ namespace BLL.Services
             }
         }
 
-        private async Task RemoveUserFromTopic(long topicId)
+        private async Task DisableTopic(long topicId)
         {
             var userTopic = await _unitOfWork.TopicRepository.GetUserTopic(topicId);
             userTopic.IsEnabled = false;

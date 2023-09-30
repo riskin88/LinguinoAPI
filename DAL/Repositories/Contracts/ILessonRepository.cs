@@ -13,7 +13,8 @@ namespace DAL.Repositories.Contracts
         public Task<IEnumerable<Lesson>> GetLessonsFromCourse(long courseId, LessonFilter filter);
         public bool IsFavorite(long id);
         public Task<IEnumerable<UserTopic>> GetUserTopics(long lessonId);
-        Task<bool> AddUser(long lessonId);
-        Task<bool> RemoveUser(long lessonId);
+        Task<bool> EnableOwn(long lessonId);
+        Task<bool> EnableLesson(string userId, long lessonId);
+        Task<bool> DisableOwn(long lessonId);
     }
 }
