@@ -69,10 +69,11 @@ namespace DAL.Repositories
         public async Task<bool> IsEnrolled(long courseId)
         {
             var course = await GetWithUsers(courseId);
-            if (course != null && course.Users.Contains(_roleGuard.user))
-                return true;
-            else return false;
-
+            if (course != null)
+            {
+                return course.Users.Contains(_roleGuard.user);
+            }
+            else throw new InvalidIDException("Course does not exist.");
         }
         public async Task AddTopic(long courseId, Topic topic)
         {

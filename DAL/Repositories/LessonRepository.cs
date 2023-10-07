@@ -98,6 +98,18 @@ namespace DAL.Repositories
 
         }
 
+        public async Task<Lesson> GetForUser(long lessonId)
+        {
+            var lesson = await dataContext.Set<Lesson>().Include(l => l.LessonItems).Include(l => l.Author).FirstOrDefaultAsync(l => l.Id == lessonId);
+            if (lesson != null)
+            {
+                if (lesson.IsCustom && lesson.Author != _roleGuard.user)
+                    throw new AccessDeniedException("You are not allowed to access this lesson.");
+                return lesson;
+            }
+            else throw new InvalidIDException("Lesson does not exist.");
+        }
+
         public bool IsFavorite(long lessonId)
         {
             string userId = _roleGuard.user.Id;
@@ -111,7 +123,7 @@ namespace DAL.Repositories
             else throw new InvalidIDException("Lesson does not exist or is not available for this user.");
         }
 
-        private bool IsVisibleToSelf(long lessonId)
+        public bool IsVisibleToSelf(long lessonId)
         {
             string userId = _roleGuard.user.Id;
             var userLesson = dataContext.Set<UserLesson>().FirstOrDefault(e => e.LessonId == lessonId && e.UserId == userId);
@@ -244,6 +256,7 @@ namespace DAL.Repositories
             }
             else throw new InvalidIDException("Lesson does not exist.");
         }
+
     }
 
 

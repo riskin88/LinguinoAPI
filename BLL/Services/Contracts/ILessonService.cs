@@ -11,11 +11,12 @@ namespace BLL.Services.Contracts
         Task<CreateLessonRespDTO> CreateCustomLesson(CreateCustomLessonDTO customLessonDTO, long courseId);
         Task AddLessonToTopic(long topicId, long lessonId);
         Task RemoveLessonFromTopic(long topicId, long lessonId);
-        Task<IEnumerable<GetLessonDTO>> GetLessonsInCourse(long courseId, LessonFilter filter);
+        Task<IEnumerable<GetLessonBriefDTO>> GetLessonsInCourse(long courseId, LessonFilter filter);
         Task EnableLesson(long lessonId);
         Task DisableLesson(long lessonId);
         Task ChangeFeedback(long courseId, long lessonId, LessonFeedbackDTO feedbackDTO);
         Task ModifyLessonStatus(long courseId, long lessonId, LessonStatusDTO lessonStatusDTO);
         Task DeleteCustomLesson(long courseId, long lessonId);
+        Task<GetLessonDTO> GetLesson(long courseId, long lessonId);
     }
 }

@@ -57,9 +57,16 @@ namespace LinguinoAPI.Controllers
 
         [HttpGet, Authorize]
         [Route("user/courses/{courseId}/lessons")]
-        public async Task<ActionResult<IEnumerable<GetLessonDTO>>> GetLessons(long courseId, [FromQuery] LessonFilter filter)
+        public async Task<ActionResult<IEnumerable<GetLessonBriefDTO>>> GetLessons(long courseId, [FromQuery] LessonFilter filter)
         {
             return Ok(await _lessonService.GetLessonsInCourse(courseId, filter));
+        }
+
+        [HttpGet, Authorize]
+        [Route("user/courses/{courseId}/lessons/{lessonId}")]
+        public async Task<ActionResult<IEnumerable<GetLessonDTO>>> GetLesson(long courseId, long lessonId)
+        {
+            return Ok(await _lessonService.GetLesson(courseId, lessonId));
         }
 
         [HttpPatch, Authorize]

@@ -20,6 +20,8 @@ namespace DAL.Repositories.Contracts
         Task SetFavorite(long lessonId, bool favorite);
         Task DeleteCustom(long lessonId);
         bool IsVisible(string userId, long lessonId);
+        bool IsVisibleToSelf(long lessonId);
         Task<LessonFeedback?> GetFeedback(long lessonId);
+        Task<Lesson> GetForUser(long lessonId);
     }
 }
