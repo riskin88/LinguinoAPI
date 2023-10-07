@@ -1,4 +1,5 @@
 ﻿using BLL.DTO;
+using DAL.Entities;
 using DAL.Filters;
 
 namespace BLL.Services.Contracts
@@ -13,5 +14,8 @@ namespace BLL.Services.Contracts
         Task<IEnumerable<GetLessonDTO>> GetLessonsInCourse(long courseId, LessonFilter filter);
         Task EnableLesson(long lessonId);
         Task DisableLesson(long lessonId);
+        Task ChangeFeedback(long courseId, long lessonId, LessonFeedbackDTO feedbackDTO);
+        Task ModifyLessonStatus(long courseId, long lessonId, LessonStatusDTO lessonStatusDTO);
+        Task DeleteCustomLesson(long courseId, long lessonId);
     }
 }

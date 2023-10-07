@@ -16,5 +16,10 @@ namespace DAL.Repositories.Contracts
         Task<bool> EnableOwn(long lessonId);
         Task<bool> EnableLesson(string userId, long lessonId);
         Task<bool> DisableOwn(long lessonId);
+        Task AddFeedback(long lessonId, LessonFeedback feedback);
+        Task SetFavorite(long lessonId, bool favorite);
+        Task DeleteCustom(long lessonId);
+        bool IsVisible(string userId, long lessonId);
+        Task<LessonFeedback?> GetFeedback(long lessonId);
     }
 }

@@ -16,6 +16,8 @@ namespace DAL.Entities
         public string? Description { get; set; }
         public LessonType? Type { get; set; }
         public LessonLevel? Level { get; set; }
+        public string? BackgroundURL {  get; set; }
+        public string? VideoURL { get; set; }
         public long? OrderOnMap {  get; set; }
         public bool IsCustom { get; set; }
         public List<User> Users { get; set; } = new();

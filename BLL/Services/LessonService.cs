@@ -2,6 +2,7 @@
 using BLL.DTO;
 using BLL.Services.Contracts;
 using DAL.Entities;
+using DAL.Entities.Relations;
 using DAL.Exceptions;
 using DAL.Filters;
 using DAL.UnitOfWork;
@@ -83,7 +84,7 @@ namespace BLL.Services
                     _unitOfWork.SaveChanges();
                     return _mapper.Map<CreateLessonRespDTO>(lesson);
                 }
-                else throw new InvalidIDException("You are not enrolled in this course.");
+                else throw new UserNotInCourseException();
             }
             else throw new InvalidIDException("Course does not exist.");
         }
@@ -95,13 +96,14 @@ namespace BLL.Services
             {
                 await _unitOfWork.LessonRepository.AddTopic(lessonId, topic);
                 var userTopics = await _unitOfWork.TopicRepository.GetUserTopics(topic.Id);
-                foreach(var userTopic in userTopics)
+                foreach (var userTopic in userTopics)
                 {
                     if (userTopic.IsEnabled)
                     {
                         await _unitOfWork.LessonRepository.EnableLesson(userTopic.UserId, lessonId);
-                        userTopic.LessonsActive++;
                     }
+                    if (_unitOfWork.LessonRepository.IsVisible(userTopic.UserId, lessonId))
+                        userTopic.LessonsActive++;
 
                 }
                 topic.LessonsTotal++;
@@ -123,16 +125,20 @@ namespace BLL.Services
 
         public async Task<IEnumerable<GetLessonDTO>> GetLessonsInCourse(long courseId, LessonFilter filter)
         {
-            var courseLessons = await _unitOfWork.LessonRepository.GetLessonsFromCourse(courseId, filter);
-            List<GetLessonDTO> resp = new();
-            foreach (var lesson in courseLessons)
+            if (await _unitOfWork.CourseRepository.IsEnrolled(courseId))
             {
-                var tmp = _mapper.Map<GetLessonDTO>(lesson);
-                if (_unitOfWork.LessonRepository.IsFavorite(lesson.Id))
-                    tmp.isFavorite = true;
-                resp.Add(tmp);
+                var courseLessons = await _unitOfWork.LessonRepository.GetLessonsFromCourse(courseId, filter);
+                List<GetLessonDTO> resp = new();
+                foreach (var lesson in courseLessons)
+                {
+                    var tmp = _mapper.Map<GetLessonDTO>(lesson);
+                    if (_unitOfWork.LessonRepository.IsFavorite(lesson.Id))
+                        tmp.isFavorite = true;
+                    resp.Add(tmp);
+                }
+                return resp;
             }
-            return resp;
+            throw new UserNotInCourseException();
         }
 
         public async Task EnableLesson(long lessonId)
@@ -164,6 +170,84 @@ namespace BLL.Services
                 }
             }
             _unitOfWork.SaveChanges();
+        }
+
+        public async Task ChangeFeedback(long courseId, long lessonId, LessonFeedbackDTO feedbackDTO)
+        {
+            if (await _unitOfWork.CourseRepository.IsEnrolled(courseId))
+            {
+                var lesson = await _unitOfWork.LessonRepository.GetById(lessonId);
+                if (lesson != null)
+                {
+                    if (lesson.CourseId == courseId)
+                    {
+                        var feedback = await _unitOfWork.LessonRepository.GetFeedback(lessonId);
+                        if (feedback == null)
+                        {
+                            LessonFeedback newFeedback = new LessonFeedback();
+                            if (feedbackDTO.State != null)
+                            {
+                                newFeedback.State = feedbackDTO.State;
+                            }
+                            if (feedbackDTO.Text != null)
+                            {
+                                newFeedback.Text = feedbackDTO.Text;
+                            }
+                            await _unitOfWork.LessonRepository.AddFeedback(lessonId, newFeedback);
+                        }
+                        else
+                        {
+                            if (feedbackDTO.State != null)
+                            {
+                                feedback.State = feedbackDTO.State;
+                            }
+                            if (feedbackDTO.Text != null)
+                            {
+                                feedback.Text = feedbackDTO.Text;
+                            }
+                        }
+                        
+                        _unitOfWork.SaveChanges();
+                    }
+                    else throw new InvalidIDException("No such lesson in this course.");
+                }
+                else throw new InvalidIDException("Lesson does not exist.");
+            }
+            else throw new UserNotInCourseException();
+        }
+
+        public async Task ModifyLessonStatus(long courseId, long lessonId, LessonStatusDTO lessonStatusDTO)
+        {
+            var lesson = await _unitOfWork.LessonRepository.GetById(lessonId);
+            if (lesson != null && lesson.CourseId == courseId)
+            {
+                if (lessonStatusDTO.Visible != null)
+                {
+                    if (lessonStatusDTO.Visible == true)
+                    {
+                        await EnableLesson(lessonId);
+                    }
+                    else await DisableLesson(lessonId);
+                }
+                if (lessonStatusDTO.Favorite != null)
+                {
+                    await _unitOfWork.LessonRepository.SetFavorite(lessonId, (bool)lessonStatusDTO.Favorite);
+                }
+                _unitOfWork.SaveChanges();
+            }
+            else throw new InvalidIDException("No such lesson in this course.");
+
+        }
+
+        public async Task DeleteCustomLesson(long courseId, long lessonId)
+        {
+            var lesson = await _unitOfWork.LessonRepository.GetById(lessonId);
+            if (lesson != null && lesson.CourseId == courseId)
+            {
+                await _unitOfWork.LessonRepository.DeleteCustom(lessonId);
+                _unitOfWork.SaveChanges();
+            }
+            else throw new InvalidIDException("No such lesson in this course.");
         }
     }
 }

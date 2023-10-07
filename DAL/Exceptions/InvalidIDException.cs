@@ -1,7 +1,7 @@
-﻿namespace DAL.Exceptions;
-
-public class InvalidIDException : Exception
+﻿namespace DAL.Exceptions
 {
-    public InvalidIDException(string? message) : base(message)
-    { }
+    public class InvalidIDException : Exception
+    {
+        public InvalidIDException(string? message) : base(message) { }
+    }
 }

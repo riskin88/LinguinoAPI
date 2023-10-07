@@ -53,7 +53,7 @@ namespace DAL.Repositories
                             lesson.Topics.Add(topic);
                         }
                     }
-                    else throw new InvalidIDException("The topic and lesson belong to different course.");
+                    else throw new CourseMismatchException("The topic and lesson belong to different course.");
                 }
                 else throw new InvalidIDException("This is a custom lesson.");
             }
@@ -80,6 +80,12 @@ namespace DAL.Repositories
             {
                 lessons = lessons.Where(l => filter.Favorite == IsFavorite(l.Id)).ToList();
             }
+            if (filter.Visible != null)
+            {
+                lessons = lessons.Where(l => filter.Visible == IsVisibleToSelf(l.Id)).ToList();
+            }
+
+
             if (filter.Custom != null)
             {
                 if (filter.Custom == false)
@@ -92,20 +98,42 @@ namespace DAL.Repositories
 
         }
 
-        public bool IsFavorite(long id)
+        public bool IsFavorite(long lessonId)
         {
-            var lesson = dataContext.Set<Lesson>().Include(l => l.UserLessons).FirstOrDefault(l => l.Id == id);
-            if (lesson != null)
-            {
-                var userLesson = lesson.UserLessons.AsQueryable().FirstOrDefault(ul => ul.User == _roleGuard.user);
+            string userId = _roleGuard.user.Id;
+            var userLesson = dataContext.Set<UserLesson>().FirstOrDefault(e => e.LessonId == lessonId && e.UserId == userId);
 
-                if (userLesson != null)
-                {
-                    return userLesson.IsFavorite;
-                }
-                return false;
+            if (userLesson != null)
+            {
+                return userLesson.IsFavorite;
+
             }
-            else throw new InvalidIDException("Lesson does not exist.");
+            else throw new InvalidIDException("Lesson does not exist or is not available for this user.");
+        }
+
+        private bool IsVisibleToSelf(long lessonId)
+        {
+            string userId = _roleGuard.user.Id;
+            var userLesson = dataContext.Set<UserLesson>().FirstOrDefault(e => e.LessonId == lessonId && e.UserId == userId);
+
+            if (userLesson != null)
+            {
+                return userLesson.IsVisible;
+
+            }
+            else throw new InvalidIDException("Lesson does not exist or is not available for this user.");
+        }
+
+        public bool IsVisible(string userId, long lessonId)
+        {
+            var userLesson = dataContext.Set<UserLesson>().FirstOrDefault(e => e.LessonId == lessonId && e.UserId == userId);
+
+            if (userLesson != null)
+            {
+                return userLesson.IsVisible;
+
+            }
+            else throw new InvalidIDException("Lesson does not exist or is not available for this user.");
         }
 
         public async Task<IEnumerable<UserTopic>> GetUserTopics(long lessonId)
@@ -166,6 +194,55 @@ namespace DAL.Repositories
                 return true;
             }
             else throw new InvalidIDException("Lesson could not be found.");
+        }
+
+        public async Task<LessonFeedback?> GetFeedback(long lessonId)
+        {
+            string userId = _roleGuard.user.Id;
+            var userLesson = await dataContext.Set<UserLesson>().Include(ul => ul.Feedback).FirstOrDefaultAsync(e => e.LessonId == lessonId && e.UserId == userId);
+            if (userLesson != null)
+            {
+                return userLesson.Feedback;
+            }
+            else throw new InvalidIDException("Lesson does not exist or is not available for this user.");
+        }
+
+        public async Task AddFeedback(long lessonId, LessonFeedback feedback)
+        {
+            string userId = _roleGuard.user.Id;
+            var userLesson = await dataContext.Set<UserLesson>().Include(ul => ul.Feedback).FirstOrDefaultAsync(e => e.LessonId == lessonId && e.UserId == userId);
+
+            if (userLesson != null)
+            {
+                userLesson.Feedback = feedback;
+
+            }
+            else throw new InvalidIDException("Lesson does not exist or is not available for this user.");
+        }
+
+        public async Task SetFavorite(long lessonId, bool favorite)
+        {
+            string userId = _roleGuard.user.Id;
+            var userLesson = await dataContext.Set<UserLesson>().FirstOrDefaultAsync(e => e.LessonId == lessonId && e.UserId == userId);
+            if (userLesson != null)
+            {
+                userLesson.IsFavorite = favorite;
+            }
+            else throw new InvalidIDException("Lesson could not be found.");
+        }
+
+        public async Task DeleteCustom(long lessonId)
+        {
+            var lesson = await GetById(lessonId);
+            if (lesson != null)
+            {
+                if (lesson.IsCustom && lesson.AuthorId == _roleGuard.user.Id)
+                {
+                    Remove(lesson);
+                }
+                else throw new AccessDeniedException();
+            }
+            else throw new InvalidIDException("Lesson does not exist.");
         }
     }
 

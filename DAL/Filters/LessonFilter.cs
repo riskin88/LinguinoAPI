@@ -8,5 +8,6 @@ namespace DAL.Filters
         public LessonLevel? Level { get; set; }
         public bool? Custom { get; set; }
         public bool? Favorite { get; set; }
+        public bool? Visible { get; set; }
     }
 }

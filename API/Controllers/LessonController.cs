@@ -26,14 +26,14 @@ namespace LinguinoAPI.Controllers
         }
 
         [HttpPost, Authorize(Roles = "ADMIN")]
-        [Route("courses/{courseId}/lessons/builtin")]
+        [Route("courses/{courseId}/lessons")]
         public async Task<ActionResult<CreateLessonRespDTO>> CreateBuiltinLesson(CreateBuiltinLessonDTO lessonDTO, long courseId)
         {
             return Ok(await _lessonService.CreateBuiltinLesson(lessonDTO, courseId));
         }
 
         [HttpPost, Authorize]
-        [Route("courses/{courseId}/lessons")]
+        [Route("user/courses/{courseId}/lessons")]
         public async Task<ActionResult<CreateLessonRespDTO>> CreateCustomLesson(CreateCustomLessonDTO lessonDTO, long courseId)
         {
             return Ok(await _lessonService.CreateCustomLesson(lessonDTO, courseId));
@@ -56,26 +56,35 @@ namespace LinguinoAPI.Controllers
         }
 
         [HttpGet, Authorize]
-        [Route("courses/{courseId}/lessons")]
+        [Route("user/courses/{courseId}/lessons")]
         public async Task<ActionResult<IEnumerable<GetLessonDTO>>> GetLessons(long courseId, [FromQuery] LessonFilter filter)
         {
             return Ok(await _lessonService.GetLessonsInCourse(courseId, filter));
         }
 
-        [HttpPut, Authorize]
-        [Route("/user/lessons/{lessonId}")]
-        public async Task<ActionResult> EnableLesson(long lessonId)
+        [HttpPatch, Authorize]
+        [Route("/user/courses/{courseId}/lessons/{lessonId}")]
+        public async Task<ActionResult> ModifyLessonStatus(long courseId, long lessonId, LessonStatusDTO lessonStatusDTO)
         {
-            await _lessonService.EnableLesson(lessonId);
+            await _lessonService.ModifyLessonStatus(courseId, lessonId, lessonStatusDTO);
             return NoContent();
         }
 
         [HttpDelete, Authorize]
-        [Route("/user/lessons/{lessonId}")]
-        public async Task<ActionResult> DisableLesson(long lessonId)
+        [Route("/user/courses/{courseId}/lessons/{lessonId}")]
+        public async Task<ActionResult> DeleteCustomLesson(long courseId, long lessonId)
         {
-            await _lessonService.DisableLesson(lessonId);
+            await _lessonService.DeleteCustomLesson(courseId, lessonId);
             return NoContent();
         }
+
+        [HttpPut, Authorize]
+        [Route("user/courses/{courseId}/lessons/{lessonId}/feedback")]
+        public async Task<ActionResult> ChangeFeedback(long courseId, long lessonId, LessonFeedbackDTO feedbackDTO)
+        {
+            await _lessonService.ChangeFeedback(courseId, lessonId, feedbackDTO);
+            return NoContent();
+        }
+
     }
 }

@@ -13,5 +13,6 @@ namespace DAL.Entities.Relations
         public long ItemsTotal { get; set; }
         public bool IsVisible { get; set; } = false;
         public bool IsFavorite { get; set; } = false;
+        public LessonFeedback? Feedback { get; set; }
     }
 }

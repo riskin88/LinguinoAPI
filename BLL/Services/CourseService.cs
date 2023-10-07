@@ -123,7 +123,7 @@ namespace BLL.Services
                         await EnableTopic(topicId);
                         _unitOfWork.SaveChanges();
                     }
-                    else throw new InvalidIDException("There is no such course registered for this user.");
+                    else throw new UserNotInCourseException();
                 }
                 else throw new InvalidIDException("There is no such topic in this course.");
             }
@@ -142,7 +142,7 @@ namespace BLL.Services
                         await DisableTopic(topicId);
                         _unitOfWork.SaveChanges();
                     }
-                    else throw new InvalidIDException("There is no such course registered for this user.");
+                    else throw new UserNotInCourseException();
                 }
                 else throw new InvalidIDException("There is no such topic in this course.");
             }
