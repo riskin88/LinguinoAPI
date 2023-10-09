@@ -26,6 +26,8 @@ namespace DAL.Data
         public DbSet<TopicLesson> TopicLessons { get; set; }
         public DbSet<UserLesson> UserLessons { get; set; }
         public DbSet<LessonItem> LessonItems { get; set; }
+        public DbSet<Word> Words { get; set; }
         public DbSet<LessonItemLesson> LessonItemsLessons { get; set; }
+        public DbSet<UserLessonItem> UserLessonItems { get; set; }
     }
 }

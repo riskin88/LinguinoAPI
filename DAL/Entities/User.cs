@@ -22,6 +22,8 @@ namespace DAL.Entities
         public List<Lesson> Lessons { get; set; } = new();
         public List<UserLesson> UserLessons { get; set; } = new();
         public List<Lesson> LessonsCreated { get; set; } = new();
+        public List<LessonItem> LessonItems { get; set; } = new();
+        public List<UserLessonItem> UserLessonItems { get; set; } = new();
 
     }
 }
