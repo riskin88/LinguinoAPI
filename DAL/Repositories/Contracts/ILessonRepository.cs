@@ -23,5 +23,6 @@ namespace DAL.Repositories.Contracts
         bool IsVisibleToSelf(long lessonId);
         Task<LessonFeedback?> GetFeedback(long lessonId);
         Task<Lesson> GetForUser(long lessonId);
+        Task AddToSelf(long lessonId);
     }
 }

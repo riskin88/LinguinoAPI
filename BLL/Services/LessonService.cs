@@ -69,11 +69,7 @@ namespace BLL.Services
                     lesson.Course = course;
                     _unitOfWork.LessonRepository.AddAuthor(lesson);
                     // add record to the M:N join table
-                    var users = await _unitOfWork.CourseRepository.GetUsersWithLessons(courseId);
-                    foreach (var user in users)
-                    {
-                        user.Lessons.Add(lesson);
-                    }
+                    await _unitOfWork.LessonRepository.AddToSelf(lesson.Id);
                     foreach (var itemDTO in customLessonDTO.Items)
                     {
                         var item = await _unitOfWork.LessonItemRepository.GetById(itemDTO.Id);

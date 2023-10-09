@@ -8,7 +8,7 @@ namespace DAL.Filters
 {
     public class CourseFilter
     {
-        public string? LanguageFrom { get; set; }
-        public string? LanguageTo { get; set; }
+        public string? Language1 { get; set; }
+        public string? Language2 { get; set; }
     }
 }

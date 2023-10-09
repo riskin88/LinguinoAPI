@@ -31,12 +31,12 @@ namespace DAL.Repositories
 
         public async Task<IEnumerable<Course>> FindByFilter(CourseFilter filter)
         {
-            if (filter.LanguageFrom != null && filter.LanguageTo != null)
-                return await FindByCondition(c => c.LanguageFrom == filter.LanguageFrom && c.LanguageTo == filter.LanguageTo);
-            if (filter.LanguageFrom != null)
-                return await FindByCondition(c => c.LanguageFrom == filter.LanguageFrom);
-            if (filter.LanguageTo != null)
-                return await FindByCondition(c => c.LanguageTo == filter.LanguageTo);
+            if (filter.Language1 != null && filter.Language2 != null)
+                return await FindByCondition(c => c.Language1 == filter.Language1 && c.Language2 == filter.Language2);
+            if (filter.Language1 != null)
+                return await FindByCondition(c => c.Language1 == filter.Language1);
+            if (filter.Language2 != null)
+                return await FindByCondition(c => c.Language2 == filter.Language2);
 
             return await GetAll();
 

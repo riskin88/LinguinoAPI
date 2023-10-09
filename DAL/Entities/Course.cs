@@ -14,9 +14,9 @@ namespace DAL.Entities
     public class Course : EntityBase
     {
         [Required]
-        public string? LanguageFrom { get; set; }
+        public string? Language1 { get; set; }
         [Required]
-        public string? LanguageTo { get; set; }
+        public string? Language2 { get; set; }
         [Required]
         public string? Name { get; set; }
         public string? ThumbnailURL { get; set; }

@@ -257,6 +257,13 @@ namespace DAL.Repositories
             else throw new InvalidIDException("Lesson does not exist.");
         }
 
+        public async Task AddToSelf(long lessonId)
+        {
+            var lesson = await dataContext.Set<Lesson>().Include(l => l.Users).FirstOrDefaultAsync(l => l.Id == lessonId);
+            if (lesson != null)
+                lesson.Users.Add(_roleGuard.user);
+            else throw new InvalidIDException("Lesson does not exist.");
+        }
     }
 
 
