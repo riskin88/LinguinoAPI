@@ -4,11 +4,6 @@ using DAL.Identity;
 using DAL.Repositories;
 using DAL.Repositories.Contracts;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DAL.UnitOfWork
 {
@@ -21,6 +16,7 @@ namespace DAL.UnitOfWork
         public ITopicRepository TopicRepository { get; set; }
         public ILessonItemRepository LessonItemRepository { get; set; }
         public ILessonRepository LessonRepository { get; set; }
+        public IExerciseRepository ExerciseRepository { get; set; }
 
         public UnitOfWork(DataContext db, UserManager<User> userManager, IRoleGuard roleGuard)
         {
@@ -31,6 +27,7 @@ namespace DAL.UnitOfWork
             TopicRepository = new TopicRepository(db, roleGuard);
             LessonItemRepository = new LessonItemRepository(db);
             LessonRepository = new LessonRepository(db, roleGuard);
+            ExerciseRepository = new ExerciseRepository(db, roleGuard);
         }
 
         public void Dispose()

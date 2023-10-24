@@ -61,6 +61,8 @@ namespace LinguinoAPI.DependencyInjection
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<ILessonService, LessonService>();
+            services.AddScoped<IExerciseService, ExerciseService>();
+
             services.AddScoped<IJwtService, JwtService>();
             services.AddScoped<EmailHelper>();
             services.AddScoped<IRoleGuard, RoleGuard>();

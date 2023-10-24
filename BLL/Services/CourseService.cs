@@ -47,23 +47,13 @@ namespace BLL.Services
         public async Task<IEnumerable<CourseRespDTO>> GetCourses(CourseFilter filter)
         {
             var res = await _unitOfWork.CourseRepository.FindByFilter(filter);
-            List<CourseRespDTO> resp = new();
-            foreach (var course in res)
-            {
-                resp.Add(_mapper.Map<CourseRespDTO>(course));
-            }
-            return resp;
+            return _mapper.Map<List<CourseRespDTO>>(res);
         }
 
         public async Task<IEnumerable<CourseRespDTO>> GetUserCourses()
         {
             var res = await _unitOfWork.CourseRepository.GetOwn();
-            List<CourseRespDTO> resp = new();
-            foreach (var course in res)
-            {
-                resp.Add(_mapper.Map<CourseRespDTO>(course));
-            }
-            return resp;
+            return _mapper.Map<List<CourseRespDTO>>(res);
         }
 
         public async Task<CourseWithFeaturedDTO> GetWithFeaturedTopics(long courseId)

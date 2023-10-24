@@ -30,5 +30,10 @@ namespace DAL.Data
         public DbSet<Word> Words { get; set; }
         public DbSet<LessonItemLesson> LessonItemsLessons { get; set; }
         public DbSet<UserLessonItem> UserLessonItems { get; set; }
+        public DbSet<Exercise> Exercises { get; set; }
+        public DbSet<TextExercise> TextExercises { get; set; }
+        public DbSet<FillInBlankExercise> FillInBlankExercises { get; set; }
+        public DbSet<FillInBlankOptionsExercise> FillInBlankOptionsExercises { get; set; }
+        public DbSet<FillInTableExercise> FillInTableExercises { get; set; }
     }
 }

@@ -29,7 +29,7 @@ namespace LinguinoAPI.Middleware
             int statusCode = 0;
             if (exception is SignupErrorException) statusCode = (int)HttpStatusCode.BadRequest;
             if (exception is EmailErrorException) statusCode = (int)HttpStatusCode.InternalServerError;
-            if (exception is InvalidIDException) statusCode = (int)HttpStatusCode.NotFound;
+            if (exception is InvalidIDException) statusCode = (int)HttpStatusCode.BadRequest;
             if (exception is CourseMismatchException) statusCode = (int)HttpStatusCode.BadRequest;
             if (exception is UserNotInCourseException) statusCode = (int)HttpStatusCode.BadRequest;
             if (exception is AccessDeniedException) statusCode = (int)HttpStatusCode.Forbidden;

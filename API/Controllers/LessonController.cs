@@ -1,6 +1,5 @@
 ﻿using BLL.DTO;
 using BLL.Services.Contracts;
-using DAL.Entities;
 using DAL.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
