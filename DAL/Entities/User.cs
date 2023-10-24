@@ -15,6 +15,8 @@ namespace DAL.Entities
         public long? Balance { get; set; }
         [Required]
         public bool? AccountInitialized { get; set; } = false;
+        public List<User> Following { get; set; } = new();
+        public List<User> Followers { get; set; } = new();
         public List<Course> Courses { get; set; } = new();
         public List<UserCourse> UserCourses { get; set; } = new();
         public List<Topic> Topics { get; set; } = new();

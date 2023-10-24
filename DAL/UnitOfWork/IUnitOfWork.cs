@@ -11,12 +11,13 @@ namespace DAL.UnitOfWork
 {
     public interface IUnitOfWork : IDisposable
     {
+        UserManager<User> UserManager { get; set; }
         IUserRepository UserRepository { get; set; }
         ICourseRepository CourseRepository { get; set; }
         ITopicRepository TopicRepository { get; set; }
         ILessonItemRepository LessonItemRepository { get; set; }
         ILessonRepository LessonRepository { get; set; }
-        UserManager<User> UserManager { get; set; }
+        IExerciseRepository ExerciseRepository { get; set; }
 
         public void SaveChanges();
     }

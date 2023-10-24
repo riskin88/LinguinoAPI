@@ -22,8 +22,12 @@ namespace DAL.Configs
             builder.HasMany(u => u.Topics)
             .WithMany(t => t.Users)
             .UsingEntity<UserTopic>(
-                l => l.HasOne<Topic>(e => e.Topic).WithMany(e => e.UserTopics), r => r.HasOne<User>(e => e.User).WithMany(e => e.UserTopics)
-           );
+                l => l.HasOne<Topic>(e => e.Topic).WithMany(e => e.UserTopics), r => r.HasOne<User>(e => e.User).WithMany(e => e.UserTopics));
+            builder.HasMany(u => u.Followers)
+            .WithMany(u => u.Following)
+            .UsingEntity<Following>(
+                l => l.HasOne<User>().WithMany().HasForeignKey(e => e.FollowerId),
+                r => r.HasOne<User>().WithMany().HasForeignKey(e => e.FolloweeId));
         }
     }
 }

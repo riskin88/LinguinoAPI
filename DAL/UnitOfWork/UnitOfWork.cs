@@ -26,7 +26,7 @@ namespace DAL.UnitOfWork
         {
             _dbContext = db;
             UserManager = userManager;
-            UserRepository = new UserRepository(roleGuard);
+            UserRepository = new UserRepository(db, roleGuard);
             CourseRepository = new CourseRepository(db, roleGuard);
             TopicRepository = new TopicRepository(db, roleGuard);
             LessonItemRepository = new LessonItemRepository(db);

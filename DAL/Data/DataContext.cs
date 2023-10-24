@@ -18,6 +18,7 @@ namespace DAL.Data
             modelBuilder.Entity<IdentityRole>().HasData(new IdentityRole { Id = "3cf4378a-3fca-45d5-8782-db69e9bd5259", Name = "USER", NormalizedName = "USER" }, new IdentityRole { Id = "d05744d9-00ed-4cb8-8224-eb1e4abf31ba", Name = "PREMIUM_USER", NormalizedName = "PREMIUM_USER" }, new IdentityRole { Id = "7521910b-749d-4fbd-bf8e-dfddb9aa4fd6", Name = "ADMIN", NormalizedName = "ADMIN" });
 
         }
+        public DbSet<Following> Following { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<Topic> Topics { get; set; }
         public DbSet<UserCourse> UserCourses { get; set; }
