@@ -70,6 +70,17 @@ namespace DAL.Repositories
 
         }
 
+        public async Task AddToSelf(long topicId)
+        {
+            var topic = await dataContext.Set<Topic>().Include(t => t.Users).FirstOrDefaultAsync(t => t.Id == topicId);
+            if (topic != null)
+            {
+                if (!topic.Users.Contains(_roleGuard.user))
+                    topic.Users.Add(_roleGuard.user);
+            }
+
+            else throw new InvalidIDException("Topic does not exist.");
+        }
     }
 
 

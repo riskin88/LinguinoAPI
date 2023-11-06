@@ -32,6 +32,7 @@ namespace LinguinoAPI.Middleware
             if (exception is InvalidIDException) statusCode = (int)HttpStatusCode.BadRequest;
             if (exception is CourseMismatchException) statusCode = (int)HttpStatusCode.BadRequest;
             if (exception is UserNotInCourseException) statusCode = (int)HttpStatusCode.BadRequest;
+            if (exception is LessonItemMismatchException) statusCode = (int)HttpStatusCode.BadRequest;
             if (exception is AccessDeniedException) statusCode = (int)HttpStatusCode.Forbidden;
             if (exception is MyBadException) statusCode = (int)HttpStatusCode.InternalServerError;
 

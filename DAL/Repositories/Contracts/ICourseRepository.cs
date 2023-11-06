@@ -10,12 +10,14 @@ namespace DAL.Repositories.Contracts
         public Task<IEnumerable<Course>> GetOwn();
         public Task<Course> AddUser(long courseId);
         public Task<IEnumerable<Topic>> GetTopics(long courseId, TopicFilter filter);
+        public Task<IEnumerable<Topic>> GetTopics(long courseId);
+        public Task<IEnumerable<Lesson>> GetBuiltinLessons(long courseId);
+
         public Task AddTopic(long courseId, Topic topic);
         public Task<bool> IsEnrolled(long courseId);
         public Task<Course?> GetWithFeaturedTopics(long courseId);
         Task<IEnumerable<Topic>> GetDefaultTopics(long courseId);
-        Task InitAllInCourse(long courseId);
         public Task<IEnumerable<User>> GetUsersWithTopics(long courseId);
-        Task<IEnumerable<User>> GetUsersWithLessons(long courseId);
+        public Task<IEnumerable<User>> GetUsers(long courseId);
     }
 }

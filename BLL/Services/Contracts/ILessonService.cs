@@ -6,7 +6,7 @@ namespace BLL.Services.Contracts
 {
     public interface ILessonService
     {
-        void CreateLessonItem(CreateLessonItemDTO lessonItemDTO);
+        IdDTO CreateLessonItem();
         Task<CreateLessonRespDTO> CreateBuiltinLesson(CreateBuiltinLessonDTO builtinLessonDTO, long courseId);
         Task<CreateLessonRespDTO> CreateCustomLesson(CreateCustomLessonDTO customLessonDTO, long courseId);
         Task AddLessonToTopic(long topicId, long lessonId);
@@ -18,5 +18,6 @@ namespace BLL.Services.Contracts
         Task ModifyLessonStatus(long courseId, long lessonId, LessonStatusDTO lessonStatusDTO);
         Task DeleteCustomLesson(long courseId, long lessonId);
         Task<GetLessonDTO> GetLesson(long courseId, long lessonId);
+        CreateWordRespDTO CreateWord(CreateWordDTO createWordDTO);
     }
 }

@@ -108,6 +108,17 @@ namespace DAL.Repositories
             else throw new InvalidIDException("Course does not exist.");
         }
 
+        public async Task<IEnumerable<Topic>> GetTopics(long courseId)
+        {
+            return await dataContext.Set<Course>().Include(c => c.Topics).Where(e => e.Id == courseId).SelectMany(c => c.Topics).ToListAsync();
+        }
+
+
+        public async Task<IEnumerable<Lesson>> GetBuiltinLessons(long courseId)
+        {
+            return await dataContext.Set<Course>().Include(c => c.Lessons).Where(e => e.Id == courseId).SelectMany(c => c.Lessons).Where(l => l.IsCustom == false).ToListAsync();
+        }
+
         public async Task<IEnumerable<Topic>> GetDefaultTopics(long courseId)
         {
             var course = await GetWithTopics(courseId);
@@ -119,35 +130,14 @@ namespace DAL.Repositories
             else throw new InvalidIDException("Course does not exist.");
         }
 
-        public async Task InitAllInCourse(long courseId)
-        {
-            var course = await dataContext.Set<Course>().Include(c => c.Topics).ThenInclude(t => t.Users).Include(c => c.Lessons).ThenInclude(l => l.Users).FirstOrDefaultAsync(c => c.Id == courseId);
-            if (course != null)
-            {
-                foreach (var topic in course.Topics)
-                {
-
-                    if (!topic.Users.Contains(_roleGuard.user))
-                        topic.Users.Add(_roleGuard.user);
-
-                }
-                foreach (var lesson in course.Lessons)
-                {
-                    if (!lesson.IsCustom && !lesson.Users.Contains(_roleGuard.user))
-                        lesson.Users.Add(_roleGuard.user);
-                }
-            }
-            else throw new InvalidIDException("Course does not exist.");
-        }
-
         public async Task<IEnumerable<User>> GetUsersWithTopics(long courseId)
         {
             return await dataContext.Set<Course>().Where(e => e.Id == courseId).Include(c => c.Users).ThenInclude(u => u.Topics).SelectMany(c => c.Users).ToListAsync();
         }
 
-        public async Task<IEnumerable<User>> GetUsersWithLessons(long courseId)
+        public async Task<IEnumerable<User>> GetUsers(long courseId)
         {
-            return await dataContext.Set<Course>().Where(e => e.Id == courseId).Include(c => c.Users).ThenInclude(u => u.Lessons).SelectMany(c => c.Users).ToListAsync();
+            return await dataContext.Set<Course>().Where(e => e.Id == courseId).Include(c => c.Users).SelectMany(c => c.Users).ToListAsync();
         }
     }
 

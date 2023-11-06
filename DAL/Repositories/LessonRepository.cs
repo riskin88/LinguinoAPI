@@ -7,6 +7,7 @@ using DAL.Identity;
 using DAL.Repositories.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration.UserSecrets;
+using System.Runtime.CompilerServices;
 
 namespace DAL.Repositories
 {
@@ -20,13 +21,38 @@ namespace DAL.Repositories
             _roleGuard = roleGuard;
         }
 
-        public void AddLessonItem(Lesson lesson, LessonItem item)
+        public async Task AddLessonItem(long lessonId, LessonItem item)
         {
-
-            if (!lesson.LessonItems.Contains(item))
+            var lesson = await dataContext.Set<Lesson>().Include(l => l.LessonItems).FirstOrDefaultAsync(e => e.Id == lessonId);
+            if (lesson != null)
             {
-                lesson.LessonItems.Add(item);
+                if (!lesson.LessonItems.Contains(item))
+                {
+                    lesson.LessonItems.Add(item);
+                }
             }
+            else throw new InvalidIDException("Lesson does not exist.");
+
+        }
+
+        public async Task AddLessonItemWithOrder(long lessonId, LessonItem item, double? orderInLesson)
+        {
+            var lesson = await dataContext.Set<Lesson>().Include(l => l.LessonItems).FirstOrDefaultAsync(e => e.Id == lessonId);
+            if (lesson != null)
+            {
+                if (!lesson.LessonItems.Contains(item))
+                {
+                    lesson.LessonItems.Add(item);
+                }
+                var lessonItemLesson = await dataContext.Set<LessonItemLesson>().FirstOrDefaultAsync(e => e.LessonId == lesson.Id && e.LessonItemId == item.Id);
+                if (lessonItemLesson != null)
+                {
+                    lessonItemLesson.OrderInLesson = orderInLesson;
+                }
+                else throw new MyBadException(null);
+            }
+            else throw new InvalidIDException("Lesson does not exist.");
+
         }
 
         private async Task<Lesson?> GetWithTopics(long lessonId)
@@ -259,9 +285,33 @@ namespace DAL.Repositories
 
         public async Task AddToSelf(long lessonId)
         {
-            var lesson = await dataContext.Set<Lesson>().Include(l => l.Users).FirstOrDefaultAsync(l => l.Id == lessonId);
+            var lesson = await dataContext.Set<Lesson>().Include(l => l.Users).Include(l => l.LessonItems).ThenInclude(l => l.Users).FirstOrDefaultAsync(l => l.Id == lessonId);
             if (lesson != null)
-                lesson.Users.Add(_roleGuard.user);
+            {
+                if (!lesson.Users.Contains(_roleGuard.user))
+                    lesson.Users.Add(_roleGuard.user);
+                foreach (var item in lesson.LessonItems)
+                {
+                    if (!item.Users.Contains(_roleGuard.user))
+                        item.Users.Add(_roleGuard.user);
+                }
+            }
+            else throw new InvalidIDException("Lesson does not exist.");
+        }
+
+        public async Task AddToUser(long lessonId, User user)
+        {
+            var lesson = await dataContext.Set<Lesson>().Include(l => l.Users).Include(l => l.LessonItems).ThenInclude(l => l.Users).FirstOrDefaultAsync(l => l.Id == lessonId);
+            if (lesson != null)
+            {
+                if (!lesson.Users.Contains(user))
+                    lesson.Users.Add(user);
+                foreach (var item in lesson.LessonItems)
+                {
+                    if (!item.Users.Contains(user))
+                        item.Users.Add(user);
+                }
+            }
             else throw new InvalidIDException("Lesson does not exist.");
         }
     }

@@ -10,6 +10,6 @@ namespace BLL.DTO
         public string Name { get; set; }
         public string? Description { get; set; }
         [Ignore]
-        public List<IdDTO> Items { get; set; }
+        public List<CreateLessonNestedItemDTO> Items { get; set; }
     }
 }

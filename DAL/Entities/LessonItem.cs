@@ -15,5 +15,6 @@ namespace DAL.Entities
         public List<User> Users { get; set; } = new();
         public List<UserLessonItem> UserLessonItems { get; set; } = new();
         public List<Exercise> Exercises { get; set; } = new();
+        public List<LearningStep> LearningSteps { get; set; } = new();
     }
 }

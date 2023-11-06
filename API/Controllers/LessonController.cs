@@ -18,10 +18,16 @@ namespace LinguinoAPI.Controllers
 
         [HttpPost, Authorize(Roles = "ADMIN")]
         [Route("lesson-items")]
-        public ActionResult CreateLessonItem(CreateLessonItemDTO lessonItemDTO)
+        public ActionResult<IdDTO> CreateLessonItem()
         {
-            _lessonService.CreateLessonItem(lessonItemDTO);
-            return Ok();
+            return Ok(_lessonService.CreateLessonItem());
+        }
+
+        [HttpPost, Authorize(Roles = "ADMIN")]
+        [Route("lesson-items/vocabulary")]
+        public ActionResult<CreateWordRespDTO> CreateWord(CreateWordDTO createWordDTO)
+        {
+            return Ok(_lessonService.CreateWord(createWordDTO));
         }
 
         [HttpPost, Authorize(Roles = "ADMIN")]

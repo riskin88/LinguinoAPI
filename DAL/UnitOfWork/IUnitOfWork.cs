@@ -18,6 +18,7 @@ namespace DAL.UnitOfWork
         ILessonItemRepository LessonItemRepository { get; set; }
         ILessonRepository LessonRepository { get; set; }
         IExerciseRepository ExerciseRepository { get; set; }
+        ILearningStepRepository LearningStepRepository { get; set; }
 
         public void SaveChanges();
     }

@@ -12,5 +12,7 @@ namespace DAL.Repositories.Contracts
         public Task<UserTopic> GetUserTopic(long topicId);
         public Task<IEnumerable<UserLesson>> GetUserLessons(long topicId);
         public Task<IEnumerable<UserTopic>> GetUserTopics(long topicId);
+        Task AddToSelf(long topicId);
+
     }
 }

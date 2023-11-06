@@ -14,6 +14,6 @@ namespace BLL.DTO
         public LessonLevel? Level { get; set; }
         public long OrderOnMap {  get; set; }
         [Ignore]
-        public List<IdDTO> Items { get; set; }
+        public List<CreateLessonNestedItemDTO> Items { get; set; }
     }
 }

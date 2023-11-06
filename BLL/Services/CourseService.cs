@@ -69,7 +69,7 @@ namespace BLL.Services
         public async Task<CourseRespDTO> AddUserWithTopics(AddCourseDTO courseDTO, long courseId)
         {
             var course = await _unitOfWork.CourseRepository.AddUser(courseId);
-            await _unitOfWork.CourseRepository.InitAllInCourse(courseId);
+            await InitAllInCourse(courseId);
             _unitOfWork.SaveChanges();
             var defaultTopics = await _unitOfWork.CourseRepository.GetDefaultTopics(courseId);
             foreach (var topic in defaultTopics)
@@ -148,7 +148,7 @@ namespace BLL.Services
             var userLessons = await _unitOfWork.TopicRepository.GetUserLessons(topicId);
             foreach (var userLesson in userLessons)
             {
-                    userLesson.IsVisible = true;
+                userLesson.IsVisible = true;
             }
         }
 
@@ -173,6 +173,25 @@ namespace BLL.Services
                 if (hide)
                     userLesson.IsVisible = false;
             }
+        }
+
+        private async Task InitAllInCourse(long courseId)
+        {
+            var topics = await _unitOfWork.CourseRepository.GetTopics(courseId);
+            foreach (var topic in topics)
+            {
+
+                await _unitOfWork.TopicRepository.AddToSelf(topic.Id);
+
+            }
+            var lessons = await _unitOfWork.CourseRepository.GetBuiltinLessons(courseId);
+            foreach (var lesson in lessons)
+            {
+
+                await _unitOfWork.LessonRepository.AddToSelf(lesson.Id);
+
+            }
+
         }
     }
 }

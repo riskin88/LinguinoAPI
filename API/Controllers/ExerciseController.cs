@@ -18,6 +18,14 @@ namespace API.Controllers
         }
 
         [HttpPost, Authorize(Roles = "ADMIN")]
+        [Route("lesson-items/{lessonItemId}/learning-step")]
+        public async Task<ActionResult> CreateLearningStep(CreateLearningStepDTO createLearningStepDTO, long lessonItemId)
+        {
+            await _exerciseService.CreateLearningStep(createLearningStepDTO, lessonItemId);
+            return Ok();
+        }
+
+        [HttpPost, Authorize(Roles = "ADMIN")]
         [Route("lesson-items/{lessonItemId}/text-exercises")]
         public async Task<ActionResult> CreateTextExercise(CreateTextExerciseDTO textExerciseDTO, long lessonItemId)
         {

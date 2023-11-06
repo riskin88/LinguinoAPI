@@ -9,6 +9,9 @@ namespace DAL.Configs
     {
         public void Configure(EntityTypeBuilder<Exercise> builder)
         {
+            builder.HasMany(e => e.LearningSteps)
+            .WithMany(l => l.Exercises)
+            .UsingEntity<LearningStepExercise>(l => l.HasOne<LearningStep>(e => e.LearningStep).WithMany(e => e.LearningStepExercises), r => r.HasOne<Exercise>(e => e.Exercise).WithMany(e => e.LearningStepExercises));
         }
         public void Configure(EntityTypeBuilder<TextExercise> builder)
         { }

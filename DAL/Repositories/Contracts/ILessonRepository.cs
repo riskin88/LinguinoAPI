@@ -6,7 +6,8 @@ namespace DAL.Repositories.Contracts
 {
     public interface ILessonRepository : IRepositoryBase<Lesson>
     {
-        void AddLessonItem(Lesson lesson, LessonItem item);
+        Task AddLessonItem(long lessonId, LessonItem item);
+        Task AddLessonItemWithOrder(long lessonId, LessonItem item, double? orderInLesson);
         void AddAuthor(Lesson lesson);
         Task AddTopic(long lessonId, Topic topic);
         Task RemoveTopic(long lessonId, Topic topic);
@@ -24,5 +25,6 @@ namespace DAL.Repositories.Contracts
         Task<LessonFeedback?> GetFeedback(long lessonId);
         Task<Lesson> GetForUser(long lessonId);
         Task AddToSelf(long lessonId);
+        Task AddToUser(long lessonId, User user);
     }
 }

@@ -17,6 +17,8 @@ namespace DAL.UnitOfWork
         public ILessonItemRepository LessonItemRepository { get; set; }
         public ILessonRepository LessonRepository { get; set; }
         public IExerciseRepository ExerciseRepository { get; set; }
+        public ILearningStepRepository LearningStepRepository { get; set; }
+
 
         public UnitOfWork(DataContext db, UserManager<User> userManager, IRoleGuard roleGuard)
         {
@@ -28,6 +30,7 @@ namespace DAL.UnitOfWork
             LessonItemRepository = new LessonItemRepository(db);
             LessonRepository = new LessonRepository(db, roleGuard);
             ExerciseRepository = new ExerciseRepository(db, roleGuard);
+            LearningStepRepository = new LearningStepRepository(db);
         }
 
         public void Dispose()

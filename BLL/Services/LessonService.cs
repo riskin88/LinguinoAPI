@@ -20,11 +20,24 @@ namespace BLL.Services
             _mapper = mapper;
         }
 
-        public void CreateLessonItem(CreateLessonItemDTO lessonItemDTO)
+        public IdDTO CreateLessonItem()
         {
-            var lessonItem = _mapper.Map<LessonItem>(lessonItemDTO);
-            _unitOfWork.LessonItemRepository.Add(lessonItem);
+            var lessonItem = _unitOfWork.LessonItemRepository.CreateNew();
             _unitOfWork.SaveChanges();
+            IdDTO dto = new()
+            {
+                Id = lessonItem.Id
+            };
+            return dto;
+        }
+
+        public CreateWordRespDTO CreateWord(CreateWordDTO createWordDTO)
+        {
+            var word = _mapper.Map<Word>(createWordDTO);
+            _unitOfWork.LessonItemRepository.AddWord(word);
+            _unitOfWork.SaveChanges();
+            return _mapper.Map<CreateWordRespDTO>(word);
+
         }
 
         public async Task<CreateLessonRespDTO> CreateBuiltinLesson(CreateBuiltinLessonDTO builtinLessonDTO, long courseId)
@@ -37,16 +50,16 @@ namespace BLL.Services
                 _unitOfWork.LessonRepository.Add(lesson);
                 lesson.Course = course;
                 // add record to the M:N join table
-                var users = await _unitOfWork.CourseRepository.GetUsersWithLessons(courseId);
+                var users = await _unitOfWork.CourseRepository.GetUsers(courseId);
                 foreach (var user in users)
                 {
-                    user.Lessons.Add(lesson);
+                    await _unitOfWork.LessonRepository.AddToUser(lesson.Id, user);
                 }
                 foreach (var itemDTO in builtinLessonDTO.Items)
                 {
                     var item = await _unitOfWork.LessonItemRepository.GetById(itemDTO.Id);
                     if (item != null)
-                        _unitOfWork.LessonRepository.AddLessonItem(lesson, item);
+                        await _unitOfWork.LessonRepository.AddLessonItemWithOrder(lesson.Id, item, itemDTO.OrderInLesson);
                     else throw new InvalidIDException("Item " + itemDTO.Id + " does not exist.");
                 }
                 _unitOfWork.SaveChanges();
@@ -55,7 +68,6 @@ namespace BLL.Services
             else throw new InvalidIDException("Course does not exist.");
         }
 
-        // TODO: CHECK if all items are vocab
         public async Task<CreateLessonRespDTO> CreateCustomLesson(CreateCustomLessonDTO customLessonDTO, long courseId)
         {
             var course = await _unitOfWork.CourseRepository.GetById(courseId);
@@ -72,10 +84,10 @@ namespace BLL.Services
                     await _unitOfWork.LessonRepository.AddToSelf(lesson.Id);
                     foreach (var itemDTO in customLessonDTO.Items)
                     {
-                        var item = await _unitOfWork.LessonItemRepository.GetById(itemDTO.Id);
-                        if (item != null)
-                            _unitOfWork.LessonRepository.AddLessonItem(lesson, item);
-                        else throw new InvalidIDException("Item " + itemDTO.Id + " does not exist.");
+                        var word = await _unitOfWork.LessonItemRepository.GetWordById(itemDTO.Id);
+                        if (word != null)
+                            await _unitOfWork.LessonRepository.AddLessonItem(lesson.Id, word);
+                        else throw new InvalidIDException("Word " + itemDTO.Id + " does not exist.");
                     }
                     _unitOfWork.SaveChanges();
                     return _mapper.Map<CreateLessonRespDTO>(lesson);
@@ -267,5 +279,7 @@ namespace BLL.Services
             }
             else throw new UserNotInCourseException();
         }
+
+       
     }
 }
