@@ -1,5 +1,5 @@
 ﻿using BLL.DTO;
-using BLL.DTO.Exercises;
+using BLL.DTO.Exercises.Inbound;
 using BLL.Services.Contracts;
 using DAL.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -27,34 +27,81 @@ namespace API.Controllers
 
         [HttpPost, Authorize(Roles = "ADMIN")]
         [Route("lesson-items/{lessonItemId}/text-exercises")]
-        public async Task<ActionResult> CreateTextExercise(CreateTextExerciseDTO textExerciseDTO, long lessonItemId)
+        public async Task<ActionResult> CreateTextExercise(CreateTextExerciseDTO exerciseDTO, long lessonItemId)
         {
-            await _exerciseService.CreateTextExercise(textExerciseDTO, lessonItemId);
+            await _exerciseService.CreateExercise(exerciseDTO, lessonItemId);
             return Ok();
         }
 
         [HttpPost, Authorize(Roles = "ADMIN")]
-        [Route("lesson-items/{lessonItemId}/fill-blank-exercises")]
-        public async Task<ActionResult> CreateFillInBlankExercise(CreateFillInBlankExerciseDTO fillInBlankExerciseDTO, long lessonItemId)
+        [Route("lesson-items/{lessonItemId}/build-word-exercises")]
+        public async Task<ActionResult> CreateBuildWordExercise(CreateBuildWordExerciseDTO exerciseDTO, long lessonItemId)
         {
-            await _exerciseService.CreateFillInBlankExercise(fillInBlankExerciseDTO, lessonItemId);
+            await _exerciseService.CreateExercise(exerciseDTO, lessonItemId);
             return Ok();
         }
 
         [HttpPost, Authorize(Roles = "ADMIN")]
-        [Route("lesson-items/{lessonItemId}/fill-blank-options-exercises")]
-        public async Task<ActionResult> CreateFillInBlankOptionsExercise(CreateFillInBlankOptionsExerciseDTO fillInBlankOptionsExerciseDTO, long lessonItemId)
+        [Route("lesson-items/{lessonItemId}/fill-sentence-exercises")]
+        public async Task<ActionResult> CreateFillInSentenceExercise(CreateFillInSentenceExerciseDTO exerciseDTO, long lessonItemId)
         {
-            await _exerciseService.CreateFillInBlankOptionsExercise(fillInBlankOptionsExerciseDTO, lessonItemId);
+            await _exerciseService.CreateExercise(exerciseDTO, lessonItemId);
             return Ok();
         }
 
         [HttpPost, Authorize(Roles = "ADMIN")]
         [Route("lesson-items/{lessonItemId}/fill-table-exercises")]
-        public async Task<ActionResult> CreateFillInTableExercise(CreateFillInTableExerciseDTO fillInTableExerciseDTO, long lessonItemId)
+        public async Task<ActionResult> CreateFillInTableExercise(CreateFillInTableExerciseDTO exerciseDTO, long lessonItemId)
         {
-            await _exerciseService.CreateFillInTableExercise(fillInTableExerciseDTO, lessonItemId);
+            await _exerciseService.CreateExercise(exerciseDTO, lessonItemId);
             return Ok();
         }
+
+        [HttpPost, Authorize(Roles = "ADMIN")]
+        [Route("lesson-items/{lessonItemId}/listening-exercises")]
+        public async Task<ActionResult> CreateListeningExercise(CreateListeningExerciseDTO exerciseDTO, long lessonItemId)
+        {
+            await _exerciseService.CreateExercise(exerciseDTO, lessonItemId);
+            return Ok();
+        }
+
+        [HttpPost, Authorize(Roles = "ADMIN")]
+        [Route("lesson-items/{lessonItemId}/read-aloud-exercises")]
+        public async Task<ActionResult> CreateReadAloudExercise(CreateReadAloudExerciseDTO exerciseDTO, long lessonItemId)
+        {
+            await _exerciseService.CreateExercise(exerciseDTO, lessonItemId);
+            return Ok();
+        }
+
+        [HttpPost, Authorize(Roles = "ADMIN")]
+        [Route("lesson-items/{lessonItemId}/reading-exercises")]
+        public async Task<ActionResult> CreateReadingExercise(CreateReadingExerciseDTO exerciseDTO, long lessonItemId)
+        {
+            await _exerciseService.CreateExercise(exerciseDTO, lessonItemId);
+            return Ok();
+        }
+        [HttpPost, Authorize(Roles = "ADMIN")]
+        [Route("lesson-items/{lessonItemId}/repeat-audio-exercises")]
+        public async Task<ActionResult> CreateRepeatAudioExercise(CreateRepeatAudioExerciseDTO exerciseDTO, long lessonItemId)
+        {
+            await _exerciseService.CreateExercise(exerciseDTO, lessonItemId);
+            return Ok();
+        }
+        [HttpPost, Authorize(Roles = "ADMIN")]
+        [Route("lesson-items/{lessonItemId}/short-listening-exercises")]
+        public async Task<ActionResult> CreateShortListeningExercise(CreateShortListeningExerciseDTO exerciseDTO, long lessonItemId)
+        {
+            await _exerciseService.CreateExercise(exerciseDTO, lessonItemId);
+            return Ok();
+        }
+        [HttpPost, Authorize(Roles = "ADMIN")]
+        [Route("lesson-items/{lessonItemId}/speech-exercises")]
+        public async Task<ActionResult> CreateSpeechExercise(CreateSpeechExerciseDTO exerciseDTO, long lessonItemId) 
+        {
+            await _exerciseService.CreateExercise(exerciseDTO, lessonItemId);
+            return Ok();
+        }
+
+
     }
 }

@@ -34,8 +34,14 @@ namespace DAL.Data
         public DbSet<LearningStepExercise> LearningStepExercises { get; set; }
         public DbSet<Exercise> Exercises { get; set; }
         public DbSet<TextExercise> TextExercises { get; set; }
-        public DbSet<FillInBlankExercise> FillInBlankExercises { get; set; }
-        public DbSet<FillInBlankOptionsExercise> FillInBlankOptionsExercises { get; set; }
+        public DbSet<BuildWordExercise> BuildWordExercises { get; set; }
+        public DbSet<FillInSentenceExercise> FillInSentenceExercises { get; set; }
         public DbSet<FillInTableExercise> FillInTableExercises { get; set; }
+        public DbSet<ListeningExercise> ListeningExercises { get; set; }
+        public DbSet<ReadAloudExercise> ReadAloudExercises { get; set; }
+        public DbSet<ReadingExercise> ReadingExercises { get; set; }
+        public DbSet<RepeatAudioExercise> RepeatAudioExercises { get; set; }
+        public DbSet<ShortListeningExercise> ShortListeningExercise { get; set; }
+        public DbSet<SpeechExercise> SpeechExercise { get; set; }
     }
 }

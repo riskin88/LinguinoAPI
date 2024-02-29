@@ -10,11 +10,13 @@ namespace DAL.Entities
     [Table("Exercise")]
     public class Exercise : EntityBase
     {
-        public double? OrderInItem { get; set; }
         public long EstimatedTimeMs { get; set; }
         public long? LessonItemId { get; set; }
+        [JsonIgnore]
         public LessonItem? LessonItem { get; set; }
+        [JsonIgnore]
         public List<LearningStep> LearningSteps { get; set; } = new();
+        [JsonIgnore]
         public List<LearningStepExercise> LearningStepExercises { get; set; } = new();
     }
 }

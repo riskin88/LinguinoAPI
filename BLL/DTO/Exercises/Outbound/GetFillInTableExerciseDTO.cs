@@ -8,15 +8,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 
-namespace BLL.DTO.Exercises
+namespace BLL.DTO.Exercises.Outbound
 {
-    [AutoMap(typeof(FillInTableExercise), ReverseMap = true)]
-
-    public class CreateFillInTableExerciseDTO
+    public class GetFillInTableExerciseDTO : GetExerciseDTO
     {
-        public double? OrderInItem { get; set; }
-        public long EstimatedTimeMs { get; set; }
-        [Required]
         public string? Question { get; set; }
         public string[][] TableRows { get; set; }
         public int[][] BlankCellCoords { get; set; }

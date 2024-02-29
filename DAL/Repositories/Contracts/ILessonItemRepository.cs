@@ -6,7 +6,12 @@ namespace DAL.Repositories.Contracts
     public interface ILessonItemRepository : IRepositoryBase<LessonItem>
     {
         void AddWord(Word word);
-        LessonItem CreateNew();
+        void AddItem(LessonItem item);
+        Task<IEnumerable<LessonItem>> GetNewInLessonOrdered(long lessonId);
+        Task<IEnumerable<LessonItem>> GetOverdueToReviewInCourseOrdered(long courseId);
+        Task<IEnumerable<LessonItem>> GetToReviewInLessonOrdered(long lessonId);
         Task<Word?> GetWordById(long wordId);
+        Task<UserLessonItem> GetUserProgress(long itemId);
+        Task RemoveExercise(long lessonItemId, Exercise exercise);
     }
 }

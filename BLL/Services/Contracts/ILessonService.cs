@@ -6,7 +6,7 @@ namespace BLL.Services.Contracts
 {
     public interface ILessonService
     {
-        IdDTO CreateLessonItem();
+        CreateItemRespDTO CreateLessonItem(CreateItemDTO createItemDTO);
         Task<CreateLessonRespDTO> CreateBuiltinLesson(CreateBuiltinLessonDTO builtinLessonDTO, long courseId);
         Task<CreateLessonRespDTO> CreateCustomLesson(CreateCustomLessonDTO customLessonDTO, long courseId);
         Task AddLessonToTopic(long topicId, long lessonId);

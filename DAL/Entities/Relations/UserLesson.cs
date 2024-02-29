@@ -9,8 +9,7 @@ namespace DAL.Entities.Relations
         public User User { get; set; } = null!;
         public long LessonId { get; set; }
         public Lesson Lesson { get; set; } = null!;
-        public long ItemsDone { get; set; }
-        public long ItemsTotal { get; set; }
+        public long ItemsDone { get; set; } = 0;
         public bool IsVisible { get; set; } = false;
         public bool IsFavorite { get; set; } = false;
         public LessonFeedback? Feedback { get; set; }

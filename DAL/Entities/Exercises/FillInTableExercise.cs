@@ -6,7 +6,7 @@ namespace DAL.Entities
     public class FillInTableExercise : Exercise
     {
         [Required]
-        public string? Question { get; set; }
+        public string? QuestionL2 { get; set; }
         public string[][] TableRows { get; set; }
         public int[][] BlankCellCoords { get; set; }
     }

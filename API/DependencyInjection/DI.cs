@@ -11,6 +11,8 @@ using System.Text;
 using BLL.Helpers;
 using DAL.Identity;
 using API.Identity;
+using Microsoft.Extensions.Configuration;
+using BLL.Config;
 
 namespace LinguinoAPI.DependencyInjection
 {
@@ -52,7 +54,8 @@ namespace LinguinoAPI.DependencyInjection
             )
         };
     });
-
+            services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
+            services.Configure<LearningSettings>(configuration.GetSection("LearningSettings"));
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -62,6 +65,7 @@ namespace LinguinoAPI.DependencyInjection
             services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<ILessonService, LessonService>();
             services.AddScoped<IExerciseService, ExerciseService>();
+            services.AddScoped<ILearningService, LearningService>();
 
             services.AddScoped<IJwtService, JwtService>();
             services.AddScoped<EmailHelper>();

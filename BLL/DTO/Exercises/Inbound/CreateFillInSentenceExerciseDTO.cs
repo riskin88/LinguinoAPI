@@ -8,21 +8,18 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 
-namespace BLL.DTO.Exercises
+namespace BLL.DTO.Exercises.Inbound
 {
-    [AutoMap(typeof(FillInBlankExercise), ReverseMap = true)]
 
-    public class CreateFillInBlankExerciseDTO
+    public class CreateFillInSentenceExerciseDTO : CreateExerciseDTO
     {
-        public double? OrderInItem { get; set; }
-        public long EstimatedTimeMs { get; set; }
         [Required]
-        public string? Question { get; set; }
+        public string? TextL1 { get; set; }
         [Required]
-        public string? Answer { get; set; }
+        public string? TextL2 { get; set; }
         public int[] BlankIndexes { get; set; }
+        public string[] Options { get; set; }
         public string? ImageURL { get; set; }
-        public string? AnswerAudioURL { get; set; }
     }
 
 }

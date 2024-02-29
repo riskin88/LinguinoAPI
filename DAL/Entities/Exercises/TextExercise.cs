@@ -6,11 +6,11 @@ namespace DAL.Entities
     public class TextExercise : Exercise
     {
         [Required]
-        public string? Question { get; set; }
+        public string? TextL1 { get; set; }
         [Required]
-        public string? Answer { get; set; }
+        public string? TextL2 { get; set; }
         public string? Explanation { get; set; }
         public string? ImageURL { get; set; }
-        public string? AnswerAudioURL { get; set; }
+        public string? TextL2AudioURL { get; set; }
     }
 }

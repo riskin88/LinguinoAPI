@@ -18,9 +18,9 @@ namespace LinguinoAPI.Controllers
 
         [HttpPost, Authorize(Roles = "ADMIN")]
         [Route("lesson-items")]
-        public ActionResult<IdDTO> CreateLessonItem()
+        public ActionResult<CreateItemRespDTO> CreateLessonItem(CreateItemDTO createItemDTO)
         {
-            return Ok(_lessonService.CreateLessonItem());
+            return Ok(_lessonService.CreateLessonItem(createItemDTO));
         }
 
         [HttpPost, Authorize(Roles = "ADMIN")]

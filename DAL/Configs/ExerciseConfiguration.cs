@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DAL.Configs
 {
-    public class ExerciseConfiguration : IEntityTypeConfiguration<Exercise>, IEntityTypeConfiguration<TextExercise>, IEntityTypeConfiguration<FillInBlankExercise>, IEntityTypeConfiguration<FillInBlankOptionsExercise>, IEntityTypeConfiguration<FillInTableExercise>
+    public class ExerciseConfiguration : IEntityTypeConfiguration<Exercise>, IEntityTypeConfiguration<TextExercise>, IEntityTypeConfiguration<BuildWordExercise>, IEntityTypeConfiguration<FillInSentenceExercise>, IEntityTypeConfiguration<FillInTableExercise>, IEntityTypeConfiguration<ListeningExercise>, IEntityTypeConfiguration<ReadAloudExercise>, IEntityTypeConfiguration<ReadingExercise>, IEntityTypeConfiguration<RepeatAudioExercise>, IEntityTypeConfiguration<ShortListeningExercise>, IEntityTypeConfiguration<SpeechExercise>
     {
         public void Configure(EntityTypeBuilder<Exercise> builder)
         {
@@ -15,14 +15,8 @@ namespace DAL.Configs
         }
         public void Configure(EntityTypeBuilder<TextExercise> builder)
         { }
-        public void Configure(EntityTypeBuilder<FillInBlankExercise> builder)
-        {
-            builder.Property(e => e.BlankIndexes)
-            .HasConversion(
-                v => string.Join(',', v),
-                v => Array.ConvertAll((v.Split(',', StringSplitOptions.RemoveEmptyEntries)), int.Parse));
-        }
-        public void Configure(EntityTypeBuilder<FillInBlankOptionsExercise> builder)
+
+        public void Configure(EntityTypeBuilder<FillInSentenceExercise> builder)
         {
             builder.Property(e => e.BlankIndexes)
             .HasConversion(
@@ -43,6 +37,37 @@ namespace DAL.Configs
             .HasConversion(
                 v => string.Join("|", v.Select(array => string.Join(",", array))),
                 v => v.Split('|', StringSplitOptions.RemoveEmptyEntries).Select(substring => substring.Split(',', StringSplitOptions.RemoveEmptyEntries)).ToArray().Select(innerArray => innerArray.Select(int.Parse).ToArray()).ToArray());
+        }
+
+        public void Configure(EntityTypeBuilder<ReadAloudExercise> builder)
+        { }
+
+        public void Configure(EntityTypeBuilder<ListeningExercise> builder)
+        { }
+
+        public void Configure(EntityTypeBuilder<ReadingExercise> builder)
+        {  }
+
+        public void Configure(EntityTypeBuilder<ShortListeningExercise> builder)
+        {  }
+
+        public void Configure(EntityTypeBuilder<RepeatAudioExercise> builder)
+        {  }
+
+        public void Configure(EntityTypeBuilder<SpeechExercise> builder)
+        {
+            builder.Property(e => e.Questions)
+            .HasConversion(
+                v => string.Join(',', v),
+                v => (v.Split(',', StringSplitOptions.RemoveEmptyEntries)));
+        }
+
+        public void Configure(EntityTypeBuilder<BuildWordExercise> builder)
+        {
+            builder.Property(e => e.Letters)
+            .HasConversion(
+                v => string.Join(',', v),
+                v => (v.Split(',', StringSplitOptions.RemoveEmptyEntries)));
         }
     }
 }

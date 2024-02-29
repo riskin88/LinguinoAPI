@@ -20,15 +20,12 @@ namespace BLL.Services
             _mapper = mapper;
         }
 
-        public IdDTO CreateLessonItem()
+        public CreateItemRespDTO CreateLessonItem(CreateItemDTO createItemDTO)
         {
-            var lessonItem = _unitOfWork.LessonItemRepository.CreateNew();
+            var item = _mapper.Map<LessonItem>(createItemDTO);
+            _unitOfWork.LessonItemRepository.AddItem(item);
             _unitOfWork.SaveChanges();
-            IdDTO dto = new()
-            {
-                Id = lessonItem.Id
-            };
-            return dto;
+            return _mapper.Map<CreateItemRespDTO>(item);
         }
 
         public CreateWordRespDTO CreateWord(CreateWordDTO createWordDTO)
@@ -47,6 +44,7 @@ namespace BLL.Services
             {
                 var lesson = _mapper.Map<Lesson>(builtinLessonDTO);
                 lesson.IsCustom = false;
+                lesson.ItemsTotal = builtinLessonDTO.Items.Count;
                 _unitOfWork.LessonRepository.Add(lesson);
                 lesson.Course = course;
                 // add record to the M:N join table
@@ -77,6 +75,8 @@ namespace BLL.Services
                 {
                     var lesson = _mapper.Map<Lesson>(customLessonDTO);
                     lesson.IsCustom = true;
+                    lesson.Type = DAL.Entities.Enums.LessonType.VOCABULARY;
+                    lesson.ItemsTotal = customLessonDTO.Items.Count;
                     _unitOfWork.LessonRepository.Add(lesson);
                     lesson.Course = course;
                     _unitOfWork.LessonRepository.AddAuthor(lesson);

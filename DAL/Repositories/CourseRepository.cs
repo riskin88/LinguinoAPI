@@ -1,12 +1,13 @@
 ﻿using DAL.Data;
 using DAL.Entities;
+using DAL.Entities.Relations;
 using DAL.Exceptions;
 using DAL.Filters;
 using DAL.Identity;
 using DAL.Repositories.Contracts;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics.Metrics;
-
+using System.Runtime.InteropServices;
 
 namespace DAL.Repositories
 {
@@ -138,6 +139,24 @@ namespace DAL.Repositories
         public async Task<IEnumerable<User>> GetUsers(long courseId)
         {
             return await dataContext.Set<Course>().Where(e => e.Id == courseId).Include(c => c.Users).SelectMany(c => c.Users).ToListAsync();
+        }
+
+        public async Task<long> GetNextLessonId(long courseId)
+        {
+            string userId = _roleGuard.user.Id;
+            var userCourse = await dataContext.Set<UserCourse>().FirstOrDefaultAsync(e => e.CourseId == courseId && e.UserId == userId);
+            if (userCourse != null)
+            {
+                var position = userCourse.PositionOnMap;
+                var lesson = await dataContext.Set<UserLesson>().Where(ul => ul.UserId == userId && ul.IsVisible).Select(ul => ul.Lesson).Where(l => !l.IsCustom && l.CourseId == courseId).OrderBy(l => l.OrderOnMap).FirstOrDefaultAsync(l => l.OrderOnMap >= position);
+                if (lesson != null)
+                {
+                    return lesson.Id;
+                }
+                else throw new MyBadException("No next visible lesson on the study map was found.");
+
+            }
+            else throw new InvalidIDException("Course does not exist.");
         }
     }
 

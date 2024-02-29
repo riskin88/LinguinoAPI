@@ -19,5 +19,6 @@ namespace DAL.Repositories.Contracts
         Task<IEnumerable<Topic>> GetDefaultTopics(long courseId);
         public Task<IEnumerable<User>> GetUsersWithTopics(long courseId);
         public Task<IEnumerable<User>> GetUsers(long courseId);
+        public Task<long> GetNextLessonId(long courseId);
     }
 }

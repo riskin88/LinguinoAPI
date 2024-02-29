@@ -11,7 +11,8 @@ namespace DAL.Entities
     [Table("LearningStep")]
     public class LearningStep : EntityBase
     {
-        public int FromInterval { get; set; }
+        public int ToInterval { get; set; }
+        public int ExercisesInSession { get; set; }
         public List<Exercise> Exercises { get; set; } = new();
         public List<LearningStepExercise> LearningStepExercises { get; set; } = new();
         public long? LessonItemId { get; set; }

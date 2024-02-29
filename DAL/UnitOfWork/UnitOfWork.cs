@@ -27,7 +27,7 @@ namespace DAL.UnitOfWork
             UserRepository = new UserRepository(db, roleGuard);
             CourseRepository = new CourseRepository(db, roleGuard);
             TopicRepository = new TopicRepository(db, roleGuard);
-            LessonItemRepository = new LessonItemRepository(db);
+            LessonItemRepository = new LessonItemRepository(db, roleGuard);
             LessonRepository = new LessonRepository(db, roleGuard);
             ExerciseRepository = new ExerciseRepository(db, roleGuard);
             LearningStepRepository = new LearningStepRepository(db);

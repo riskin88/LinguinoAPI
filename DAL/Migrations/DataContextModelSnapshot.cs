@@ -68,9 +68,6 @@ namespace DAL.Migrations
                     b.Property<long?>("LessonItemId")
                         .HasColumnType("bigint");
 
-                    b.Property<double?>("OrderInItem")
-                        .HasColumnType("float");
-
                     b.HasKey("Id");
 
                     b.HasIndex("LessonItemId");
@@ -90,11 +87,14 @@ namespace DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<int>("FromInterval")
+                    b.Property<int>("ExercisesInSession")
                         .HasColumnType("int");
 
                     b.Property<long?>("LessonItemId")
                         .HasColumnType("bigint");
+
+                    b.Property<int>("ToInterval")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -125,6 +125,9 @@ namespace DAL.Migrations
 
                     b.Property<bool>("IsCustom")
                         .HasColumnType("bit");
+
+                    b.Property<long>("ItemsTotal")
+                        .HasColumnType("bigint");
 
                     b.Property<int?>("Level")
                         .HasColumnType("int");
@@ -181,6 +184,9 @@ namespace DAL.Migrations
                     b.Property<string>("Discriminator")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -338,9 +344,6 @@ namespace DAL.Migrations
                     b.Property<long>("ItemsDone")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("ItemsTotal")
-                        .HasColumnType("bigint");
-
                     b.Property<long>("LessonId")
                         .HasColumnType("bigint");
 
@@ -367,6 +370,9 @@ namespace DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
+                    b.Property<DateTime?>("DateToReview")
+                        .HasColumnType("datetime2");
+
                     b.Property<double>("Easiness")
                         .HasColumnType("float");
 
@@ -375,6 +381,9 @@ namespace DAL.Migrations
 
                     b.Property<bool>("IsFavorite")
                         .HasColumnType("bit");
+
+                    b.Property<int>("ItemState")
+                        .HasColumnType("int");
 
                     b.Property<long>("LessonItemId")
                         .HasColumnType("bigint");
@@ -690,43 +699,36 @@ namespace DAL.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("DAL.Entities.FillInBlankExercise", b =>
+            modelBuilder.Entity("DAL.Entities.BuildWordExercise", b =>
                 {
                     b.HasBaseType("DAL.Entities.Exercise");
-
-                    b.Property<string>("Answer")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AnswerAudioURL")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BlankIndexes")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ImageURL")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Question")
+                    b.Property<string>("Letters")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WordL1")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WordL2")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WordL2AudioURL")
                         .HasColumnType("nvarchar(max)");
 
                     b.ToTable("Exercise");
 
-                    b.HasDiscriminator().HasValue("FillInBlankExercise");
+                    b.HasDiscriminator().HasValue("BuildWordExercise");
                 });
 
-            modelBuilder.Entity("DAL.Entities.FillInBlankOptionsExercise", b =>
+            modelBuilder.Entity("DAL.Entities.FillInSentenceExercise", b =>
                 {
                     b.HasBaseType("DAL.Entities.Exercise");
-
-                    b.Property<string>("Answer")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AnswerAudioURL")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("BlankIndexes")
                         .IsRequired()
@@ -739,29 +741,21 @@ namespace DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Question")
+                    b.Property<string>("TextL1")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TextL2")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.ToTable("Exercise", t =>
                         {
-                            t.Property("Answer")
-                                .HasColumnName("FillInBlankOptionsExercise_Answer");
-
-                            t.Property("AnswerAudioURL")
-                                .HasColumnName("FillInBlankOptionsExercise_AnswerAudioURL");
-
-                            t.Property("BlankIndexes")
-                                .HasColumnName("FillInBlankOptionsExercise_BlankIndexes");
-
                             t.Property("ImageURL")
-                                .HasColumnName("FillInBlankOptionsExercise_ImageURL");
-
-                            t.Property("Question")
-                                .HasColumnName("FillInBlankOptionsExercise_Question");
+                                .HasColumnName("FillInSentenceExercise_ImageURL");
                         });
 
-                    b.HasDiscriminator().HasValue("FillInBlankOptionsExercise");
+                    b.HasDiscriminator().HasValue("FillInSentenceExercise");
                 });
 
             modelBuilder.Entity("DAL.Entities.FillInTableExercise", b =>
@@ -772,7 +766,7 @@ namespace DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Question")
+                    b.Property<string>("QuestionL2")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -780,25 +774,167 @@ namespace DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("Exercise", t =>
-                        {
-                            t.Property("Question")
-                                .HasColumnName("FillInTableExercise_Question");
-                        });
+                    b.ToTable("Exercise");
 
                     b.HasDiscriminator().HasValue("FillInTableExercise");
+                });
+
+            modelBuilder.Entity("DAL.Entities.ListeningExercise", b =>
+                {
+                    b.HasBaseType("DAL.Entities.Exercise");
+
+                    b.Property<string>("AnswerL2")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AudioURL")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageURL")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("QuestionL2")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("Exercise", t =>
+                        {
+                            t.Property("ImageURL")
+                                .HasColumnName("ListeningExercise_ImageURL");
+
+                            t.Property("QuestionL2")
+                                .HasColumnName("ListeningExercise_QuestionL2");
+                        });
+
+                    b.HasDiscriminator().HasValue("ListeningExercise");
+                });
+
+            modelBuilder.Entity("DAL.Entities.ReadAloudExercise", b =>
+                {
+                    b.HasBaseType("DAL.Entities.Exercise");
+
+                    b.Property<string>("ImageURL")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TextL2")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("Exercise", t =>
+                        {
+                            t.Property("ImageURL")
+                                .HasColumnName("ReadAloudExercise_ImageURL");
+
+                            t.Property("TextL2")
+                                .HasColumnName("ReadAloudExercise_TextL2");
+                        });
+
+                    b.HasDiscriminator().HasValue("ReadAloudExercise");
+                });
+
+            modelBuilder.Entity("DAL.Entities.ReadingExercise", b =>
+                {
+                    b.HasBaseType("DAL.Entities.Exercise");
+
+                    b.Property<string>("AnswerL2")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Article")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageURL")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("QuestionL2")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("Exercise", t =>
+                        {
+                            t.Property("AnswerL2")
+                                .HasColumnName("ReadingExercise_AnswerL2");
+
+                            t.Property("ImageURL")
+                                .HasColumnName("ReadingExercise_ImageURL");
+
+                            t.Property("QuestionL2")
+                                .HasColumnName("ReadingExercise_QuestionL2");
+                        });
+
+                    b.HasDiscriminator().HasValue("ReadingExercise");
+                });
+
+            modelBuilder.Entity("DAL.Entities.RepeatAudioExercise", b =>
+                {
+                    b.HasBaseType("DAL.Entities.Exercise");
+
+                    b.Property<string>("AudioURL")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TextL2")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("Exercise", t =>
+                        {
+                            t.Property("AudioURL")
+                                .HasColumnName("RepeatAudioExercise_AudioURL");
+
+                            t.Property("TextL2")
+                                .HasColumnName("RepeatAudioExercise_TextL2");
+                        });
+
+                    b.HasDiscriminator().HasValue("RepeatAudioExercise");
+                });
+
+            modelBuilder.Entity("DAL.Entities.ShortListeningExercise", b =>
+                {
+                    b.HasBaseType("DAL.Entities.Exercise");
+
+                    b.Property<string>("TextL2")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TextL2AudioURL")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("Exercise", t =>
+                        {
+                            t.Property("TextL2")
+                                .HasColumnName("ShortListeningExercise_TextL2");
+                        });
+
+                    b.HasDiscriminator().HasValue("ShortListeningExercise");
+                });
+
+            modelBuilder.Entity("DAL.Entities.SpeechExercise", b =>
+                {
+                    b.HasBaseType("DAL.Entities.Exercise");
+
+                    b.Property<string>("AssignmentTopicL2")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Questions")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TimeMs")
+                        .HasColumnType("int");
+
+                    b.ToTable("Exercise");
+
+                    b.HasDiscriminator().HasValue("SpeechExercise");
                 });
 
             modelBuilder.Entity("DAL.Entities.TextExercise", b =>
                 {
                     b.HasBaseType("DAL.Entities.Exercise");
-
-                    b.Property<string>("Answer")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AnswerAudioURL")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Explanation")
                         .HasColumnType("nvarchar(max)");
@@ -806,23 +942,30 @@ namespace DAL.Migrations
                     b.Property<string>("ImageURL")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Question")
+                    b.Property<string>("TextL1")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TextL2")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TextL2AudioURL")
                         .HasColumnType("nvarchar(max)");
 
                     b.ToTable("Exercise", t =>
                         {
-                            t.Property("Answer")
-                                .HasColumnName("TextExercise_Answer");
-
-                            t.Property("AnswerAudioURL")
-                                .HasColumnName("TextExercise_AnswerAudioURL");
-
                             t.Property("ImageURL")
                                 .HasColumnName("TextExercise_ImageURL");
 
-                            t.Property("Question")
-                                .HasColumnName("TextExercise_Question");
+                            t.Property("TextL1")
+                                .HasColumnName("TextExercise_TextL1");
+
+                            t.Property("TextL2")
+                                .HasColumnName("TextExercise_TextL2");
+
+                            t.Property("TextL2AudioURL")
+                                .HasColumnName("TextExercise_TextL2AudioURL");
                         });
 
                     b.HasDiscriminator().HasValue("TextExercise");

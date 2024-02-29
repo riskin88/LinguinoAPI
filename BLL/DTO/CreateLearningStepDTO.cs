@@ -7,8 +7,9 @@ namespace BLL.DTO
     [AutoMap(typeof(LearningStep), ReverseMap = true)]
     public class CreateLearningStepDTO
     {
-        public int FromInterval { get; set; }
+        public int ToInterval { get; set; }
+        public int ExercisesInSession { get; set; }
         [Ignore]
-        public List<IdDTO> Excercises { get; set; }
+        public List<IdDTO> ExercisesId { get; set; }
     }
 }

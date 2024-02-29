@@ -19,15 +19,13 @@ namespace DAL.Repositories
             var step = await dataContext.Set<LearningStep>().Include(l => l.Exercises).FirstOrDefaultAsync(e => e.Id == stepId);
             if (step != null)
             {
-                if (step.LessonItemId == exercise.LessonItemId)
+
+                if (!step.Exercises.Contains(exercise))
                 {
-                    if (!step.Exercises.Contains(exercise))
-                    {
-                        step.Exercises.Add(exercise);
-                    }
+                    step.Exercises.Add(exercise);
                 }
-                else throw new LessonItemMismatchException(null);
-                
+
+
             }
             else throw new InvalidIDException("Learning step does not exist.");
         }

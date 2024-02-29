@@ -3,15 +3,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DAL.Entities
 {
-    public class FillInBlankOptionsExercise : Exercise
+    public class FillInSentenceExercise : Exercise
     {
         [Required]
-        public string? Question { get; set; }
+        public string? TextL1 { get; set; }
         [Required]
-        public string? Answer { get; set; }
+        public string? TextL2 { get; set; }
         public int[] BlankIndexes { get; set; }
         public string[] Options { get; set; }
         public string? ImageURL { get; set; }
-        public string? AnswerAudioURL { get; set; }
     }
 }

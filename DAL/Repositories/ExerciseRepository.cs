@@ -1,7 +1,10 @@
 ﻿using DAL.Data;
 using DAL.Entities;
+using DAL.Entities.Relations;
+using DAL.Exceptions;
 using DAL.Identity;
 using DAL.Repositories.Contracts;
+using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Repositories
 {
@@ -14,24 +17,35 @@ namespace DAL.Repositories
             _roleGuard = roleGuard;
         }
 
-        public void Add(TextExercise textExercise)
+        public void AddExercise(Exercise exercise)
         {
-            dataContext.Set<TextExercise>().Add(textExercise);
+            dataContext.Set<Exercise>().Add(exercise);
         }
 
-        public void Add(FillInBlankExercise fillInBlankExercise)
+        public async Task<IEnumerable<Exercise>> GetFromStep(long stepId)
         {
-            dataContext.Set<FillInBlankExercise>().Add(fillInBlankExercise);
+            var step = await dataContext.Set<LearningStep>().Include(s => s.Exercises).FirstOrDefaultAsync(s => s.Id == stepId);
+            if (step != null)
+            {
+                var exercisesInSession = step.ExercisesInSession;
+                var exercises = step.Exercises;
+                Random rnd = new Random();
+                return exercises.OrderBy(x => rnd.Next()).Take(exercisesInSession);
+            }
+            else throw new InvalidIDException("Learning step does not exist.");
+
         }
 
-        public void Add(FillInBlankOptionsExercise fillInBlankOptionsExercise)
+        public async Task<IEnumerable<Exercise>> GetRandomFromItem(long itemId, int numberOfExercises)
         {
-            dataContext.Set<FillInBlankOptionsExercise>().Add(fillInBlankOptionsExercise);
-        }
-
-        public void Add(FillInTableExercise fillInTableExercise)
-        {
-            dataContext.Set<FillInTableExercise>().Add(fillInTableExercise);
+            var item = await dataContext.Set<LessonItem>().Include(l => l.Exercises).FirstOrDefaultAsync(l => l.Id == itemId);
+            if (item != null)
+            {
+                var exercises = item.Exercises;
+                Random rnd = new Random();
+                return exercises.OrderBy(x => rnd.Next()).Take(numberOfExercises);
+            }
+            else throw new InvalidIDException("Lesson item does not exist.");
         }
     }
 }
