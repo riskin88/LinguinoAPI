@@ -6,7 +6,7 @@ namespace BLL.Services.Contracts
 {
     public interface IExerciseService
     {
-        Task CreateLearningStep(CreateLearningStepDTO createLearningStepDTO, long lessonItemId);
-        Task CreateExercise(CreateExerciseDTO exerciseDTO, long lessonItemId);
+        Task<LearningStep> CreateLearningStep(CreateLearningStepDTO createLearningStepDTO, long lessonItemId);
+        Task<Exercise> CreateExercise(CreateExerciseDTO exerciseDTO, long lessonItemId);
     }
 }

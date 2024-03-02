@@ -20,7 +20,7 @@ namespace BLL.Services
             _mapper = mapper;
         }
 
-        public async Task CreateLearningStep(CreateLearningStepDTO createLearningStepDTO, long lessonItemId)
+        public async Task<LearningStep> CreateLearningStep(CreateLearningStepDTO createLearningStepDTO, long lessonItemId)
         {
             var lessonItem = await _unitOfWork.LessonItemRepository.GetById(lessonItemId);
             if (lessonItem != null)
@@ -43,10 +43,12 @@ namespace BLL.Services
                     else throw new InvalidIDException("Exercise " + exerciseDTO.Id + " does not exist.");
                 }
                 _unitOfWork.SaveChanges();
+                return learningStep;
             }
+            else throw new InvalidIDException("Lesson item does not exist.");
         }
 
-        public async Task CreateExercise(CreateExerciseDTO exerciseDTO, long lessonItemId)
+        public async Task<Exercise> CreateExercise(CreateExerciseDTO exerciseDTO, long lessonItemId)
         {
             var lessonItem = await _unitOfWork.LessonItemRepository.GetById(lessonItemId);
             if (lessonItem != null)
@@ -55,6 +57,7 @@ namespace BLL.Services
                 _unitOfWork.ExerciseRepository.AddExercise(exercise);
                 exercise.LessonItem = lessonItem;
                 _unitOfWork.SaveChanges();
+                return exercise;
             }
             else throw new InvalidIDException("Lesson item does not exist.");
         }

@@ -26,13 +26,14 @@ namespace LinguinoAPI.Middleware
         }
         private async Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
-            int statusCode = 0;
+            int statusCode = (int)HttpStatusCode.InternalServerError;
             if (exception is SignupErrorException) statusCode = (int)HttpStatusCode.BadRequest;
             if (exception is EmailErrorException) statusCode = (int)HttpStatusCode.InternalServerError;
             if (exception is InvalidIDException) statusCode = (int)HttpStatusCode.BadRequest;
             if (exception is CourseMismatchException) statusCode = (int)HttpStatusCode.BadRequest;
             if (exception is UserNotInCourseException) statusCode = (int)HttpStatusCode.BadRequest;
             if (exception is LessonItemMismatchException) statusCode = (int)HttpStatusCode.BadRequest;
+            if (exception is LessonTypeMismatchException) statusCode = (int)HttpStatusCode.BadRequest;
             if (exception is AccessDeniedException) statusCode = (int)HttpStatusCode.Forbidden;
             if (exception is MyBadException) statusCode = (int)HttpStatusCode.InternalServerError;
 

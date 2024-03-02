@@ -10,7 +10,7 @@ namespace DAL.Entities.Relations
         public long LessonId { get; set; }
         public Lesson Lesson { get; set; } = null!;
         public long ItemsDone { get; set; } = 0;
-        public bool IsVisible { get; set; } = false;
+        public bool IsVisible { get; set; } = true;
         public bool IsFavorite { get; set; } = false;
         public LessonFeedback? Feedback { get; set; }
     }

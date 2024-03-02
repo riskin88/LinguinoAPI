@@ -27,5 +27,6 @@ namespace DAL.Repositories.Contracts
         Task AddToSelf(long lessonId);
         Task AddToUser(long lessonId, User user);
         Task<bool> IsNotOwn(long lessonId);
+        Task<IEnumerable<User>> GetUsers(long lessonId);
     }
 }

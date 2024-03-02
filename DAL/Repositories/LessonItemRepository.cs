@@ -128,5 +128,16 @@ namespace DAL.Repositories
             string userId = _roleGuard.user.Id;
             return dataContext.Set<UserLessonItem>().FirstOrDefault(ul => ul.UserId == userId && ul.LessonItemId == lessonItemId).DateToReview;
         }
+
+        public async Task AddToUser(long lessonItemId, User user)
+        {
+            var lessonItem = await dataContext.Set<LessonItem>().Include(l => l.Users).FirstOrDefaultAsync(l => l.Id == lessonItemId);
+            if (lessonItem != null)
+            {
+                if (!lessonItem.Users.Contains(user))
+                    lessonItem.Users.Add(user);
+            }
+            else throw new InvalidIDException("Lesson item does not exist.");
+        }
     }
 }

@@ -23,6 +23,14 @@ namespace LinguinoAPI.Controllers
             return Ok(_lessonService.CreateLessonItem(createItemDTO));
         }
 
+        [HttpPut, Authorize(Roles = "ADMIN")]
+        [Route("lessons/{lessonId}/lesson-items/{lessonItemId}")]
+        public async Task<ActionResult> AddLessonItem(AddItemDTO itemDTO, long lessonId, long lessonItemId)
+        {
+            await _lessonService.AddLessonItem(itemDTO, lessonId, lessonItemId);
+            return Ok();
+        }
+
         [HttpPost, Authorize(Roles = "ADMIN")]
         [Route("lesson-items/vocabulary")]
         public ActionResult<CreateWordRespDTO> CreateWord(CreateWordDTO createWordDTO)

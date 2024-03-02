@@ -13,5 +13,6 @@ namespace DAL.Repositories.Contracts
         Task<Word?> GetWordById(long wordId);
         Task<UserLessonItem> GetUserProgress(long itemId);
         Task RemoveExercise(long lessonItemId, Exercise exercise);
+        Task AddToUser(long lessonItemId, User user);
     }
 }

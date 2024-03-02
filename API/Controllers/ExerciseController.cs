@@ -19,87 +19,76 @@ namespace API.Controllers
 
         [HttpPost, Authorize(Roles = "ADMIN")]
         [Route("lesson-items/{lessonItemId}/learning-step")]
-        public async Task<ActionResult> CreateLearningStep(CreateLearningStepDTO createLearningStepDTO, long lessonItemId)
+        public async Task<ActionResult<LearningStep>> CreateLearningStep(CreateLearningStepDTO createLearningStepDTO, long lessonItemId)
         {
-            await _exerciseService.CreateLearningStep(createLearningStepDTO, lessonItemId);
-            return Ok();
+            return Ok(await _exerciseService.CreateLearningStep(createLearningStepDTO, lessonItemId));
         }
 
         [HttpPost, Authorize(Roles = "ADMIN")]
         [Route("lesson-items/{lessonItemId}/text-exercises")]
-        public async Task<ActionResult> CreateTextExercise(CreateTextExerciseDTO exerciseDTO, long lessonItemId)
+        public async Task<ActionResult<Exercise>> CreateTextExercise(CreateTextExerciseDTO exerciseDTO, long lessonItemId)
         {
-            await _exerciseService.CreateExercise(exerciseDTO, lessonItemId);
-            return Ok();
+            return Ok(await _exerciseService.CreateExercise(exerciseDTO, lessonItemId));
         }
 
         [HttpPost, Authorize(Roles = "ADMIN")]
         [Route("lesson-items/{lessonItemId}/build-word-exercises")]
-        public async Task<ActionResult> CreateBuildWordExercise(CreateBuildWordExerciseDTO exerciseDTO, long lessonItemId)
+        public async Task<ActionResult<Exercise>> CreateBuildWordExercise(CreateBuildWordExerciseDTO exerciseDTO, long lessonItemId)
         {
-            await _exerciseService.CreateExercise(exerciseDTO, lessonItemId);
-            return Ok();
+            return Ok(await _exerciseService.CreateExercise(exerciseDTO, lessonItemId));
         }
 
         [HttpPost, Authorize(Roles = "ADMIN")]
         [Route("lesson-items/{lessonItemId}/fill-sentence-exercises")]
-        public async Task<ActionResult> CreateFillInSentenceExercise(CreateFillInSentenceExerciseDTO exerciseDTO, long lessonItemId)
+        public async Task<ActionResult<Exercise>> CreateFillInSentenceExercise(CreateFillInSentenceExerciseDTO exerciseDTO, long lessonItemId)
         {
-            await _exerciseService.CreateExercise(exerciseDTO, lessonItemId);
-            return Ok();
+            return Ok(await _exerciseService.CreateExercise(exerciseDTO, lessonItemId));
         }
 
         [HttpPost, Authorize(Roles = "ADMIN")]
         [Route("lesson-items/{lessonItemId}/fill-table-exercises")]
-        public async Task<ActionResult> CreateFillInTableExercise(CreateFillInTableExerciseDTO exerciseDTO, long lessonItemId)
+        public async Task<ActionResult<Exercise>> CreateFillInTableExercise(CreateFillInTableExerciseDTO exerciseDTO, long lessonItemId)
         {
-            await _exerciseService.CreateExercise(exerciseDTO, lessonItemId);
-            return Ok();
+            return Ok(await _exerciseService.CreateExercise(exerciseDTO, lessonItemId));
         }
 
         [HttpPost, Authorize(Roles = "ADMIN")]
         [Route("lesson-items/{lessonItemId}/listening-exercises")]
-        public async Task<ActionResult> CreateListeningExercise(CreateListeningExerciseDTO exerciseDTO, long lessonItemId)
+        public async Task<ActionResult<Exercise>> CreateListeningExercise(CreateListeningExerciseDTO exerciseDTO, long lessonItemId)
         {
-            await _exerciseService.CreateExercise(exerciseDTO, lessonItemId);
-            return Ok();
+            return Ok(await _exerciseService.CreateExercise(exerciseDTO, lessonItemId));
         }
 
         [HttpPost, Authorize(Roles = "ADMIN")]
         [Route("lesson-items/{lessonItemId}/read-aloud-exercises")]
-        public async Task<ActionResult> CreateReadAloudExercise(CreateReadAloudExerciseDTO exerciseDTO, long lessonItemId)
+        public async Task<ActionResult<Exercise>> CreateReadAloudExercise(CreateReadAloudExerciseDTO exerciseDTO, long lessonItemId)
         {
-            await _exerciseService.CreateExercise(exerciseDTO, lessonItemId);
-            return Ok();
+            return Ok(await _exerciseService.CreateExercise(exerciseDTO, lessonItemId));
         }
 
         [HttpPost, Authorize(Roles = "ADMIN")]
         [Route("lesson-items/{lessonItemId}/reading-exercises")]
-        public async Task<ActionResult> CreateReadingExercise(CreateReadingExerciseDTO exerciseDTO, long lessonItemId)
+        public async Task<ActionResult<Exercise>> CreateReadingExercise(CreateReadingExerciseDTO exerciseDTO, long lessonItemId)
         {
-            await _exerciseService.CreateExercise(exerciseDTO, lessonItemId);
-            return Ok();
+            return Ok(await _exerciseService.CreateExercise(exerciseDTO, lessonItemId));
         }
         [HttpPost, Authorize(Roles = "ADMIN")]
         [Route("lesson-items/{lessonItemId}/repeat-audio-exercises")]
-        public async Task<ActionResult> CreateRepeatAudioExercise(CreateRepeatAudioExerciseDTO exerciseDTO, long lessonItemId)
+        public async Task<ActionResult<Exercise>> CreateRepeatAudioExercise(CreateRepeatAudioExerciseDTO exerciseDTO, long lessonItemId)
         {
-            await _exerciseService.CreateExercise(exerciseDTO, lessonItemId);
-            return Ok();
+            return Ok(await _exerciseService.CreateExercise(exerciseDTO, lessonItemId));
         }
         [HttpPost, Authorize(Roles = "ADMIN")]
         [Route("lesson-items/{lessonItemId}/short-listening-exercises")]
-        public async Task<ActionResult> CreateShortListeningExercise(CreateShortListeningExerciseDTO exerciseDTO, long lessonItemId)
+        public async Task<ActionResult<Exercise>> CreateShortListeningExercise(CreateShortListeningExerciseDTO exerciseDTO, long lessonItemId)
         {
-            await _exerciseService.CreateExercise(exerciseDTO, lessonItemId);
-            return Ok();
+            return Ok(await _exerciseService.CreateExercise(exerciseDTO, lessonItemId));
         }
         [HttpPost, Authorize(Roles = "ADMIN")]
         [Route("lesson-items/{lessonItemId}/speech-exercises")]
-        public async Task<ActionResult> CreateSpeechExercise(CreateSpeechExerciseDTO exerciseDTO, long lessonItemId) 
+        public async Task<ActionResult<Exercise>> CreateSpeechExercise(CreateSpeechExerciseDTO exerciseDTO, long lessonItemId) 
         {
-            await _exerciseService.CreateExercise(exerciseDTO, lessonItemId);
-            return Ok();
+            return Ok(await _exerciseService.CreateExercise(exerciseDTO, lessonItemId));
         }
 
 

@@ -44,6 +44,7 @@ namespace DAL.Repositories
                 {
                     lesson.LessonItems.Add(item);
                 }
+                dataContext.SaveChanges();
                 var lessonItemLesson = await dataContext.Set<LessonItemLesson>().FirstOrDefaultAsync(e => e.LessonId == lesson.Id && e.LessonItemId == item.Id);
                 if (lessonItemLesson != null)
                 {
@@ -326,6 +327,11 @@ namespace DAL.Repositories
                 else return false;
             }
             else throw new InvalidIDException("Lesson does not exist.");
+        }
+
+        public async Task<IEnumerable<User>> GetUsers(long lessonId)
+        {
+            return await dataContext.Set<Course>().Where(e => e.Id == lessonId).Include(c => c.Users).SelectMany(c => c.Users).ToListAsync();
         }
     }
 

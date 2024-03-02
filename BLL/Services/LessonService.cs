@@ -6,6 +6,7 @@ using DAL.Entities.Relations;
 using DAL.Exceptions;
 using DAL.Filters;
 using DAL.UnitOfWork;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BLL.Services
 {
@@ -28,6 +29,29 @@ namespace BLL.Services
             return _mapper.Map<CreateItemRespDTO>(item);
         }
 
+        public async Task AddLessonItem(AddItemDTO itemDTO, long lessonId, long lessonItemId)
+        {
+            var lesson = await _unitOfWork.LessonRepository.GetById(lessonId);
+            if (lesson != null)
+            {
+                var item = await _unitOfWork.LessonItemRepository.GetById(lessonItemId);
+                    if (item != null)
+                    {
+                        if (item.Type == lesson.Type)
+                            await _unitOfWork.LessonRepository.AddLessonItemWithOrder(lesson.Id, item, itemDTO.OrderInLesson);
+                        else throw new LessonTypeMismatchException();
+                    }
+                var users = await _unitOfWork.LessonRepository.GetUsers(lessonId);
+                foreach (var user in users)
+                {
+                    await _unitOfWork.LessonItemRepository.AddToUser(lessonItemId, user);
+                }
+
+                lesson.ItemsTotal++;
+                _unitOfWork.SaveChanges();
+            }
+        }
+
         public CreateWordRespDTO CreateWord(CreateWordDTO createWordDTO)
         {
             var word = _mapper.Map<Word>(createWordDTO);
@@ -44,15 +68,10 @@ namespace BLL.Services
             {
                 var lesson = _mapper.Map<Lesson>(builtinLessonDTO);
                 lesson.IsCustom = false;
-                lesson.ItemsTotal = builtinLessonDTO.Items.Count;
                 _unitOfWork.LessonRepository.Add(lesson);
                 lesson.Course = course;
-                // add record to the M:N join table
-                var users = await _unitOfWork.CourseRepository.GetUsers(courseId);
-                foreach (var user in users)
-                {
-                    await _unitOfWork.LessonRepository.AddToUser(lesson.Id, user);
-                }
+                _unitOfWork.SaveChanges();
+
                 foreach (var itemDTO in builtinLessonDTO.Items)
                 {
                     var item = await _unitOfWork.LessonItemRepository.GetById(itemDTO.Id);
@@ -64,6 +83,14 @@ namespace BLL.Services
                     }
                         
                     else throw new InvalidIDException("Item " + itemDTO.Id + " does not exist.");
+                }
+                lesson.ItemsTotal = builtinLessonDTO.Items.Count;
+
+                // add record to the M:N join table
+                var users = await _unitOfWork.CourseRepository.GetUsers(courseId);
+                foreach (var user in users)
+                {
+                    await _unitOfWork.LessonRepository.AddToUser(lesson.Id, user);
                 }
                 _unitOfWork.SaveChanges();
                 return _mapper.Map<CreateLessonRespDTO>(lesson);
@@ -85,8 +112,8 @@ namespace BLL.Services
                     _unitOfWork.LessonRepository.Add(lesson);
                     lesson.Course = course;
                     _unitOfWork.LessonRepository.AddAuthor(lesson);
-                    // add record to the M:N join table
-                    await _unitOfWork.LessonRepository.AddToSelf(lesson.Id);
+                    _unitOfWork.SaveChanges();
+                    
                     foreach (var itemDTO in customLessonDTO.Items)
                     {
                         var word = await _unitOfWork.LessonItemRepository.GetWordById(itemDTO.Id);
@@ -94,6 +121,10 @@ namespace BLL.Services
                             await _unitOfWork.LessonRepository.AddLessonItem(lesson.Id, word);
                         else throw new InvalidIDException("Word " + itemDTO.Id + " does not exist.");
                     }
+
+                    // add record to the M:N join table
+                    await _unitOfWork.LessonRepository.AddToSelf(lesson.Id);
+
                     _unitOfWork.SaveChanges();
                     return _mapper.Map<CreateLessonRespDTO>(lesson);
                 }
