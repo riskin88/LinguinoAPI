@@ -13,7 +13,7 @@ namespace DAL.Entities.Relations
         public LessonItem LessonItem { get; set; } = null!;
         public bool IsFavorite { get; set; } = false;
         public int Repetitions { get; set; } = 0;
-        public int Interval { get; set; } = 1;
+        public int Interval { get; set; } = 0;
         [DataType(DataType.Date)]
         [Column(TypeName = "Date")]
         public DateTime? DateToReview { get; set; }

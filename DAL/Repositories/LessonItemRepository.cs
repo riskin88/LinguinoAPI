@@ -21,7 +21,7 @@ namespace DAL.Repositories
         public void AddWord(Word word)
         {
             dataContext.Set<Word>().Add(word);
-            word.Type = LessonItemType.WORD;
+            word.Type = LessonType.VOCABULARY;
         }
 
         public void AddItem(LessonItem item)
@@ -35,15 +35,14 @@ namespace DAL.Repositories
 
             if (lesson != null)
             {
-                var lessonItemLessons = dataContext.Set<LessonItemLesson>().Include(li => li.LessonItem).ThenInclude(li => li.UserLessonItems).Where(li => li.Id == lessonId).OrderBy(li => li.OrderInLesson).OrderByDescending(li => li.OrderInLesson == null);
                 string userId = _roleGuard.user.Id;
-                var items = await lessonItemLessons.Select(li => li.LessonItem).SelectMany(li => li.UserLessonItems).Where(ul => ul.UserId == userId && ul.ItemState == LessonItemState.NEW).Select(ul => ul.LessonItem).ToListAsync();
+                var items = await dataContext.Set<LessonItem>().Include(li => li.Lessons).Where(li => li.Lessons.Contains(lesson)).SelectMany(li => li.UserLessonItems).Where(ul => ul.UserId == userId && ul.ItemState == LessonItemState.NEW).Select(ul => ul.LessonItem).Distinct().ToListAsync();
                 List<LessonItem> res = new();
                 foreach (var item in items)
                 {
                     res.Add(await dataContext.Set<LessonItem>().Include(li => li.LearningSteps).Include(li => li.Lessons).FirstOrDefaultAsync(li => li.Id == item.Id));
                 }
-                return res;
+                return res.OrderBy(li => GetOrderInLessonNotNull(lessonId, li.Id)).ToList();
 
             }
             else throw new InvalidIDException("Lesson does not exist.");
@@ -55,13 +54,13 @@ namespace DAL.Repositories
             if (course != null)
             {
                 string userId = _roleGuard.user.Id;
-                var items = await course.SelectMany(c => c.Lessons).SelectMany(l => l.LessonItems).SelectMany(li => li.UserLessonItems).Where(ul => ul.UserId == userId && ul.ItemState == LessonItemState.REVIEW && ul.DateToReview <= DateTime.Now).OrderBy(ul => ul.DateToReview).Select(ul => ul.LessonItem).ToListAsync();
+                var items = await course.SelectMany(c => c.Lessons).SelectMany(l => l.LessonItems).SelectMany(li => li.UserLessonItems).Where(ul => ul.UserId == userId && ul.ItemState == LessonItemState.REVIEW && ul.DateToReview <= DateTime.Now).Select(ul => ul.LessonItem).Distinct().ToListAsync();
                 List<LessonItem> res = new();
                 foreach (var item in items)
                 {
                     res.Add(await dataContext.Set<LessonItem>().Include(li => li.LearningSteps).Include(li => li.Lessons).FirstOrDefaultAsync(li => li.Id == item.Id));
                 }
-                return res;
+                return res.OrderBy(li => GetDateToReview(li.Id)).ToList();
             }
             else throw new InvalidIDException("Course does not exist.");
 
@@ -74,13 +73,13 @@ namespace DAL.Repositories
             if (lesson != null)
             {
                 string userId = _roleGuard.user.Id;
-                var items = await dataContext.Set<UserLessonItem>().Include(ul => ul.LessonItem).ThenInclude(li => li.Lessons).Where(ul => ul.UserId == userId && ul.ItemState == LessonItemState.REVIEW ).OrderBy(ul => ul.DateToReview).Select(ul => ul.LessonItem).Where(li => li.Lessons.Contains(lesson)).ToListAsync();
+                var items = await dataContext.Set<UserLessonItem>().Include(ul => ul.LessonItem).ThenInclude(li => li.Lessons).Where(ul => ul.UserId == userId && ul.ItemState == LessonItemState.REVIEW).Select(ul => ul.LessonItem).Where(li => li.Lessons.Contains(lesson)).Distinct().ToListAsync();
                 List<LessonItem> res = new();
                 foreach (var item in items)
                 {
                     res.Add(await dataContext.Set<LessonItem>().Include(li => li.LearningSteps).Include(li => li.Lessons).FirstOrDefaultAsync(li => li.Id == item.Id));
                 }
-                return res;
+                return res.OrderBy(li => GetDateToReview(li.Id)).ToList();
             }
             else throw new InvalidIDException("Lesson does not exist.");
         }
@@ -116,6 +115,18 @@ namespace DAL.Repositories
 
             }
             else throw new InvalidIDException("Lesson item does not exist.");
+        }
+
+        private double GetOrderInLessonNotNull(long lessonId, long lessonItemId)
+        {
+            var order = dataContext.Set<LessonItemLesson>().FirstOrDefault(lil => lil.LessonId == lessonId && lil.LessonItemId == lessonItemId).OrderInLesson;
+            return order ?? double.MaxValue;
+        }
+
+        private DateTime? GetDateToReview(long lessonItemId)
+        {
+            string userId = _roleGuard.user.Id;
+            return dataContext.Set<UserLessonItem>().FirstOrDefault(ul => ul.UserId == userId && ul.LessonItemId == lessonItemId).DateToReview;
         }
     }
 }

@@ -36,21 +36,26 @@ namespace BLL.Services
                     // study specific lesson
                     if (filter.LessonId != null)
                     {
-                        // new
-                        long totalTimeNew = (long)(_configuration.SessionLengthMs * _configuration.TimeForNewItems);
-                        var itemsNew = await _unitOfWork.LessonItemRepository.GetNewInLessonOrdered(filter.LessonId.Value);
-                        (IEnumerable<Exercise> exercises, long time) res = await GetExercisesForOrderedItems(itemsNew, totalTimeNew);
-                        exerciseDTOs = _mapper.Map<IEnumerable<Exercise>, List<GetExerciseDTO>>(res.exercises);
-                        exerciseDTOs.ForEach(e =>
+                        if (!await _unitOfWork.LessonRepository.IsNotOwn(filter.LessonId.Value))
                         {
-                            e.IsNew = true;
-                            e.LessonId = filter.LessonId.Value;
+                            // new
+                            long totalTimeNew = (long)(_configuration.SessionLengthMs * _configuration.TimeForNewItems);
+                            var itemsNew = await _unitOfWork.LessonItemRepository.GetNewInLessonOrdered(filter.LessonId.Value);
+                            (IEnumerable<GetExerciseDTO> exercises, long time) res = await GetExercisesForOrderedItems(itemsNew, totalTimeNew, true);
+                            exerciseDTOs = res.exercises.ToList();
+                            exerciseDTOs.ForEach(e =>
+                            {
+                                e.IsNew = true;
+                                e.LessonId = filter.LessonId.Value;
                             });
 
-                        // to review
-                        long totalTimeReview = _configuration.SessionLengthMs - res.time;
-                        var itemsToReview = await _unitOfWork.LessonItemRepository.GetToReviewInLessonOrdered(filter.LessonId.Value);
-                        exerciseDTOs.AddRange(_mapper.Map<IEnumerable<Exercise>, List<GetExerciseDTO>>((await GetExercisesForOrderedItems(itemsToReview, totalTimeReview)).Item1));
+                            // to review
+                            long totalTimeReview = _configuration.SessionLengthMs - res.time;
+                            var itemsToReview = await _unitOfWork.LessonItemRepository.GetToReviewInLessonOrdered(filter.LessonId.Value);
+                            exerciseDTOs.AddRange((await GetExercisesForOrderedItems(itemsToReview, totalTimeReview, false)).Item1);
+                        }
+                        else throw new AccessDeniedException("You have no access to this lesson.");
+
                     }
 
                     // daily learning
@@ -60,8 +65,8 @@ namespace BLL.Services
                         long totalTimeNew = (long)(_configuration.SessionLengthMs * _configuration.TimeForNewItems);
                         var lessonId = await _unitOfWork.CourseRepository.GetNextLessonId(courseId);
                         var itemsNew = await _unitOfWork.LessonItemRepository.GetNewInLessonOrdered(lessonId);
-                        (IEnumerable<Exercise> exercises, long time) res = await GetExercisesForOrderedItems(itemsNew, totalTimeNew);
-                        exerciseDTOs = _mapper.Map<IEnumerable<Exercise>, List<GetExerciseDTO>>(res.exercises);
+                        (IEnumerable<GetExerciseDTO> exercises, long time) res = await GetExercisesForOrderedItems(itemsNew, totalTimeNew, true);
+                        exerciseDTOs = res.exercises.ToList();
                         exerciseDTOs.ForEach(e =>
                         {
                             e.IsNew = true;
@@ -71,7 +76,7 @@ namespace BLL.Services
                         // review
                         long totalTimeReview = _configuration.SessionLengthMs - res.time;
                         var itemsToReview = await _unitOfWork.LessonItemRepository.GetOverdueToReviewInCourseOrdered(courseId);
-                        exerciseDTOs.AddRange(_mapper.Map<IEnumerable<Exercise>, List<GetExerciseDTO>>((await GetExercisesForOrderedItems(itemsToReview, totalTimeReview)).Item1));
+                        exerciseDTOs.AddRange((await GetExercisesForOrderedItems(itemsToReview, totalTimeReview, false)).Item1);
                     }
 
                     exerciseDTOs.Shuffle();
@@ -86,20 +91,14 @@ namespace BLL.Services
         private int GetNumberOfExercises(LessonItem item, bool isNew)
         {
             string typeStr = "";
-            if (item is Word)
+
+            var itemType = item.Type;
+            string? enumName = Enum.GetName(typeof(LessonType), itemType);
+            if (enumName != null)
             {
-                typeStr = "WORD";
+                typeStr = enumName;
             }
-            else
-            {
-                var itemType = item.Type;
-                string? enumName = Enum.GetName(typeof(LessonItemType), itemType);
-                if (enumName != null)
-                {
-                    typeStr = enumName;
-                }
-                else throw new MyBadException(null);
-            }
+            else throw new MyBadException(null);
 
             if (isNew)
             {
@@ -118,10 +117,10 @@ namespace BLL.Services
             else throw new MyBadException("Lesson item type not found in config.");
         }
 
-        private async Task<(IEnumerable<Exercise>, long)> GetExercisesForOrderedItems(IEnumerable<LessonItem> itemsAll, long totalTime)
+        private async Task<(IEnumerable<GetExerciseDTO>, long)> GetExercisesForOrderedItems(IEnumerable<LessonItem> itemsAll, long limitTime, bool isNew)
         {
-            List<Exercise> exercisesAll = new();
-            long currentTime = 0;
+            List<GetExerciseDTO> exercisesAll = new();
+            long totalTime = 0;
             foreach (var item in itemsAll)
             {
                 List<Exercise> exercises = new();
@@ -136,29 +135,38 @@ namespace BLL.Services
                     }
                     else
                     {
-                        int numberOfExercises = GetNumberOfExercises(item, true);
+                        int numberOfExercises = GetNumberOfExercises(item, isNew);
                         exercises.AddRange(await _unitOfWork.ExerciseRepository.GetRandomFromItem(item.Id, numberOfExercises));
                     }
                 }
 
                 else
                 {
-                    int numberOfExercises = GetNumberOfExercises(item, true);
+                    int numberOfExercises = GetNumberOfExercises(item, isNew);
                     exercises.AddRange(await _unitOfWork.ExerciseRepository.GetRandomFromItem(item.Id, numberOfExercises));
                 }
 
+                long itemTime = 0;
                 foreach (var exercise in exercises)
                 {
-                    currentTime += exercise.EstimatedTimeMs;
+                    itemTime += exercise.EstimatedTimeMs;
                 }
-                if (currentTime > totalTime)
+                if (totalTime + itemTime > limitTime)
                 {
                     break;
                 }
-                exercisesAll.AddRange(exercises);
+                totalTime += itemTime;
+
+                var exerciseDTOs = _mapper.Map<IEnumerable<Exercise>, List<GetExerciseDTO>>(exercises);
+                foreach (var exercise in exerciseDTOs)
+                {
+                    exercise.LessonItemType = item.Type;
+                }
+
+                exercisesAll.AddRange(exerciseDTOs);
 
             }
-            return (exercisesAll, currentTime);
+            return (exercisesAll, totalTime);
         }
 
     }

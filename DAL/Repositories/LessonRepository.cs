@@ -314,6 +314,19 @@ namespace DAL.Repositories
             }
             else throw new InvalidIDException("Lesson does not exist.");
         }
+
+        public async Task<bool> IsNotOwn(long lessonId)
+        {
+            var lesson = await dataContext.Set<Lesson>().FirstOrDefaultAsync(l => l.Id == lessonId);
+            if (lesson != null)
+            {
+                string userId = _roleGuard.user.Id;
+                if (lesson.IsCustom && lesson.AuthorId != userId)
+                    return true;
+                else return false;
+            }
+            else throw new InvalidIDException("Lesson does not exist.");
+        }
     }
 
 

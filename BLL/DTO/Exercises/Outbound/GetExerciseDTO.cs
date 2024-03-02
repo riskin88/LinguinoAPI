@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using DAL.Entities.Enums;
 
 namespace BLL.DTO.Exercises.Outbound
 {
@@ -26,6 +27,7 @@ namespace BLL.DTO.Exercises.Outbound
         public long Id { get; set; }
         public string? Type { get; set; }
         public long LessonItemId { get; set; }
+        public LessonType? LessonItemType { get; set; }
         public bool IsNew { get; set; } = false;
         public long? LessonId { get; set; }
     }

@@ -8,7 +8,7 @@ namespace BLL.DTO
     public class CreateItemRespDTO
     {
         public long Id { get; set; }
-        public LessonItemType? Type { get; set; }
+        public LessonType? Type { get; set; }
 
     }
 }

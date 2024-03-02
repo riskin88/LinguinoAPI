@@ -11,7 +11,7 @@ namespace DAL.Entities
     [Table("LessonItem")]
     public class LessonItem : EntityBase
     {
-        public LessonItemType Type { get; set; }
+        public LessonType Type { get; set; }
         public List<Lesson> Lessons { get; set; } = new();
         public List<LessonItemLesson> LessonItemLessons { get; set; } = new();
         public List<User> Users { get; set; } = new();

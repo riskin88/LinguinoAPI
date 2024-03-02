@@ -57,7 +57,12 @@ namespace BLL.Services
                 {
                     var item = await _unitOfWork.LessonItemRepository.GetById(itemDTO.Id);
                     if (item != null)
-                        await _unitOfWork.LessonRepository.AddLessonItemWithOrder(lesson.Id, item, itemDTO.OrderInLesson);
+                    {
+                        if (item.Type == lesson.Type)
+                            await _unitOfWork.LessonRepository.AddLessonItemWithOrder(lesson.Id, item, itemDTO.OrderInLesson);
+                        else throw new LessonTypeMismatchException();
+                    }
+                        
                     else throw new InvalidIDException("Item " + itemDTO.Id + " does not exist.");
                 }
                 _unitOfWork.SaveChanges();

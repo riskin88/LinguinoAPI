@@ -8,6 +8,6 @@ namespace BLL.DTO
     [AutoMap(typeof(LessonItem), ReverseMap = true)]
     public class CreateItemDTO
     {
-        public LessonItemType Type { get; set; }
+        public LessonType Type { get; set; }
     }
 }
