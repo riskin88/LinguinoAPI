@@ -1,12 +1,15 @@
 ﻿using AutoMapper;
 using BLL.Config;
+using BLL.DTO;
 using BLL.DTO.Exercises.Outbound;
 using BLL.Services.Contracts;
 using DAL.Entities;
 using DAL.Entities.Enums;
+using DAL.Entities.Relations;
 using DAL.Exceptions;
 using DAL.Filters;
 using DAL.UnitOfWork;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Options;
 
 namespace BLL.Services
@@ -63,7 +66,7 @@ namespace BLL.Services
                     {
                         // TODO move time from config to user settings
                         long totalTimeNew = (long)(_configuration.SessionLengthMs * _configuration.TimeForNewItems);
-                        var lessonId = await _unitOfWork.CourseRepository.GetNextLessonId(courseId);
+                        var lessonId = await _unitOfWork.CourseRepository.GetCurrentLessonId(courseId);
                         var itemsNew = await _unitOfWork.LessonItemRepository.GetNewInLessonOrdered(lessonId);
                         (IEnumerable<GetExerciseDTO> exercises, long time) res = await GetExercisesForOrderedItems(itemsNew, totalTimeNew, true);
                         exerciseDTOs = res.exercises.ToList();
@@ -169,8 +172,95 @@ namespace BLL.Services
             return (exercisesAll, totalTime);
         }
 
+        public async Task<PostSessionRespDTO> PostStudySessionResults(IEnumerable<ExerciseAnswerDTO> exerciseAnswers, long courseId)
+        {
+            bool movePosition = false;
+            var userCourse = await _unitOfWork.CourseRepository.GetUserCourse(courseId);
+            var itemResults = exerciseAnswers.GroupBy(x => x.LessonItemId)
+                          .Select(g => new
+                          {
+                              lessonItemId = g.Key,
+                              averageRating = g.Average(x => x.AnswerRating)
+                          });
+            foreach (var itemResult in itemResults)
+            {
+                var userLessonItem = await _unitOfWork.LessonItemRepository.GetUserProgress(itemResult.lessonItemId);
+                if (userLessonItem.ItemState == LessonItemState.NEW)
+                {
+                    var userLessons = await _unitOfWork.LessonItemRepository.GetUserLessons(itemResult.lessonItemId);
+                    foreach (var userLesson in userLessons)
+                    {
+                        if (userLesson.Lesson.CourseId != courseId)
+                            throw new CourseMismatchException("Lesson item does not belong to this course.");
+                        if (++userLesson.ItemsDone >= userLesson.Lesson.ItemsTotal && !userLesson.Lesson.IsCustom)
+                        {
+                            if (userLesson.Lesson.OrderOnMap >= userCourse.PositionOnMap)
+                                movePosition = true;
+                        }
+                    }
+                }
+                UpdateUserProgress(userLessonItem, itemResult.averageRating);
+            }
+            await _unitOfWork.CourseRepository.MovePositionOnMap(courseId);
+            var user = _unitOfWork.UserRepository.GetUser();
+            int points = exerciseAnswers.Count() * _configuration.PointsForExercise;
+            user.Balance += points;
+            // last session was before yesterday
+            if (user.LastSessionDate == null || user.LastSessionDate < DateTime.Today.AddDays(-1))
+            {
+                user.Streak = 0;
+            }
+            else
+            {
+                user.Streak++;
+            }
+            user.LastSessionDate = DateTime.Today;
+            _unitOfWork.SaveChanges();
+            return new PostSessionRespDTO { Reward = points };
+
+        }
+
+        private void UpdateUserProgress(UserLessonItem progress, double averageRating)
+        {
+            int responseQuality = (int)Math.Round(averageRating / 20.0);
+            if (responseQuality < 3)
+            {
+                progress.Repetitions = 1;
+                progress.Interval = 1;
+            }
+            else
+            {
+                switch (progress.Repetitions)
+                {
+                    case 0:
+                        progress.Interval = 1; break;
+                    case 1:
+                        progress.Interval = 6; break;
+                    default:
+                        progress.Interval = (int)Math.Ceiling(progress.Interval * progress.Easiness); break;
+                }
+                progress.Repetitions++;
+                progress.Easiness = SM2.ComputeEF(progress.Easiness, responseQuality);
+            }
+
+            if (progress.ItemState == LessonItemState.NEW)
+            {
+                progress.ItemState = LessonItemState.REVIEW;
+            }
+            
+            progress.DateToReview = DateTime.Today.AddDays(progress.Interval);
+
+        }
     }
 
+    static class SM2
+    {
+        public static double ComputeEF(double oldEF, int responseQuality)
+        {
+            double newEF = oldEF + (0.1 - (5.0 - responseQuality) * (0.08 + (5.0 - responseQuality) * 0.02));
+            return (newEF >= 1.3) ? newEF : 1.3;
+        }
+    }
 
     static class Shuffler
     {

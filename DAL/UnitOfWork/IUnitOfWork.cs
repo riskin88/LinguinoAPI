@@ -1,4 +1,5 @@
 ﻿using DAL.Entities;
+using DAL.Filters;
 using DAL.Repositories.Contracts;
 using Microsoft.AspNetCore.Identity;
 using System;

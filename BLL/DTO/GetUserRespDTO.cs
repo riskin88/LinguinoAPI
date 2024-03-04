@@ -10,6 +10,7 @@ namespace BLL.DTO
         public string? Id { get; set; }
         public string? Username { get; set; }
         public long? Streak { get; set; }
+        public DateTime? LastSessionDate { get; set; }
         public long? Balance { get; set; }
         public bool? AccountInitialized { get; set; }
     }

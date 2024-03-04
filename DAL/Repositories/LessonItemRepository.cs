@@ -139,5 +139,11 @@ namespace DAL.Repositories
             }
             else throw new InvalidIDException("Lesson item does not exist.");
         }
+
+        public async Task<IEnumerable<UserLesson>> GetUserLessons(long lessonItemId)
+        {
+                string userId = _roleGuard.user.Id;
+                return await dataContext.Set<LessonItem>().Where(li => li.Id == lessonItemId).SelectMany(li => li.Lessons).SelectMany(l => l.UserLessons).Where(ul => ul.UserId == userId).ToListAsync();
+        }
     }
 }

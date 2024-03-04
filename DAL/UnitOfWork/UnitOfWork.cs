@@ -1,5 +1,6 @@
 ﻿using DAL.Data;
 using DAL.Entities;
+using DAL.Filters;
 using DAL.Identity;
 using DAL.Repositories;
 using DAL.Repositories.Contracts;

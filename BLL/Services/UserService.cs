@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BLL.DTO;
 using BLL.Services.Contracts;
+using DAL.Entities;
 using DAL.Identity;
 using DAL.UnitOfWork;
 using System.Runtime.InteropServices;
@@ -33,6 +34,8 @@ namespace BLL.Services
         public GetUserRespDTO GetUser()
         {
             var user = _unitOfWork.UserRepository.GetUser();
+            ResetStreak(user);
+
             return _mapper.Map<GetUserRespDTO>(user);
         }
 
@@ -58,6 +61,17 @@ namespace BLL.Services
                     user.IsFollowed = true;
             }
             return usersDTO;
+        }
+
+        private void ResetStreak(User user)
+        {
+            if (user.LastSessionDate != null)
+            {
+                if (DateTime.Today > user.LastSessionDate.Value.AddDays(1))
+                    user.Streak = 0;
+            }
+            _unitOfWork.SaveChanges();
+
         }
     }
 }

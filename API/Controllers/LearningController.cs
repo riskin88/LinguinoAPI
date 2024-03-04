@@ -25,5 +25,12 @@ namespace LinguinoAPI.Controllers
             return Ok(await _learningService.GetStudySession(courseId, filter));
         }
 
+        [HttpPost, Authorize]
+        [Route("/user/courses/{courseId}/study-session")]
+        public async Task<ActionResult<PostSessionRespDTO>> PostStudySessionResults(IEnumerable<ExerciseAnswerDTO> exerciseAnswers, long courseId)
+        {
+            return Ok(await _learningService.PostStudySessionResults(exerciseAnswers, courseId));
+        }
+
     }
 }

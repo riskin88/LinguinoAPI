@@ -14,5 +14,6 @@ namespace DAL.Repositories.Contracts
         Task<UserLessonItem> GetUserProgress(long itemId);
         Task RemoveExercise(long lessonItemId, Exercise exercise);
         Task AddToUser(long lessonItemId, User user);
+        Task<IEnumerable<UserLesson>> GetUserLessons(long lessonItemId);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using DAL.Entities;
+using DAL.Entities.Relations;
 using DAL.Filters;
 using System.Threading.Tasks;
 
@@ -19,6 +20,8 @@ namespace DAL.Repositories.Contracts
         Task<IEnumerable<Topic>> GetDefaultTopics(long courseId);
         public Task<IEnumerable<User>> GetUsersWithTopics(long courseId);
         public Task<IEnumerable<User>> GetUsers(long courseId);
-        public Task<long> GetNextLessonId(long courseId);
+        public Task<long> GetCurrentLessonId(long courseId);
+        public Task MovePositionOnMap(long courseId);
+        Task<UserCourse> GetUserCourse(long courseId);
     }
 }

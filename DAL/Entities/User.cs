@@ -11,7 +11,10 @@ namespace DAL.Entities
     [Table("User")]
     public class User : IdentityUser
     {
-        public long? Streak { get; set; }
+        public long? Streak { get; set; } = 0;
+        [DataType(DataType.Date)]
+        [Column(TypeName = "Date")]
+        public DateTime? LastSessionDate { get; set; }
         public long? Balance { get; set; }
         [Required]
         public bool? AccountInitialized { get; set; } = false;

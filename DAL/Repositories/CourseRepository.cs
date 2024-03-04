@@ -141,19 +141,74 @@ namespace DAL.Repositories
             return await dataContext.Set<Course>().Where(e => e.Id == courseId).Include(c => c.Users).SelectMany(c => c.Users).ToListAsync();
         }
 
-        public async Task<long> GetNextLessonId(long courseId)
+        public async Task<long> GetCurrentLessonId(long courseId)
         {
             string userId = _roleGuard.user.Id;
             var userCourse = await dataContext.Set<UserCourse>().FirstOrDefaultAsync(e => e.CourseId == courseId && e.UserId == userId);
             if (userCourse != null)
             {
                 var position = userCourse.PositionOnMap;
-                var lesson = await dataContext.Set<UserLesson>().Where(ul => ul.UserId == userId && ul.IsVisible).Select(ul => ul.Lesson).Where(l => !l.IsCustom && l.CourseId == courseId).OrderBy(l => l.OrderOnMap).FirstOrDefaultAsync(l => l.OrderOnMap >= position);
-                if (lesson != null)
+                var lessons = await dataContext.Set<UserLesson>().Where(ul => ul.UserId == userId && ul.IsVisible).Select(ul => ul.Lesson).Where(l => !l.IsCustom && l.CourseId == courseId).OrderBy(l => l.OrderOnMap).ToListAsync();
+                var currentLesson = lessons.FirstOrDefault(l => l.OrderOnMap >= position);
+                if (currentLesson != null)
                 {
-                    return lesson.Id;
+                    return currentLesson.Id;
                 }
-                else throw new MyBadException("No next visible lesson on the study map was found.");
+                else
+                {
+                    currentLesson = lessons.LastOrDefault();
+                    if (currentLesson != null)
+                    {
+                        return currentLesson.Id;
+                    }
+                    else throw new MyBadException("No visible lesson on the study map was found.");
+                }
+            }
+            else throw new InvalidIDException("Course does not exist.");
+        }
+        public async Task MovePositionOnMap(long courseId)
+        {
+            string userId = _roleGuard.user.Id;
+            var userCourse = await dataContext.Set<UserCourse>().FirstOrDefaultAsync(e => e.CourseId == courseId && e.UserId == userId);
+            if (userCourse != null)
+            {
+                var position = userCourse.PositionOnMap;
+                var lessons = await dataContext.Set<UserLesson>().Where(ul => ul.UserId == userId && ul.IsVisible).Select(ul => ul.Lesson).Where(l => !l.IsCustom && l.CourseId == courseId).OrderBy(l => l.OrderOnMap).ToListAsync();
+                var nextLessons = lessons.Where(l => l.OrderOnMap >= position).ToList();
+                if (nextLessons.Count >= 2)
+                {
+                    userCourse.PositionOnMap = (long)nextLessons[1].OrderOnMap.Value;
+                }
+                else
+                {
+                    var nextLesson = nextLessons.FirstOrDefault();
+                    if (nextLesson != null)
+                    {
+                        userCourse.PositionOnMap = (long)nextLesson.OrderOnMap.Value;
+                    }
+                    else
+                    {
+                        nextLesson = lessons.LastOrDefault();
+                        if (nextLesson != null)
+                        {
+                            userCourse.PositionOnMap = (long)nextLesson.OrderOnMap.Value;
+                        }
+                        else throw new MyBadException("No visible lesson on the study map was found.");
+                    }
+                    
+                }
+
+            }
+            else throw new InvalidIDException("Course does not exist.");
+        }
+
+        public async Task<UserCourse> GetUserCourse(long courseId)
+        {
+            string userId = _roleGuard.user.Id;
+            var userCourse = await dataContext.Set<UserCourse>().FirstOrDefaultAsync(e => e.CourseId == courseId && e.UserId == userId);
+            if (userCourse != null)
+            {
+                return userCourse;
 
             }
             else throw new InvalidIDException("Course does not exist.");
