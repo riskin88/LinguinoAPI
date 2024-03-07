@@ -11,7 +11,8 @@ namespace DAL.Repositories.Contracts
         void AddAuthor(Lesson lesson);
         Task AddTopic(long lessonId, Topic topic);
         Task RemoveTopic(long lessonId, Topic topic);
-        public Task<IEnumerable<Lesson>> GetLessonsFromCourse(long courseId, LessonFilter filter);
+        Task<IEnumerable<Lesson>> GetLessonsFromCourse(long courseId, LessonFilter filter);
+        Task<IEnumerable<Lesson>> GetBuiltInLessonsFromCourseOrdered(long courseId, StudyMapFilter filter);
         public bool IsFavorite(long id);
         public Task<IEnumerable<UserTopic>> GetUserTopics(long lessonId);
         Task<bool> EnableOwn(long lessonId);

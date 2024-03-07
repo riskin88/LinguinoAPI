@@ -15,7 +15,7 @@ namespace BLL.DTO.Exercises.Inbound
     {
         [Required]
         public string? TextL2 { get; set; }
-        public string? ImageURL { get; set; }
+        public string? ImageUrl { get; set; }
     }
 
 }

@@ -7,6 +7,6 @@ namespace BLL.DTO
     public class TopicBriefDTO : EntityBase
     {
         public string? Name { get; set; }
-        public string? ThumbnailURL { get; set; }
+        public string? ThumbnailUrl { get; set; }
     }
 }

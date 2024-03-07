@@ -141,7 +141,7 @@ namespace DAL.Repositories
             return await dataContext.Set<Course>().Where(e => e.Id == courseId).Include(c => c.Users).SelectMany(c => c.Users).ToListAsync();
         }
 
-        public async Task<long> GetCurrentLessonId(long courseId)
+        public async Task<long> GetActiveLessonId(long courseId)
         {
             string userId = _roleGuard.user.Id;
             var userCourse = await dataContext.Set<UserCourse>().FirstOrDefaultAsync(e => e.CourseId == courseId && e.UserId == userId);

@@ -13,7 +13,7 @@ namespace BLL.DTO.Exercises.Outbound
     public class GetShortListeningExerciseDTO : GetExerciseDTO
     {
         public string? TextL2 { get; set; }
-        public string? TextL2AudioURL { get; set; }
+        public string? TextL2AudioUrl { get; set; }
     }
 
 }

@@ -8,7 +8,7 @@ namespace BLL.DTO
     public class TopicRespDTO : EntityBase
     {
         public string? Name { get; set; }
-        public string? ThumbnailURL { get; set; }
+        public string? ThumbnailUrl { get; set; }
         public bool Enabled { get; set; } = false;
     }
 }

@@ -15,8 +15,8 @@ namespace BLL.DTO.Exercises.Outbound
         public string? TextL1 { get; set; }
         public string? TextL2 { get; set; }
         public string? Explanation { get; set; }
-        public string? ImageURL { get; set; }
-        public string? TextL2AudioURL { get; set; }
+        public string? ImageUrl { get; set; }
+        public string? TextL2AudioUrl { get; set; }
     }
 
 }

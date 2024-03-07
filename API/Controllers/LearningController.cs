@@ -32,5 +32,12 @@ namespace LinguinoAPI.Controllers
             return Ok(await _learningService.PostStudySessionResults(exerciseAnswers, courseId));
         }
 
+        [HttpGet, Authorize]
+        [Route("/user/courses/{courseId}/study-map")]
+        public async Task<ActionResult<IEnumerable<GetMapLessonDTO>>> GetStudyMap(long courseId, [FromQuery] StudyMapFilter filter)
+        {
+            return Ok(await _learningService.GetStudyMap(courseId, filter));
+        }
+
     }
 }

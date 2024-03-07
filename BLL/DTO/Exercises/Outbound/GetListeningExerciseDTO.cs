@@ -12,10 +12,10 @@ namespace BLL.DTO.Exercises.Outbound
 {
     public class GetListeningExerciseDTO : GetExerciseDTO
     {
-        public string? AudioURL { get; set; }
+        public string? AudioUrl { get; set; }
         public string? QuestionL2 { get; set; }
         public string? AnswerL2 { get; set; }
-        public string? ImageURL { get; set; }
+        public string? ImageUrl { get; set; }
     }
 
 }

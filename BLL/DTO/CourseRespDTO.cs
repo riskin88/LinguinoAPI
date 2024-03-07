@@ -16,6 +16,6 @@ namespace BLL.DTO
         public string? Language1 { get; set; }
         public string? Language2 { get; set; }
         public string? Name { get; set; }
-        public string? ThumbnailURL { get; set; }
+        public string? ThumbnailUrl { get; set; }
     }
 }

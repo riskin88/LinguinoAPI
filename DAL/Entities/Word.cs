@@ -10,7 +10,8 @@ namespace DAL.Entities
         [Required]
         public string? NameL2 { get; set; }
         public string? Description { get; set; }
-        public string? ImageURL { get; set; }
-        public string? AudioURL { get; set; }
+        public string? ImageUrl { get; set; }
+        public string? AudioUrl { get; set; }
+        public List<WordExample> Examples { get; set; } = new();
     }
 }

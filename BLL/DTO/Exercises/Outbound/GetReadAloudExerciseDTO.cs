@@ -13,7 +13,7 @@ namespace BLL.DTO.Exercises.Outbound
     public class GetReadAloudExerciseDTO : GetExerciseDTO
     {
         public string? TextL2 { get; set; }
-        public string? ImageURL { get; set; }
+        public string? ImageUrl { get; set; }
     }
 
 }

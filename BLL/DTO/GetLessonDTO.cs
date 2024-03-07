@@ -12,9 +12,10 @@ namespace BLL.DTO
         public string? Description { get; set; }
         public LessonType? Type { get; set; }
         public LessonLevel? Level { get; set; }
-        public string? BackgroundURL { get; set; }
-        public string? VideoURL { get; set; }
-        public long? OrderOnMap { get; set; }
+        public string? BackgroundImageUrl { get; set; }
+        public string? VideoId { get; set; }
+        public string? Icon { get; set; }
+        public double? OrderOnMap { get; set; }
         public bool IsCustom { get; set; } = false;
         public bool Visible { get; set; } = false;
         public bool Favorite { get; set; } = false;

@@ -11,6 +11,6 @@ namespace DAL.Entities
         public string? TextL2 { get; set; }
         public int[] BlankIndexes { get; set; }
         public string[] Options { get; set; }
-        public string? ImageURL { get; set; }
+        public string? ImageUrl { get; set; }
     }
 }

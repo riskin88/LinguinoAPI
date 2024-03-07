@@ -10,7 +10,7 @@ namespace DAL.Entities
     {
         [Required]
         public string? Name { get; set; }
-        public string? ThumbnailURL { get; set; }
+        public string? ThumbnailUrl { get; set; }
         [Required]
         public bool IsDefault { get; set; } = true;
         [Required]

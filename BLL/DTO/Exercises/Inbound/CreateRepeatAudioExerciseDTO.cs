@@ -16,7 +16,7 @@ namespace BLL.DTO.Exercises.Inbound
         [Required]
         public string? TextL2 { get; set; }
         [Required]
-        public string? AudioURL { get; set; }
+        public string? AudioUrl { get; set; }
     }
 
 }

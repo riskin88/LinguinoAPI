@@ -12,7 +12,10 @@ namespace BLL.DTO
         public string? Description { get; set; }
         public LessonType? Type { get; set; }
         public LessonLevel? Level { get; set; }
-        public long OrderOnMap {  get; set; }
+        public string? BackgroundImageUrl { get; set; }
+        public string? VideoId { get; set; }
+        public string? Icon { get; set; }
+        public double? OrderOnMap {  get; set; }
         [Ignore]
         public List<CreateLessonNestedItemDTO> Items { get; set; }
     }

@@ -10,7 +10,7 @@ namespace DAL.Entities
         [Required]
         public string? WordL2 { get; set; }
         public string[] Letters { get; set; }
-        public string? ImageURL { get; set; }
-        public string? WordL2AudioURL { get; set; }
+        public string? ImageUrl { get; set; }
+        public string? WordL2AudioUrl { get; set; }
     }
 }

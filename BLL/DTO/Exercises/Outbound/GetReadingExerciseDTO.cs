@@ -15,7 +15,7 @@ namespace BLL.DTO.Exercises.Outbound
         public string? Article { get; set; }
         public string? QuestionL2 { get; set; }
         public string? AnswerL2 { get; set; }
-        public string? ImageURL { get; set; }
+        public string? ImageUrl { get; set; }
     }
 
 }

@@ -8,6 +8,6 @@ namespace DAL.Entities
         [Required]
         public string? TextL2 { get; set; }
         [Required]
-        public string? TextL2AudioURL { get; set; }
+        public string? TextL2AudioUrl { get; set; }
     }
 }

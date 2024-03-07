@@ -19,7 +19,7 @@ namespace DAL.Entities
         public string? Language2 { get; set; }
         [Required]
         public string? Name { get; set; }
-        public string? ThumbnailURL { get; set; }
+        public string? ThumbnailUrl { get; set; }
         public List<User> Users { get; set; } = new();
         public List<UserCourse> UserCourses { get; set; } = new();
         public List<Topic> Topics { get; set; } = new();

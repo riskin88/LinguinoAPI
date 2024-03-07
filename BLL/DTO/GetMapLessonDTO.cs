@@ -1,20 +1,19 @@
 ﻿using AutoMapper;
+using AutoMapper.Configuration.Annotations;
 using DAL.Entities;
 using DAL.Entities.Enums;
 
 namespace BLL.DTO
 {
     [AutoMap(typeof(Lesson))]
-    public class CreateLessonRespDTO
+    public class GetMapLessonDTO
     {
-        public long? Id { get; set; }
+        public long Id { get; set; }
         public string? Name { get; set; }
-        public string? Description { get; set; }
         public LessonType? Type { get; set; }
         public LessonLevel? Level { get; set; }
+        public string? Icon { get; set; }
         public double? OrderOnMap { get; set; }
-        public bool IsCustom { get; set; }
-        public long? CourseId { get; set; }
-        public string? AuthorId { get; set; }
+        public bool IsActive { get; set; } = false;
     }
 }

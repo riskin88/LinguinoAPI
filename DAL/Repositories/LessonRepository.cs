@@ -125,6 +125,15 @@ namespace DAL.Repositories
 
         }
 
+        public async Task<IEnumerable<Lesson>> GetBuiltInLessonsFromCourseOrdered(long courseId, StudyMapFilter filter)
+        {
+            var lessons = await dataContext.Set<Lesson>().Where(
+                l => l.CourseId == courseId && !l.IsCustom &&
+            (filter.Level == null || filter.Level == l.Level)).OrderBy(l => l.OrderOnMap).ToListAsync();
+            return lessons.Where(l => IsVisibleToSelf(l.Id)).ToList();
+
+        }
+
         public async Task<Lesson> GetForUser(long lessonId)
         {
             var lesson = await dataContext.Set<Lesson>().Include(l => l.LessonItems).Include(l => l.Author).FirstOrDefaultAsync(l => l.Id == lessonId);

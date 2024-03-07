@@ -66,7 +66,7 @@ namespace BLL.Services
                     {
                         // TODO move time from config to user settings
                         long totalTimeNew = (long)(_configuration.SessionLengthMs * _configuration.TimeForNewItems);
-                        var lessonId = await _unitOfWork.CourseRepository.GetCurrentLessonId(courseId);
+                        var lessonId = await _unitOfWork.CourseRepository.GetActiveLessonId(courseId);
                         var itemsNew = await _unitOfWork.LessonItemRepository.GetNewInLessonOrdered(lessonId);
                         (IEnumerable<GetExerciseDTO> exercises, long time) res = await GetExercisesForOrderedItems(itemsNew, totalTimeNew, true);
                         exerciseDTOs = res.exercises.ToList();
@@ -201,7 +201,8 @@ namespace BLL.Services
                 }
                 UpdateUserProgress(userLessonItem, itemResult.averageRating);
             }
-            await _unitOfWork.CourseRepository.MovePositionOnMap(courseId);
+            if (movePosition)
+                await _unitOfWork.CourseRepository.MovePositionOnMap(courseId);
             var user = _unitOfWork.UserRepository.GetUser();
             int points = exerciseAnswers.Count() * _configuration.PointsForExercise;
             user.Balance += points;
@@ -250,6 +251,23 @@ namespace BLL.Services
             
             progress.DateToReview = DateTime.Today.AddDays(progress.Interval);
 
+        }
+
+        public async Task<IEnumerable<GetMapLessonDTO>> GetStudyMap(long courseId, StudyMapFilter filter)
+        {
+            if (await _unitOfWork.CourseRepository.IsEnrolled(courseId))
+            {
+                var lessons = await _unitOfWork.LessonRepository.GetBuiltInLessonsFromCourseOrdered(courseId, filter);
+                var lessonDTOs = _mapper.Map<IEnumerable<Lesson>, List<GetMapLessonDTO>>(lessons);
+                var activeLessonId = await _unitOfWork.CourseRepository.GetActiveLessonId(courseId);
+                foreach (var lessonDTO in lessonDTOs)
+                {
+                    if (lessonDTO.Id == activeLessonId)
+                        lessonDTO.IsActive = true;
+                }
+                return lessonDTOs;
+            }
+            else throw new UserNotInCourseException();
         }
     }
 

@@ -143,7 +143,7 @@ namespace DAL.Repositories
         public async Task<IEnumerable<UserLesson>> GetUserLessons(long lessonItemId)
         {
                 string userId = _roleGuard.user.Id;
-                return await dataContext.Set<LessonItem>().Where(li => li.Id == lessonItemId).SelectMany(li => li.Lessons).SelectMany(l => l.UserLessons).Where(ul => ul.UserId == userId).ToListAsync();
+                return await dataContext.Set<LessonItem>().Where(li => li.Id == lessonItemId).SelectMany(li => li.Lessons).SelectMany(l => l.UserLessons).Include(l => l.Lesson).Where(ul => ul.UserId == userId).ToListAsync();
         }
     }
 }
