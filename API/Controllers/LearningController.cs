@@ -1,5 +1,6 @@
 ﻿using BLL.DTO;
 using BLL.DTO.Exercises.Outbound;
+using BLL.DTO.Lessons;
 using BLL.Services.Contracts;
 using DAL.Entities;
 using DAL.Filters;

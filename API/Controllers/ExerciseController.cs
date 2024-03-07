@@ -1,5 +1,5 @@
-﻿using BLL.DTO;
-using BLL.DTO.Exercises.Inbound;
+﻿using BLL.DTO.Exercises.Inbound;
+using BLL.DTO.LearningSteps;
 using BLL.Services.Contracts;
 using DAL.Entities;
 using Microsoft.AspNetCore.Authorization;

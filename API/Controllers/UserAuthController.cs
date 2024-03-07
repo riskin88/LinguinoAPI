@@ -1,4 +1,5 @@
-using BLL.DTO;
+using BLL.DTO.Auth;
+using BLL.DTO.Users;
 using BLL.Helpers;
 using BLL.Services.Contracts;
 using Microsoft.AspNetCore.Mvc;

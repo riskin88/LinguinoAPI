@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using BLL.DTO;
 using BLL.DTO.Exercises.Inbound;
 using BLL.DTO.Exercises.Outbound;
+using BLL.DTO.LearningSteps;
 using BLL.Services.Contracts;
 using DAL.Entities;
 using DAL.Exceptions;

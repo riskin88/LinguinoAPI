@@ -1,4 +1,5 @@
-﻿using BLL.DTO;
+﻿using BLL.DTO.Courses;
+using BLL.DTO.Topics;
 using DAL.Entities;
 using DAL.Filters;
 

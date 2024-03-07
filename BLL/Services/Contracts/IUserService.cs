@@ -1,4 +1,4 @@
-﻿using BLL.DTO;
+﻿using BLL.DTO.Users;
 
 namespace BLL.Services.Contracts
 {

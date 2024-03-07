@@ -1,5 +1,6 @@
 ﻿using DAL.Entities;
 using DAL.Entities.Relations;
+using DAL.Filters;
 
 namespace DAL.Repositories.Contracts
 {
@@ -15,5 +16,6 @@ namespace DAL.Repositories.Contracts
         Task RemoveExercise(long lessonItemId, Exercise exercise);
         Task AddToUser(long lessonItemId, User user);
         Task<IEnumerable<UserLesson>> GetUserLessons(long lessonItemId);
+        Task<IEnumerable<Word>> GetLessonItemsFromCourse(long courseId, VocabularyFilter filter);
     }
 }

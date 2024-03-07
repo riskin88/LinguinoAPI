@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using BLL.DTO;
+using BLL.DTO.Users;
 using BLL.Services.Contracts;
 using DAL.Entities;
 using DAL.Identity;

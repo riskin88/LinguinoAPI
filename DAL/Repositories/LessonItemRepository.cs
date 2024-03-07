@@ -3,6 +3,7 @@ using DAL.Entities;
 using DAL.Entities.Enums;
 using DAL.Entities.Relations;
 using DAL.Exceptions;
+using DAL.Filters;
 using DAL.Identity;
 using DAL.Repositories.Contracts;
 using Microsoft.EntityFrameworkCore;
@@ -144,6 +145,39 @@ namespace DAL.Repositories
         {
                 string userId = _roleGuard.user.Id;
                 return await dataContext.Set<LessonItem>().Where(li => li.Id == lessonItemId).SelectMany(li => li.Lessons).SelectMany(l => l.UserLessons).Include(l => l.Lesson).Where(ul => ul.UserId == userId).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Word>> GetLessonItemsFromCourse(long courseId, VocabularyFilter filter)
+        {
+            var course = GetById(courseId);
+            if (course != null)
+            {
+                var vocab = await dataContext.Set<Course>().Include(c => c.Lessons).ThenInclude(l => l.LessonItems).Where(c => c.Id == courseId).SelectMany(c => c.Lessons).SelectMany(l => l.LessonItems).OfType<Word>().Distinct()
+                    .Where(w => filter.SearchName == null || (w.NameL1 != null && w.NameL1.StartsWith(filter.SearchName)) || (w.NameL2 != null && w.NameL2.StartsWith(filter.SearchName))).ToListAsync();
+
+
+                if (filter.Favorite != null)
+                {
+                    vocab = vocab.Where(w => filter.Favorite == IsFavorite(w.Id)).ToList(); ;
+                }
+
+                return vocab;
+            }
+            else throw new InvalidIDException("Course does not exist.");
+
+        }
+
+        private bool IsFavorite(long lessonItemId)
+        {
+            string userId = _roleGuard.user.Id;
+            var userLessonItem = dataContext.Set<UserLessonItem>().FirstOrDefault(e => e.LessonItemId == lessonItemId && e.UserId == userId);
+
+            if (userLessonItem != null)
+            {
+                return userLessonItem.IsFavorite;
+
+            }
+            else throw new InvalidIDException("Lesson item does not exist or is not available for this user.");
         }
     }
 }

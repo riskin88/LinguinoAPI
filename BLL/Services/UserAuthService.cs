@@ -1,7 +1,8 @@
 ﻿
 using AutoMapper;
 using Azure.Core;
-using BLL.DTO;
+using BLL.DTO.Auth;
+using BLL.DTO.Users;
 using BLL.Exceptions.Auth;
 using BLL.Helpers;
 using BLL.Services.Auth;

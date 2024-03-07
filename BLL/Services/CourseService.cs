@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
-using BLL.DTO;
+using BLL.DTO.Courses;
+using BLL.DTO.Topics;
 using BLL.Exceptions;
 using BLL.Exceptions.Auth;
 using BLL.Services.Contracts;

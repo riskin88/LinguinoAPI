@@ -1,5 +1,5 @@
-﻿using BLL.DTO;
-using BLL.DTO.Exercises.Inbound;
+﻿using BLL.DTO.Exercises.Inbound;
+using BLL.DTO.LearningSteps;
 using DAL.Entities;
 
 namespace BLL.Services.Contracts
