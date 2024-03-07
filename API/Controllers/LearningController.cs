@@ -39,5 +39,13 @@ namespace LinguinoAPI.Controllers
             return Ok(await _learningService.GetStudyMap(courseId, filter));
         }
 
+        [HttpPut, Authorize]
+        [Route("/user/courses/{courseId}/study-map/active/{lessonId}")]
+        public async Task<ActionResult> ChangeActiveLesson(long courseId, long lessonId)
+        {
+            await _learningService.ChangeActiveLesson(courseId, lessonId);
+            return NoContent();
+        }
+
     }
 }

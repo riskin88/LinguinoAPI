@@ -269,6 +269,28 @@ namespace BLL.Services
             }
             else throw new UserNotInCourseException();
         }
+
+        public async Task ChangeActiveLesson(long courseId, long lessonId)
+        {
+            if (await _unitOfWork.CourseRepository.IsEnrolled(courseId))
+            {
+                var lesson = await _unitOfWork.LessonRepository.GetById(lessonId);
+                if (lesson != null)
+                {
+                    if (lesson.CourseId == courseId && !lesson.IsCustom)
+                    {
+                        var userCourse = await _unitOfWork.CourseRepository.GetUserCourse(courseId);
+                        userCourse.PositionOnMap = (long)lesson.OrderOnMap;
+                        _unitOfWork.SaveChanges();
+                        
+                    }
+                    else throw new CourseMismatchException("The lesson does not belong to this course.");
+                }
+                else throw new InvalidIDException("Lesson does not exist.");
+
+            }
+            else throw new UserNotInCourseException();
+        }
     }
 
     static class SM2

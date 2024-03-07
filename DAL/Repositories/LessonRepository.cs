@@ -1,13 +1,16 @@
-﻿using DAL.Data;
+﻿using Azure;
+using DAL.Data;
 using DAL.Entities;
 using DAL.Entities.Relations;
 using DAL.Exceptions;
 using DAL.Filters;
 using DAL.Identity;
 using DAL.Repositories.Contracts;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration.UserSecrets;
 using System.Runtime.CompilerServices;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace DAL.Repositories
 {
@@ -127,10 +130,16 @@ namespace DAL.Repositories
 
         public async Task<IEnumerable<Lesson>> GetBuiltInLessonsFromCourseOrdered(long courseId, StudyMapFilter filter)
         {
-            var lessons = await dataContext.Set<Lesson>().Where(
+            string userId = _roleGuard.user.Id;
+            var lessons = dataContext.Set<UserLesson>().Where(ul => ul.UserId == userId && ul.IsVisible).Select(ul => ul.Lesson).Where(
                 l => l.CourseId == courseId && !l.IsCustom &&
-            (filter.Level == null || filter.Level == l.Level)).OrderBy(l => l.OrderOnMap).ToListAsync();
-            return lessons.Where(l => IsVisibleToSelf(l.Id)).ToList();
+            (filter.Level == null || filter.Level == l.Level));
+            if (filter.Page != null && filter.Page > 0 && filter.Limit != null && filter.Limit > 0)
+            {
+                int skip = (filter.Page.Value - 1) * filter.Limit.Value;
+                lessons = lessons.Skip(skip).Take(filter.Limit.Value);
+            }
+            return await lessons.OrderBy(l => l.OrderOnMap).ToListAsync();
 
         }
 
