@@ -21,7 +21,7 @@ namespace DAL.Entities
         public string? Icon { get; set; }
         public double? OrderOnMap {  get; set; }
         public bool IsCustom { get; set; }
-        public long ItemsTotal { get; set; }
+        public long ItemsTotal { get; set; } = 0;
         public List<User> Users { get; set; } = new();
         public List<UserLesson> UserLessons { get; set; } = new();
         public List<Topic> Topics { get; set; } = new();

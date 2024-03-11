@@ -44,7 +44,7 @@ namespace LinguinoAPI.Controllers
         [Route("/user/courses/{courseId}/study-map/active/{lessonId}")]
         public async Task<ActionResult> ChangeActiveLesson(long courseId, long lessonId)
         {
-            await _learningService.ChangeActiveLesson(courseId, lessonId);
+            await _learningService.ChangeSelectedLesson(courseId, lessonId);
             return NoContent();
         }
 

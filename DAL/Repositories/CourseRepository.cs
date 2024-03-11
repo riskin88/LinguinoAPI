@@ -144,68 +144,67 @@ namespace DAL.Repositories
         public async Task<long> GetActiveLessonId(long courseId)
         {
             string userId = _roleGuard.user.Id;
-            var userCourse = await dataContext.Set<UserCourse>().FirstOrDefaultAsync(e => e.CourseId == courseId && e.UserId == userId);
-            if (userCourse != null)
-            {
-                var position = userCourse.PositionOnMap;
-                var lessons = await dataContext.Set<UserLesson>().Where(ul => ul.UserId == userId && ul.IsVisible).Select(ul => ul.Lesson).Where(l => !l.IsCustom && l.CourseId == courseId).OrderBy(l => l.OrderOnMap).ToListAsync();
-                var currentLesson = lessons.FirstOrDefault(l => l.OrderOnMap >= position);
-                if (currentLesson != null)
-                {
-                    return currentLesson.Id;
-                }
-                else
-                {
-                    currentLesson = lessons.LastOrDefault();
-                    if (currentLesson != null)
-                    {
-                        return currentLesson.Id;
-                    }
-                    else throw new MyBadException("No visible lesson on the study map was found.");
-                }
-            }
-            else throw new InvalidIDException("Course does not exist.");
-        }
-        public async Task MovePositionOnMap(long courseId)
-        {
-            string userId = _roleGuard.user.Id;
-            var userCourse = await dataContext.Set<UserCourse>().FirstOrDefaultAsync(e => e.CourseId == courseId && e.UserId == userId);
-            if (userCourse != null)
-            {
-                var position = userCourse.PositionOnMap;
-                var lessons = await dataContext.Set<UserLesson>().Where(ul => ul.UserId == userId && ul.IsVisible).Select(ul => ul.Lesson).Where(l => !l.IsCustom && l.CourseId == courseId).OrderBy(l => l.OrderOnMap).ToListAsync();
-                var nextLessons = lessons.Where(l => l.OrderOnMap >= position).ToList();
-                if (nextLessons.Count >= 2)
-                {
-                    userCourse.PositionOnMap = (long)nextLessons[1].OrderOnMap.Value;
-                }
-                else
-                {
-                    var nextLesson = nextLessons.FirstOrDefault();
-                    if (nextLesson != null)
-                    {
-                        userCourse.PositionOnMap = (long)nextLesson.OrderOnMap.Value;
-                    }
-                    else
-                    {
-                        nextLesson = lessons.LastOrDefault();
-                        if (nextLesson != null)
-                        {
-                            userCourse.PositionOnMap = (long)nextLesson.OrderOnMap.Value;
-                        }
-                        else throw new MyBadException("No visible lesson on the study map was found.");
-                    }
-                    
-                }
+            var userCourse = await GetUserCourse(courseId);
 
+            var lessons = await dataContext.Set<UserLesson>().Where(ul => ul.UserId == userId && ul.IsVisible && !ul.IsLearned).Select(ul => ul.Lesson).Where(l => !l.IsCustom && l.CourseId == courseId).OrderBy(l => l.OrderOnMap).ToListAsync();
+            int startPosition = -1;
+            if (userCourse.SelectedLesson != null)
+            {
+                startPosition = lessons.Select((value, idx) => new { Value = value, Index = idx })
+              .FirstOrDefault(l => l.Value.Id == userCourse.SelectedLessonId)?.Index ?? -1;
             }
-            else throw new InvalidIDException("Course does not exist.");
+
+            lessons = lessons.Skip(startPosition).ToList();
+
+            var currentLesson = lessons.FirstOrDefault();
+            if (currentLesson != null)
+            {
+                return currentLesson.Id;
+            }
+
+            else throw new MyBadException("No visible lesson on the study map was found.");
+
         }
+        //public async Task MovePositionOnMap(long courseId)
+        //{
+        //    string userId = _roleGuard.user.Id;
+        //    var userCourse = await dataContext.Set<UserCourse>().FirstOrDefaultAsync(e => e.CourseId == courseId && e.UserId == userId);
+        //    if (userCourse != null)
+        //    {
+        //        var position = userCourse.PositionOnMap;
+        //        var lessons = await dataContext.Set<UserLesson>().Where(ul => ul.UserId == userId && ul.IsVisible).Select(ul => ul.Lesson).Where(l => !l.IsCustom && l.CourseId == courseId).OrderBy(l => l.OrderOnMap).ToListAsync();
+        //        var nextLessons = lessons.Where(l => l.OrderOnMap >= position).ToList();
+        //        if (nextLessons.Count >= 2)
+        //        {
+        //            userCourse.PositionOnMap = (long)nextLessons[1].OrderOnMap.Value;
+        //        }
+        //        else
+        //        {
+        //            var nextLesson = nextLessons.FirstOrDefault();
+        //            if (nextLesson != null)
+        //            {
+        //                userCourse.PositionOnMap = (long)nextLesson.OrderOnMap.Value;
+        //            }
+        //            else
+        //            {
+        //                nextLesson = lessons.LastOrDefault();
+        //                if (nextLesson != null)
+        //                {
+        //                    userCourse.PositionOnMap = (long)nextLesson.OrderOnMap.Value;
+        //                }
+        //                else throw new MyBadException("No visible lesson on the study map was found.");
+        //            }
+                    
+        //        }
+
+        //    }
+        //    else throw new InvalidIDException("Course does not exist.");
+        //}
 
         public async Task<UserCourse> GetUserCourse(long courseId)
         {
             string userId = _roleGuard.user.Id;
-            var userCourse = await dataContext.Set<UserCourse>().FirstOrDefaultAsync(e => e.CourseId == courseId && e.UserId == userId);
+            var userCourse = await dataContext.Set<UserCourse>().Include(uc => uc.SelectedLesson).FirstOrDefaultAsync(e => e.CourseId == courseId && e.UserId == userId);
             if (userCourse != null)
             {
                 return userCourse;

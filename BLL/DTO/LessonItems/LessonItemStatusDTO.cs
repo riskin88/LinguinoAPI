@@ -1,8 +1,7 @@
 ﻿namespace BLL.DTO.Lessons
 {
-    public class LessonStatusDTO
+    public class LessonItemStatusDTO
     {
-        public bool? Visible { get; set; }
         public bool? Favorite { get; set; }
         public bool? MarkAsLearned { get; set; }
     }

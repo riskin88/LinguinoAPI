@@ -26,12 +26,15 @@ namespace DAL.Repositories
 
         public async Task AddLessonItem(long lessonId, LessonItem item)
         {
-            var lesson = await dataContext.Set<Lesson>().Include(l => l.LessonItems).FirstOrDefaultAsync(e => e.Id == lessonId);
+            var lesson = await GetWithItems(lessonId);
             if (lesson != null)
             {
                 if (!lesson.LessonItems.Contains(item))
                 {
                     lesson.LessonItems.Add(item);
+                    lesson.ItemsTotal++;
+                    var userLesson = await GetUserLesson(lessonId);
+                    userLesson.IsLearned = false;
                 }
             }
             else throw new InvalidIDException("Lesson does not exist.");
@@ -45,6 +48,9 @@ namespace DAL.Repositories
             {
                 if (!lesson.LessonItems.Contains(item))
                 {
+                    lesson.ItemsTotal++;
+                    var userLesson = await GetUserLesson(lessonId);
+                    userLesson.IsLearned = false;
                     lesson.LessonItems.Add(item);
                 }
                 dataContext.SaveChanges();
@@ -350,6 +356,37 @@ namespace DAL.Repositories
         public async Task<IEnumerable<User>> GetUsers(long lessonId)
         {
             return await dataContext.Set<Course>().Where(e => e.Id == lessonId).Include(c => c.Users).SelectMany(c => c.Users).ToListAsync();
+        }
+
+        public async Task<UserLesson> GetUserLesson(long lessonId)
+        {
+            string userId = _roleGuard.user.Id;
+            var result = await dataContext.Set<UserLesson>().Where(e => e.LessonId == lessonId && e.UserId == userId).FirstOrDefaultAsync();
+            if (result != null)
+            {
+                return result;
+            }
+            else throw new InvalidIDException("Lesson does not exist.");
+        }
+
+        public async Task<Lesson> GetWithItems(long lessonId)
+        {
+            var lesson = await dataContext.Set<Lesson>().Include(l => l.LessonItems).FirstOrDefaultAsync(e => e.Id == lessonId);
+            if (lesson != null)
+            {
+                return lesson;
+            }
+            else throw new InvalidIDException("Lesson does not exist.");
+        }
+
+        public async Task RemoveWord(long lessonId, Word item)
+        {
+            var lesson = await GetWithItems(lessonId);
+            if (lesson != null)
+            {
+                if (lesson.LessonItems.Remove(item))
+                    lesson.ItemsTotal--;
+            }
         }
     }
 

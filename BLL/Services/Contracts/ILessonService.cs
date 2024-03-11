@@ -16,5 +16,6 @@ namespace BLL.Services.Contracts
         Task ModifyLessonStatus(long courseId, long lessonId, LessonStatusDTO lessonStatusDTO);
         Task DeleteCustomLesson(long courseId, long lessonId);
         Task<GetLessonDTO> GetLesson(long courseId, long lessonId);
+        Task ModifyCustomLesson(long courseId, long lessonId, ModifyLessonDTO modifyLessonDTO);
     }
 }

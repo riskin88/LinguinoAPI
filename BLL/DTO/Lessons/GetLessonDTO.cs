@@ -22,6 +22,6 @@ namespace BLL.DTO.Lessons
         public bool Favorite { get; set; } = false;
         public LessonFeedbackDTO? Feedback { get; set; }
         [SourceMember(nameof(Lesson.LessonItems))]
-        public List<LessonItemDTO> LessonItems { get; set; }
+        public List<GetLessonItemInLessonDTO> LessonItems { get; set; }
     }
 }

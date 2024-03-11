@@ -78,6 +78,14 @@ namespace LinguinoAPI.Controllers
         }
 
         [HttpPut, Authorize]
+        [Route("/user/courses/{courseId}/lessons/{lessonId}")]
+        public async Task<ActionResult> ModifyCustomLesson(long courseId, long lessonId, ModifyLessonDTO modifyLessonDTO)
+        {
+            await _lessonService.ModifyCustomLesson(courseId, lessonId, modifyLessonDTO);
+            return Ok(await _lessonService.GetLesson(courseId, lessonId));
+        }
+
+        [HttpPut, Authorize]
         [Route("user/courses/{courseId}/lessons/{lessonId}/feedback")]
         public async Task<ActionResult> ChangeFeedback(long courseId, long lessonId, LessonFeedbackDTO feedbackDTO)
         {

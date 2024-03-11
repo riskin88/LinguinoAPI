@@ -90,7 +90,7 @@ namespace DAL.Repositories
            return  dataContext.Set<Word>().FirstOrDefaultAsync(e => e.Id == wordId);
         }
 
-        public async Task<UserLessonItem> GetUserProgress (long itemId)
+        public async Task<UserLessonItem> GetUserLessonItem (long itemId)
         {
             string userId = _roleGuard.user.Id;
             var ul = await dataContext.Set<UserLessonItem>().FirstOrDefaultAsync(ul => ul.UserId == userId && ul.LessonItemId == itemId);
@@ -167,7 +167,7 @@ namespace DAL.Repositories
 
         }
 
-        private bool IsFavorite(long lessonItemId)
+        public bool IsFavorite(long lessonItemId)
         {
             string userId = _roleGuard.user.Id;
             var userLessonItem = dataContext.Set<UserLessonItem>().FirstOrDefault(e => e.LessonItemId == lessonItemId && e.UserId == userId);
@@ -177,7 +177,18 @@ namespace DAL.Repositories
                 return userLessonItem.IsFavorite;
 
             }
-            else throw new InvalidIDException("Lesson item does not exist or is not available for this user.");
+            else throw new InvalidIDException("Lesson item does not exist.");
+        }
+
+        public async Task<bool> WordInCourse(long wordId, long courseId)
+        {
+            var lessons = await dataContext.Set<Word>().Where(li => li.Id == wordId).SelectMany(li => li.Lessons).ToListAsync();
+            foreach (var lesson in lessons)
+            {
+                if (lesson.CourseId == courseId)
+                    return true;
+            }
+            return false;
         }
     }
 }

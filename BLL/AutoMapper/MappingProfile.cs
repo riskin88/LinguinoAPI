@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BLL.DTO.Exercises.Inbound;
 using BLL.DTO.Exercises.Outbound;
+using BLL.DTO.LessonItems;
 using DAL.Entities;
 using Microsoft.AspNetCore.Rewrite;
 using System.Drawing;
@@ -37,5 +38,9 @@ public class MappingProfile : Profile
         CreateMap<CreateShortListeningExerciseDTO, ShortListeningExercise>();
         CreateMap<CreateSpeechExerciseDTO, SpeechExercise>();
         CreateMap<CreateTextExerciseDTO, TextExercise>();
+
+        CreateMap<LessonItem, GetLessonItemInLessonDTO>()
+            .Include<Word, GetWordInLessonDTO>();
+        CreateMap<Word, GetWordInLessonDTO>();
     }
 }

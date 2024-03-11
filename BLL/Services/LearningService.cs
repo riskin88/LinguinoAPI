@@ -128,7 +128,7 @@ namespace BLL.Services
             foreach (var item in itemsAll)
             {
                 List<Exercise> exercises = new();
-                var progress = await _unitOfWork.LessonItemRepository.GetUserProgress(item.Id);
+                var progress = await _unitOfWork.LessonItemRepository.GetUserLessonItem(item.Id);
                 // learning steps defined
                 if (item.LearningSteps.Count > 0)
                 {
@@ -175,7 +175,6 @@ namespace BLL.Services
 
         public async Task<PostSessionRespDTO> PostStudySessionResults(IEnumerable<ExerciseAnswerDTO> exerciseAnswers, long courseId)
         {
-            bool movePosition = false;
             var userCourse = await _unitOfWork.CourseRepository.GetUserCourse(courseId);
             var itemResults = exerciseAnswers.GroupBy(x => x.LessonItemId)
                           .Select(g => new
@@ -185,7 +184,7 @@ namespace BLL.Services
                           });
             foreach (var itemResult in itemResults)
             {
-                var userLessonItem = await _unitOfWork.LessonItemRepository.GetUserProgress(itemResult.lessonItemId);
+                var userLessonItem = await _unitOfWork.LessonItemRepository.GetUserLessonItem(itemResult.lessonItemId);
                 if (userLessonItem.ItemState == LessonItemState.NEW)
                 {
                     var userLessons = await _unitOfWork.LessonItemRepository.GetUserLessons(itemResult.lessonItemId);
@@ -193,17 +192,15 @@ namespace BLL.Services
                     {
                         if (userLesson.Lesson.CourseId != courseId)
                             throw new CourseMismatchException("Lesson item does not belong to this course.");
-                        if (++userLesson.ItemsDone >= userLesson.Lesson.ItemsTotal && !userLesson.Lesson.IsCustom)
+                        if (++userLesson.ItemsDone >= userLesson.Lesson.ItemsTotal)
                         {
-                            if (userLesson.Lesson.OrderOnMap >= userCourse.PositionOnMap)
-                                movePosition = true;
+                            userLesson.IsLearned = true;
                         }
                     }
                 }
                 UpdateUserProgress(userLessonItem, itemResult.averageRating);
             }
-            if (movePosition)
-                await _unitOfWork.CourseRepository.MovePositionOnMap(courseId);
+
             var user = _unitOfWork.UserRepository.GetUser();
             int points = exerciseAnswers.Count() * _configuration.PointsForExercise;
             user.Balance += points;
@@ -271,7 +268,7 @@ namespace BLL.Services
             else throw new UserNotInCourseException();
         }
 
-        public async Task ChangeActiveLesson(long courseId, long lessonId)
+        public async Task ChangeSelectedLesson(long courseId, long lessonId)
         {
             if (await _unitOfWork.CourseRepository.IsEnrolled(courseId))
             {
@@ -281,7 +278,7 @@ namespace BLL.Services
                     if (lesson.CourseId == courseId && !lesson.IsCustom)
                     {
                         var userCourse = await _unitOfWork.CourseRepository.GetUserCourse(courseId);
-                        userCourse.PositionOnMap = (long)lesson.OrderOnMap;
+                        userCourse.SelectedLesson = lesson;
                         _unitOfWork.SaveChanges();
                         
                     }

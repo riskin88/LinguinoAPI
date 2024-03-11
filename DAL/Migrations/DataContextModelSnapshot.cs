@@ -313,7 +313,7 @@ namespace DAL.Migrations
                     b.Property<bool>("IsSelected")
                         .HasColumnType("bit");
 
-                    b.Property<long>("PositionOnMap")
+                    b.Property<long?>("SelectedLessonId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("UserId")
@@ -323,6 +323,8 @@ namespace DAL.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CourseId");
+
+                    b.HasIndex("SelectedLessonId");
 
                     b.HasIndex("UserId");
 
@@ -341,6 +343,9 @@ namespace DAL.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<bool>("IsFavorite")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsLearned")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsVisible")
@@ -1147,6 +1152,10 @@ namespace DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("DAL.Entities.Lesson", "SelectedLesson")
+                        .WithMany()
+                        .HasForeignKey("SelectedLessonId");
+
                     b.HasOne("DAL.Entities.User", "User")
                         .WithMany("UserCourses")
                         .HasForeignKey("UserId")
@@ -1154,6 +1163,8 @@ namespace DAL.Migrations
                         .IsRequired();
 
                     b.Navigation("Course");
+
+                    b.Navigation("SelectedLesson");
 
                     b.Navigation("User");
                 });

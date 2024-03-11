@@ -10,8 +10,8 @@ namespace DAL.Entities.Relations
         public User User { get; set; } = null!;
         public long CourseId { get; set; }
         public Course Course { get; set; } = null!;
-        [Required]
-        public long PositionOnMap { get; set; } = 0;
-        public bool IsSelected { get; set; }
+        public Lesson? SelectedLesson { get; set; }
+        public long? SelectedLessonId { get; set; }
+        public bool IsSelected { get; set; } = false;
     }
 }

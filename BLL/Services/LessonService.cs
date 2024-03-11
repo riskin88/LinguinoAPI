@@ -1,12 +1,17 @@
 ﻿using AutoMapper;
+using BLL.Config;
 using BLL.DTO.Lessons;
 using BLL.Services.Contracts;
 using DAL.Entities;
+using DAL.Entities.Enums;
 using DAL.Entities.Relations;
 using DAL.Exceptions;
 using DAL.Filters;
+using DAL.Migrations;
 using DAL.UnitOfWork;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using System;
 
 namespace BLL.Services
 {
@@ -14,11 +19,13 @@ namespace BLL.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly LearningSettings _configuration;
 
-        public LessonService(IUnitOfWork unitOfWork, IMapper mapper)
+        public LessonService(IUnitOfWork unitOfWork, IMapper mapper, IOptions<LearningSettings> configuration)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _configuration = configuration.Value;
         }
 
         public async Task<CreateLessonRespDTO> CreateBuiltinLesson(CreateBuiltinLessonDTO builtinLessonDTO, long courseId)
@@ -44,7 +51,6 @@ namespace BLL.Services
                         
                     else throw new InvalidIDException("Item " + itemDTO.Id + " does not exist.");
                 }
-                lesson.ItemsTotal = builtinLessonDTO.Items.Count;
 
                 // add record to the M:N join table
                 var users = await _unitOfWork.CourseRepository.GetUsers(courseId);
@@ -68,7 +74,6 @@ namespace BLL.Services
                     var lesson = _mapper.Map<Lesson>(customLessonDTO);
                     lesson.IsCustom = true;
                     lesson.Type = DAL.Entities.Enums.LessonType.VOCABULARY;
-                    lesson.ItemsTotal = customLessonDTO.Items.Count;
                     _unitOfWork.LessonRepository.Add(lesson);
                     lesson.Course = course;
                     _unitOfWork.LessonRepository.AddAuthor(lesson);
@@ -214,7 +219,7 @@ namespace BLL.Services
 
         public async Task ModifyLessonStatus(long courseId, long lessonId, LessonStatusDTO lessonStatusDTO)
         {
-            var lesson = await _unitOfWork.LessonRepository.GetById(lessonId);
+            var lesson = await _unitOfWork.LessonRepository.GetWithItems(lessonId);
             if (lesson != null && lesson.CourseId == courseId)
             {
                 if (lessonStatusDTO.Visible != null)
@@ -229,10 +234,54 @@ namespace BLL.Services
                 {
                     await _unitOfWork.LessonRepository.SetFavorite(lessonId, (bool)lessonStatusDTO.Favorite);
                 }
+                if (lessonStatusDTO.MarkAsLearned == true)
+                {
+                    foreach (var item in lesson.LessonItems)
+                    {
+                        var userLessonItem = await _unitOfWork.LessonItemRepository.GetUserLessonItem(item.Id);
+
+                        userLessonItem.Easiness = _configuration.BoostEasiness;
+                        userLessonItem.Interval = _configuration.BoostInterval;
+                        userLessonItem.Repetitions = _configuration.BoostRepetitions;
+                        userLessonItem.DateToReview = DateTime.Today.AddDays(userLessonItem.Interval);
+                        userLessonItem.ItemState = LessonItemState.REVIEW;
+                    }
+                    var userLesson = await _unitOfWork.LessonRepository.GetUserLesson(lessonId);
+                    userLesson.ItemsDone = lesson.ItemsTotal;
+                    userLesson.IsLearned = true;
+                }
                 _unitOfWork.SaveChanges();
             }
             else throw new InvalidIDException("No such lesson in this course.");
 
+        }
+
+
+        public async Task ModifyCustomLesson(long courseId, long lessonId, ModifyLessonDTO modifyLessonDTO)
+        {
+            if (await _unitOfWork.CourseRepository.IsEnrolled(courseId))
+            {
+                var lesson = await _unitOfWork.LessonRepository.GetForUser(lessonId);
+                if (lesson.IsCustom)
+                {
+                    if (lesson.CourseId == courseId)
+                    {
+                        if (modifyLessonDTO.Name != null)
+                        {
+                            lesson.Name = modifyLessonDTO.Name;
+                        }
+                        if (modifyLessonDTO.Description != null)
+                        {
+                            lesson.Description = modifyLessonDTO.Description;
+                        }
+
+                        _unitOfWork.SaveChanges();
+                    }
+                    else throw new InvalidIDException("No such lesson in this course.");
+                }
+                else throw new AccessDeniedException("You have not created this lesson.");
+            }
+            else throw new UserNotInCourseException();
         }
 
         public async Task DeleteCustomLesson(long courseId, long lessonId)
@@ -276,6 +325,5 @@ namespace BLL.Services
             else throw new UserNotInCourseException();
         }
 
-       
     }
 }
