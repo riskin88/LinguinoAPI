@@ -11,11 +11,14 @@ namespace DAL.Entities
     [Table("User")]
     public class User : IdentityUser
     {
+        [Required]
+        public string? Name { get; set; }
         public long? Streak { get; set; } = 0;
         [DataType(DataType.Date)]
         [Column(TypeName = "Date")]
         public DateTime? LastSessionDate { get; set; }
-        public long? Balance { get; set; }
+        public long? Balance { get; set; } = 0;
+        public long? DailyGoalMs { get; set; }
         [Required]
         public bool? AccountInitialized { get; set; } = false;
         public List<User> Following { get; set; } = new();

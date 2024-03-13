@@ -28,14 +28,14 @@ namespace LinguinoAPI.Controllers
 
         [HttpGet, Authorize]
         [Route("courses")]
-        public async Task<ActionResult<IEnumerable<CourseRespDTO>>> GetCourses([FromQuery] CourseFilter filter)
+        public async Task<ActionResult<IEnumerable<GetCourseDTO>>> GetCourses([FromQuery] CourseFilter filter)
         {                      
             return Ok(await _courseService.GetCourses(filter));
         }
 
         [HttpGet, Authorize]
         [Route("user/courses")]
-        public async Task<ActionResult<IEnumerable<CourseRespDTO>>> GetUserCourses()
+        public async Task<ActionResult<IEnumerable<GetCourseDTO>>> GetUserCourses()
         {
             return Ok(await _courseService.GetUserCourses());
         }

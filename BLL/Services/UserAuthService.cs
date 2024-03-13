@@ -11,6 +11,7 @@ using DAL.Entities;
 using DAL.Repositories.Contracts;
 using DAL.UnitOfWork;
 using Microsoft.AspNetCore.Identity;
+using System.CodeDom.Compiler;
 
 
 namespace BLL.Services
@@ -37,6 +38,7 @@ namespace BLL.Services
             {
                 var user = await _unitOfWork.UserManager.FindByNameAsync(createUserDTO.UserName);
                 await _unitOfWork.UserManager.AddToRoleAsync(user, "USER");
+                user.Name = GenerateRandomName();
 
                 var roles = await _unitOfWork.UserManager.GetRolesAsync(user);
                 var resp = _mapper.Map<CreateUserRespDTO>(user);
@@ -75,7 +77,7 @@ namespace BLL.Services
             else throw new SignupErrorException("WRONG_EMAIL");
         }
 
-        public async Task ResetPassword(ResetPasswordDTO resetPasswordDTO)
+        public async Task ChangePassword(ResetPasswordDTO resetPasswordDTO)
         {
             var user = await _unitOfWork.UserManager.FindByEmailAsync(resetPasswordDTO.Email);
             if (user != null)
@@ -87,6 +89,46 @@ namespace BLL.Services
             }
             else throw new SignupErrorException("WRONG_EMAIL");
         }
+
+
+
+        public async Task ChangeEmail(ChangeEmailDTO changeEmailDTO)
+        {
+            var user = _unitOfWork.UserRepository.GetUser();
+            var token = await _unitOfWork.UserManager.GenerateChangeEmailTokenAsync(user, changeEmailDTO.NewEmail);
+            _emailHelper.SendEmailChangeEmail(user.Email, changeEmailDTO.NewEmail, token);
+        }
+
+
+        public async Task ChangeEmailConfirm(ChangeEmailConfirmDTO changeEmailConfirmDTO)
+        {
+            var user = await _unitOfWork.UserManager.FindByEmailAsync(changeEmailConfirmDTO.OldEmail);
+            if (user != null)
+            {
+                var result = await _unitOfWork.UserManager.ChangeEmailAsync(user, changeEmailConfirmDTO.NewEmail, changeEmailConfirmDTO.Token);
+                _unitOfWork.SaveChanges();
+                if (!result.Succeeded)
+                    throw new SignupErrorException(result.Errors.First().Code);
+            }
+            else throw new SignupErrorException("WRONG_EMAIL");
+        }
+
+        private static string GenerateRandomName()
+        {
+            const int nameLength = 10;
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+            Random random = new Random();
+            char[] stringChars = new char[nameLength];
+
+            for (int i = 0; i < stringChars.Length; i++)
+            {
+                stringChars[i] = chars[random.Next(chars.Length)];
+            }
+
+            return new string(stringChars);
+        }
+
     }
 }
 

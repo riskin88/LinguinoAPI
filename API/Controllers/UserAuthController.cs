@@ -2,6 +2,7 @@ using BLL.DTO.Auth;
 using BLL.DTO.Users;
 using BLL.Helpers;
 using BLL.Services.Contracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LinguinoAPI.Controllers
@@ -47,7 +48,24 @@ namespace LinguinoAPI.Controllers
         [Route("change-password")]
         public async Task<ActionResult> ChangePassword(ResetPasswordDTO resetPassword)
         {
-            await _userService.ResetPassword(resetPassword);
+            await _userService.ChangePassword(resetPassword);
+            return Ok();
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("change-email")]
+        public async Task<ActionResult> ChangeEmail(ChangeEmailDTO changeEmailDTO)
+        {
+            await _userService.ChangeEmail(changeEmailDTO);
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("change-email-confirm")]
+        public async Task<ActionResult> ChangeEmailConfirm(ChangeEmailConfirmDTO changeEmailConfirmDTO)
+        {
+            await _userService.ChangeEmailConfirm(changeEmailConfirmDTO);
             return Ok();
         }
     }

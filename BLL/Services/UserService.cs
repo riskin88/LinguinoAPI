@@ -73,5 +73,33 @@ namespace BLL.Services
             _unitOfWork.SaveChanges();
 
         }
+
+        public GetUserSettingsDTO GetSettings()
+        {
+            var user = _unitOfWork.UserRepository.GetUser();
+            return _mapper.Map<GetUserSettingsDTO>(user);
+        }
+
+        public GetUserSettingsDTO ChangeSettings(ChangeUserSettingsDTO changeSettingsDTO)
+        {
+            var user = _unitOfWork.UserRepository.GetUser();
+            if (changeSettingsDTO.Username != null)
+            {
+                user.UserName = changeSettingsDTO.Username;
+            }
+
+            if (changeSettingsDTO.Name != null)
+            {
+                user.Name = changeSettingsDTO.Name;
+            }
+
+            if (changeSettingsDTO.DailyGoal != null)
+            {
+                user.DailyGoalMs = changeSettingsDTO.DailyGoal;
+            }
+
+            _unitOfWork.SaveChanges();
+            return _mapper.Map<GetUserSettingsDTO>(user);
+        }
     }
 }

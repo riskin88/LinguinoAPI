@@ -9,5 +9,7 @@ namespace BLL.Services.Contracts
         GetUserRespDTO GetUser();
         Task<IEnumerable<GetFollowerDTO>> GetFollowing(string userId);
         Task<IEnumerable<GetFollowerDTO>> GetFollowers(string userId);
+        GetUserSettingsDTO GetSettings();
+        GetUserSettingsDTO ChangeSettings(ChangeUserSettingsDTO changeSettingsDTO);
     }
 }

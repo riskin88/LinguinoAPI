@@ -13,5 +13,6 @@ namespace BLL.Config
         public string Host { get; set; }
         public int Port { get; set; }
         public string ResetPasswordUrl { get; set; }
+        public string ChangeEmailUrl { get; set; }
     }
 }

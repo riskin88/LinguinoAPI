@@ -15,7 +15,9 @@ namespace BLL.Services.Contracts
         Task<CreateUserRespDTO> RegisterUser(CreateUserDTO user);
         Task<CreateUserRespDTO> LoginUser(LoginUserDTO loginUserDTO);
         Task ResetPasswordToken(string email);
-        Task ResetPassword(ResetPasswordDTO resetPassword);
+        Task ChangePassword(ResetPasswordDTO resetPassword);
+        Task ChangeEmail(ChangeEmailDTO changeEmailDTO);
+        Task ChangeEmailConfirm(ChangeEmailConfirmDTO changeEmailConfirmDTO);
 
         /// <summary>
         /// Updates entity

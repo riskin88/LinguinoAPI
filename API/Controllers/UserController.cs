@@ -51,5 +51,19 @@ namespace LinguinoAPI.Controllers
         {
             return Ok(await _userService.GetFollowers(userId));
         }
+
+        [HttpGet, Authorize]
+        [Route("user/settings")]
+        public ActionResult<GetUserSettingsDTO> GetSettings()
+        {
+            return Ok(_userService.GetSettings());
+        }
+
+        [HttpPatch, Authorize]
+        [Route("user/settings")]
+        public ActionResult<GetUserSettingsDTO> ChangeSettings(ChangeUserSettingsDTO changeSettingsDTO)
+        {
+            return Ok(_userService.ChangeSettings(changeSettingsDTO));
+        }
     }
 }

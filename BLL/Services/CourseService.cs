@@ -45,16 +45,16 @@ namespace BLL.Services
 
         }
 
-        public async Task<IEnumerable<CourseRespDTO>> GetCourses(CourseFilter filter)
+        public async Task<IEnumerable<GetCourseDTO>> GetCourses(CourseFilter filter)
         {
             var res = await _unitOfWork.CourseRepository.FindByFilter(filter);
-            return _mapper.Map<List<CourseRespDTO>>(res);
+            return _mapper.Map<List<GetCourseDTO>>(res);
         }
 
-        public async Task<IEnumerable<CourseRespDTO>> GetUserCourses()
+        public async Task<IEnumerable<GetCourseDTO>> GetUserCourses()
         {
             var res = await _unitOfWork.CourseRepository.GetOwn();
-            return _mapper.Map<List<CourseRespDTO>>(res);
+            return _mapper.Map<List<GetCourseDTO>>(res);
         }
 
         public async Task<CourseWithFeaturedDTO> GetWithFeaturedTopics(long courseId)
@@ -67,7 +67,7 @@ namespace BLL.Services
             else throw new InvalidIDException("Course does not exist.");
         }
 
-        public async Task<CourseRespDTO> AddUserWithTopics(AddCourseDTO courseDTO, long courseId)
+        public async Task<GetCourseDTO> AddUserWithTopics(AddCourseDTO courseDTO, long courseId)
         {
             var course = await _unitOfWork.CourseRepository.AddUser(courseId);
             await InitAllInCourse(courseId);
@@ -85,7 +85,7 @@ namespace BLL.Services
                 else throw new InvalidIDException("Topic " + topicDTO.Id + " does not exist in this course.");
             }
             _unitOfWork.SaveChanges();
-            return _mapper.Map<CourseRespDTO>(course);
+            return _mapper.Map<GetCourseDTO>(course);
         }
 
         public async Task<IEnumerable<TopicRespDTO>> GetTopics(long courseId, TopicFilter filter)
