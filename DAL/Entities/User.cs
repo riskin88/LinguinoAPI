@@ -13,11 +13,14 @@ namespace DAL.Entities
     {
         [Required]
         public string? Name { get; set; }
+        public string? ProfileImageUrl { get; set; }
         public long? Streak { get; set; } = 0;
         [DataType(DataType.Date)]
         [Column(TypeName = "Date")]
         public DateTime? LastSessionDate { get; set; }
         public long? Balance { get; set; } = 0;
+        public long Xp { get; set; } = 0;
+        public int Level { get; set; } = 1;
         public long? DailyGoalMs { get; set; }
         [Required]
         public bool? AccountInitialized { get; set; } = false;
@@ -32,6 +35,7 @@ namespace DAL.Entities
         public List<Lesson> LessonsCreated { get; set; } = new();
         public List<LessonItem> LessonItems { get; set; } = new();
         public List<UserLessonItem> UserLessonItems { get; set; } = new();
+        public List<LearningStat> LearningStats { get; set; } = new();
 
     }
 }

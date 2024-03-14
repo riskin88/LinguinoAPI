@@ -94,7 +94,7 @@ namespace BLL.Services
 
         public async Task ChangeEmail(ChangeEmailDTO changeEmailDTO)
         {
-            var user = _unitOfWork.UserRepository.GetUser();
+            var user = _unitOfWork.UserRepository.GetCurrentUser();
             var token = await _unitOfWork.UserManager.GenerateChangeEmailTokenAsync(user, changeEmailDTO.NewEmail);
             _emailHelper.SendEmailChangeEmail(user.Email, changeEmailDTO.NewEmail, token);
         }

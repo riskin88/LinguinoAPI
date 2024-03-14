@@ -111,7 +111,8 @@ namespace DAL.Repositories
             var lessons = await dataContext.Set<Lesson>().Include(l => l.Author).Where(
                 l => l.CourseId == courseId &&
             (filter.Type == null || filter.Type == l.Type) &&
-            (filter.Level == null || filter.Level == l.Level)).ToListAsync();
+            (filter.Level == null || filter.Level == l.Level) &&
+            (filter.SearchName == null || (l.Name != null && l.Name.Contains(filter.SearchName)))).ToListAsync();
             if (filter.Favorite != null)
             {
                 lessons = lessons.Where(l => filter.Favorite == IsFavorite(l.Id)).ToList();

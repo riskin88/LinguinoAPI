@@ -1,6 +1,7 @@
 ﻿using DAL.Data;
 using DAL.Entities;
 using DAL.Exceptions;
+using DAL.Filters;
 using DAL.Identity;
 using DAL.Repositories.Contracts;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +17,7 @@ namespace DAL.Repositories
             _dataContext = dataContext;
             _roleGuard = roleGuard;
         }
-        public User GetUser()
+        public User GetCurrentUser()
         {
             return _roleGuard.user;
         }
@@ -74,6 +75,21 @@ namespace DAL.Repositories
                 return user.Followers;
             }
             else throw new InvalidIDException("User does not exist.");
+        }
+
+        public async Task<IEnumerable<User>> GetUsers(UserFilter filter)
+        {
+            return await _dataContext.Set<User>().Where(u => filter.SearchName == null || (u.Name != null && u.Name.Contains(filter.SearchName)) || (u.UserName != null && u.UserName.StartsWith(filter.SearchName))).ToListAsync();
+        }
+
+        public async Task<User?> GetUserWithStatsAndFollowers(string userId)
+        {
+            return await _dataContext.Set<User>().Include(u => u.Followers).Include(u => u.Following).Include(u => u.LearningStats.Where(ls => (DateTime.Now - ls.Date).TotalDays <= 7)).FirstOrDefaultAsync(e => e.Id == userId);
+        }
+
+        public async Task<User?> GetUserWithStats(string userId)
+        {
+            return await _dataContext.Set<User>().Include(u => u.LearningStats.Where(ls => (DateTime.Now - ls.Date).TotalDays <= 7)).FirstOrDefaultAsync(e => e.Id == userId);
         }
     }
 }

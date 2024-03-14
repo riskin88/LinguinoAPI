@@ -12,8 +12,9 @@ namespace BLL.Config
         public long SessionLengthMs { get; set; }
         public double TimeForNewItems {  get; set; }
         public Dictionary<string, int> ExercisesInSession { get; set; }
-        public List<int> SessionLengths { get; set; }
-        public int PointsForExercise { get; set; }
+        public List<int> LevelThresholds { get; set; }
+        public int CoinsForExercise { get; set; }
+        public int XpForExercise { get; set; }
         public int BoostInterval {  get; set; }
         public int BoostRepetitions { get; set; }
         public double BoostEasiness { get; set; }

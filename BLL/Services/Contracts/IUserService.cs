@@ -1,4 +1,5 @@
 ﻿using BLL.DTO.Users;
+using DAL.Filters;
 
 namespace BLL.Services.Contracts
 {
@@ -6,10 +7,12 @@ namespace BLL.Services.Contracts
     {
         Task FollowUser(string userId);
         Task UnfollowUser(string userId);
-        GetUserRespDTO GetUser();
+        Task<GetUserDTO> GetUser();
         Task<IEnumerable<GetFollowerDTO>> GetFollowing(string userId);
         Task<IEnumerable<GetFollowerDTO>> GetFollowers(string userId);
         GetUserSettingsDTO GetSettings();
         GetUserSettingsDTO ChangeSettings(ChangeUserSettingsDTO changeSettingsDTO);
+        Task<IEnumerable<GetUserBriefDTO>> GetUsers(UserFilter filter);
+        Task<GetUserPublicDTO> GetUserPublicData(string userId);
     }
 }

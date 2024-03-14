@@ -11,6 +11,7 @@ using DAL.Exceptions;
 using DAL.Filters;
 using DAL.UnitOfWork;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Configuration.UserSecrets;
 using Microsoft.Extensions.Options;
 
 namespace BLL.Services
@@ -201,9 +202,13 @@ namespace BLL.Services
                 UpdateUserProgress(userLessonItem, itemResult.averageRating);
             }
 
-            var user = _unitOfWork.UserRepository.GetUser();
-            int points = exerciseAnswers.Count() * _configuration.PointsForExercise;
-            user.Balance += points;
+            var user = _unitOfWork.UserRepository.GetCurrentUser();
+            int coins = exerciseAnswers.Count() * _configuration.CoinsForExercise;
+            user.Balance += coins;
+            int xp = exerciseAnswers.Count() * _configuration.XpForExercise;
+            user.Xp += xp;
+            UpdateUserLevel(user);
+            await UpdateUserStats(user.Id, exerciseAnswers.Count());
             // last session was before yesterday
             if (user.LastSessionDate == null || user.LastSessionDate < DateTime.Today.AddDays(-1))
             {
@@ -215,7 +220,7 @@ namespace BLL.Services
             }
             user.LastSessionDate = DateTime.Today;
             _unitOfWork.SaveChanges();
-            return new PostSessionRespDTO { Reward = points };
+            return new PostSessionRespDTO { Reward = coins };
 
         }
 
@@ -248,6 +253,34 @@ namespace BLL.Services
             }
             
             progress.DateToReview = DateTime.Today.AddDays(progress.Interval);
+
+        }
+
+        private void UpdateUserLevel(User user)
+        {
+            for (int i = 0; i < _configuration.LevelThresholds.Count; i++)
+            {
+                if (user.Xp < _configuration.LevelThresholds[i])
+                {
+                    user.Level = i + 1;
+                    return;
+                }
+            }
+        }
+
+        private async Task UpdateUserStats(string userId, long exerciseCount)
+        {
+            var user = await _unitOfWork.UserRepository.GetUserWithStats(userId);
+            var todayStats = user.LearningStats.Where(ls => ls.Date.Date == DateTime.Today).FirstOrDefault();
+            if (todayStats != null)
+            {
+                todayStats.Points += exerciseCount;
+            }
+            else
+            {
+                user.LearningStats.Add(new LearningStat { Date = DateTime.Today, Points = exerciseCount });
+            }
+
 
         }
 

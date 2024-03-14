@@ -9,5 +9,6 @@ namespace DAL.Filters
         public bool? Custom { get; set; }
         public bool? Favorite { get; set; }
         public bool? Visible { get; set; }
+        public string? SearchName { get; set; }
     }
 }

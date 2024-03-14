@@ -1,5 +1,6 @@
 ﻿using BLL.DTO.Users;
 using BLL.Services.Contracts;
+using DAL.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,9 +18,9 @@ namespace LinguinoAPI.Controllers
 
         [HttpGet, Authorize]
         [Route("user")]
-        public ActionResult<GetUserRespDTO> GetUser()
+        public async Task<ActionResult<GetUserDTO>> GetUser()
         {
-            return Ok(_userService.GetUser());
+            return Ok(await _userService.GetUser());
         }
 
         [HttpPut, Authorize]
@@ -64,6 +65,20 @@ namespace LinguinoAPI.Controllers
         public ActionResult<GetUserSettingsDTO> ChangeSettings(ChangeUserSettingsDTO changeSettingsDTO)
         {
             return Ok(_userService.ChangeSettings(changeSettingsDTO));
+        }
+
+        [HttpGet, Authorize]
+        [Route("users")]
+        public async Task<ActionResult<IEnumerable<GetUserBriefDTO>>> GetUsers([FromQuery] UserFilter filter)
+        {
+            return Ok(await _userService.GetUsers(filter));
+        }
+
+        [HttpGet, Authorize]
+        [Route("users/{userId}")]
+        public async Task<ActionResult<GetUserPublicDTO>> GetUserPublic(string userId)
+        {
+            return Ok(await _userService.GetUserPublicData(userId));
         }
     }
 }
