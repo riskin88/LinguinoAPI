@@ -16,6 +16,6 @@ namespace BLL.Services.Contracts
         public Task EnableTopicInCourse(long courseId, long topicId);
         public Task DisableTopicInCourse(long courseId, long topicId);
         public Task<CourseWithFeaturedDTO> GetWithFeaturedTopics(long courseId);
-
+        Task SelectCourse(long courseId);
     }
 }

@@ -28,6 +28,10 @@ namespace DAL.Configs
             .UsingEntity<Following>(
                 l => l.HasOne<User>().WithMany().HasForeignKey(e => e.FollowerId),
                 r => r.HasOne<User>().WithMany().HasForeignKey(e => e.FolloweeId));
+            builder.HasOne(u => u.SelectedCourse)
+            .WithMany()
+            .HasForeignKey(uc => uc.SelectedCourseId)
+            .IsRequired(false);
         }
     }
 }

@@ -5,6 +5,7 @@ using DAL.Exceptions;
 using DAL.Filters;
 using DAL.Identity;
 using DAL.Repositories.Contracts;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics.Metrics;
 using System.Runtime.InteropServices;
@@ -165,41 +166,6 @@ namespace DAL.Repositories
             else throw new MyBadException("No visible lesson on the study map was found.");
 
         }
-        //public async Task MovePositionOnMap(long courseId)
-        //{
-        //    string userId = _roleGuard.user.Id;
-        //    var userCourse = await dataContext.Set<UserCourse>().FirstOrDefaultAsync(e => e.CourseId == courseId && e.UserId == userId);
-        //    if (userCourse != null)
-        //    {
-        //        var position = userCourse.PositionOnMap;
-        //        var lessons = await dataContext.Set<UserLesson>().Where(ul => ul.UserId == userId && ul.IsVisible).Select(ul => ul.Lesson).Where(l => !l.IsCustom && l.CourseId == courseId).OrderBy(l => l.OrderOnMap).ToListAsync();
-        //        var nextLessons = lessons.Where(l => l.OrderOnMap >= position).ToList();
-        //        if (nextLessons.Count >= 2)
-        //        {
-        //            userCourse.PositionOnMap = (long)nextLessons[1].OrderOnMap.Value;
-        //        }
-        //        else
-        //        {
-        //            var nextLesson = nextLessons.FirstOrDefault();
-        //            if (nextLesson != null)
-        //            {
-        //                userCourse.PositionOnMap = (long)nextLesson.OrderOnMap.Value;
-        //            }
-        //            else
-        //            {
-        //                nextLesson = lessons.LastOrDefault();
-        //                if (nextLesson != null)
-        //                {
-        //                    userCourse.PositionOnMap = (long)nextLesson.OrderOnMap.Value;
-        //                }
-        //                else throw new MyBadException("No visible lesson on the study map was found.");
-        //            }
-                    
-        //        }
-
-        //    }
-        //    else throw new InvalidIDException("Course does not exist.");
-        //}
 
         public async Task<UserCourse> GetUserCourse(long courseId)
         {
@@ -209,6 +175,18 @@ namespace DAL.Repositories
             {
                 return userCourse;
 
+            }
+            else throw new InvalidIDException("Course does not exist.");
+        }
+
+        public async Task SelectCourse(long courseId)
+        {
+            var course = await GetById(courseId);
+            if (course != null)
+            {
+                string userId = _roleGuard.user.Id;
+                var user = await dataContext.Set<User>().Include(u => u.SelectedCourse).FirstOrDefaultAsync(u => u.Id == userId);
+                user.SelectedCourse = course;
             }
             else throw new InvalidIDException("Course does not exist.");
         }

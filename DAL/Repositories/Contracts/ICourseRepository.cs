@@ -22,5 +22,6 @@ namespace DAL.Repositories.Contracts
         public Task<IEnumerable<User>> GetUsers(long courseId);
         public Task<long> GetActiveLessonId(long courseId);
         Task<UserCourse> GetUserCourse(long courseId);
+        Task SelectCourse(long courseId);
     }
 }

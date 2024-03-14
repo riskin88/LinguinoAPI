@@ -194,5 +194,16 @@ namespace BLL.Services
             }
 
         }
+
+        public async Task SelectCourse(long courseId)
+        {
+            if (await _unitOfWork.CourseRepository.IsEnrolled(courseId))
+            {
+                await _unitOfWork.CourseRepository.SelectCourse(courseId);
+                _unitOfWork.SaveChanges();
+            }
+            else throw new UserNotInCourseException();
+
+        }
     }
 }

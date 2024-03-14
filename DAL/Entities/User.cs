@@ -28,6 +28,8 @@ namespace DAL.Entities
         public List<User> Followers { get; set; } = new();
         public List<Course> Courses { get; set; } = new();
         public List<UserCourse> UserCourses { get; set; } = new();
+        public long? SelectedCourseId { get; set; }
+        public Course? SelectedCourse { get; set; }
         public List<Topic> Topics { get; set; } = new();
         public List<UserTopic> UserTopics { get; set; } = new();
         public List<Lesson> Lessons { get; set; } = new();
