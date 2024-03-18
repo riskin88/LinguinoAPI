@@ -67,25 +67,40 @@ namespace BLL.Services
             else throw new InvalidIDException("Course does not exist.");
         }
 
-        public async Task<GetCourseDTO> AddUserWithTopics(AddCourseDTO courseDTO, long courseId)
+        public async Task AddUserWithTopics(AddCourseDTO courseDTO, long courseId)
         {
             var course = await _unitOfWork.CourseRepository.AddUser(courseId);
             await InitAllInCourse(courseId);
             _unitOfWork.SaveChanges();
+            if (courseDTO.StartingLevel != null)
+            {
+                var lesson = await _unitOfWork.LessonRepository.GetFirstInCourseByLevel(courseId, courseDTO.StartingLevel.Value);
+                if (lesson != null)
+                {
+
+                    var userCourse = await _unitOfWork.CourseRepository.GetUserCourse(courseId);
+                    userCourse.SelectedLesson = lesson;
+                    _unitOfWork.SaveChanges();
+
+
+                }
+                else throw new MyBadException("No lesson with your desired level was found in this course.");
+            }
+
+
             var defaultTopics = await _unitOfWork.CourseRepository.GetDefaultTopics(courseId);
             foreach (var topic in defaultTopics)
             {
                 await EnableTopic(topic.Id);
             }
-            foreach (var topicDTO in courseDTO.SelectedTopics)
+            foreach (var topicId in courseDTO.SelectedTopicIds)
             {
-                var topic = await _unitOfWork.TopicRepository.GetWithCourse(topicDTO.Id);
+                var topic = await _unitOfWork.TopicRepository.GetWithCourse(topicId);
                 if (topic != null && topic.CourseId == course.Id)
                     await EnableTopic(topic.Id);
-                else throw new InvalidIDException("Topic " + topicDTO.Id + " does not exist in this course.");
+                else throw new InvalidIDException("Topic " + topicId + " does not exist in this course.");
             }
             _unitOfWork.SaveChanges();
-            return _mapper.Map<GetCourseDTO>(course);
         }
 
         public async Task<IEnumerable<TopicRespDTO>> GetTopics(long courseId, TopicFilter filter)

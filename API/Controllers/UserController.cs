@@ -80,5 +80,13 @@ namespace LinguinoAPI.Controllers
         {
             return Ok(await _userService.GetUserPublicData(userId));
         }
+
+        [HttpPost, Authorize]
+        [Route("user/account-setup")]
+        public ActionResult AccountSetup(AccountSetupDTO accountSetupDTO)
+        {
+            _userService.AccountSetup(accountSetupDTO);
+            return Ok();
+        }
     }
 }

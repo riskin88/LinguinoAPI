@@ -1,13 +1,17 @@
-﻿using BLL.Services.Contracts;
+﻿using BLL.Config;
+using BLL.Services.Contracts;
 using DAL.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,19 +19,19 @@ namespace BLL.Services.Auth
 {
     public class JwtService : IJwtService
     {
-        private readonly IConfiguration _configuration;
+        private readonly SecuritySettings _configuration;
 
-        public JwtService(IConfiguration configuration)
+        public JwtService(IOptions<SecuritySettings> configuration)
         {
-            _configuration = configuration;
+            _configuration = configuration.Value;
         }
 
-        public string CreateToken(User user, IList<string> roles)
+        public string CreateAccessToken(User user, IList<string> roles)
         {
             var token = CreateJwtToken(
                 CreateClaims(user, roles),
                 CreateSigningCredentials(),
-                DateTime.UtcNow.AddMinutes(Double.Parse(_configuration["Jwt:ExpiryMinutes"]))
+                DateTime.UtcNow.AddMinutes(_configuration.AccessTokenExpirationMinutes)
             );
 
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -37,8 +41,8 @@ namespace BLL.Services.Auth
 
         private JwtSecurityToken CreateJwtToken(List<Claim> claims, SigningCredentials credentials, DateTime expiration) =>
             new JwtSecurityToken(
-                _configuration["Jwt:Issuer"],
-                _configuration["Jwt:Audience"],
+                _configuration.Issuer,
+                _configuration.Audience,
                 claims,
                 expires: expiration,
                 signingCredentials: credentials
@@ -62,9 +66,18 @@ namespace BLL.Services.Auth
         private SigningCredentials CreateSigningCredentials() =>
             new SigningCredentials(
                 new SymmetricSecurityKey(
-                    Encoding.UTF8.GetBytes(_configuration["Jwt:Key"])
+                    Encoding.UTF8.GetBytes(_configuration.Key)
                 ),
                 SecurityAlgorithms.HmacSha256
             );
+
+        public string CreateRefreshToken()
+        {
+            const int length = 64;
+            var randomNumber = new byte[length];
+            var rng = RandomNumberGenerator.Create();
+            rng.GetBytes(randomNumber);
+            return Convert.ToBase64String(randomNumber);
+        }
     }
 }

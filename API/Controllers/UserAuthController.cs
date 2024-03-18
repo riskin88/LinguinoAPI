@@ -22,7 +22,7 @@ namespace LinguinoAPI.Controllers
 
         [HttpPost]
         [Route("signup")]
-        public async Task<ActionResult<CreateUserRespDTO>> RegisterUser(CreateUserDTO user)
+        public async Task<ActionResult<AuthUserRespDTO>> RegisterUser(CreateUserDTO user)
         {
             var resp = await _userService.RegisterUser(user);
             return Ok(resp);
@@ -30,7 +30,7 @@ namespace LinguinoAPI.Controllers
 
         [HttpPost]
         [Route("login")]
-        public async Task<ActionResult<CreateUserRespDTO>> LoginUser(LoginUserDTO user)
+        public async Task<ActionResult<AuthUserRespDTO>> LoginUser(LoginUserDTO user)
         {
             var resp = await _userService.LoginUser(user);
             return Ok(resp);
@@ -67,6 +67,13 @@ namespace LinguinoAPI.Controllers
         {
             await _userService.ChangeEmailConfirm(changeEmailConfirmDTO);
             return Ok();
+        }
+
+        [HttpPost]
+        [Route("refresh-token")]
+        public async Task<ActionResult<RefreshTokenRespDTO>> RefreshToken(string token)
+        {
+            return Ok(await _userService.RefreshToken(token));
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using DAL.Entities;
+using DAL.Entities.Enums;
 using DAL.Entities.Relations;
 using DAL.Filters;
 
@@ -32,5 +33,6 @@ namespace DAL.Repositories.Contracts
         Task<UserLesson> GetUserLesson(long lessonId);
         Task<Lesson> GetWithItems(long lessonId);
         Task RemoveWord(long lessonId, Word item);
+        Task<Lesson?> GetFirstInCourseByLevel(long courseId, LessonLevel level);
     }
 }

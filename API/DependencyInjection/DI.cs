@@ -47,15 +47,16 @@ namespace LinguinoAPI.DependencyInjection
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidAudience = configuration["Jwt:Audience"],
-            ValidIssuer = configuration["Jwt:Issuer"],
+            ValidAudience = configuration["SecuritySettings:Audience"],
+            ValidIssuer = configuration["SecuritySettings:Issuer"],
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(configuration["Jwt:Key"])
+                Encoding.UTF8.GetBytes(configuration["SecuritySettings:Key"])
             )
         };
     });
             services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
             services.Configure<LearningSettings>(configuration.GetSection("LearningSettings"));
+            services.Configure<SecuritySettings>(configuration.GetSection("SecuritySettings"));
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

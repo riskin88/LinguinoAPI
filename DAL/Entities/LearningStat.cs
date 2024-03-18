@@ -12,6 +12,8 @@ namespace DAL.Entities
     [Table("LearningStat")]
     public class LearningStat : EntityBase
     {
+        [DataType(DataType.Date)]
+        [Column(TypeName = "Date")]
         public DateTime Date { get; set; }
         public long Points { get; set; } = 0;
         [JsonIgnore]

@@ -15,5 +15,8 @@ namespace DAL.Repositories.Contracts
         Task<bool> IsFollowed(string userId);
         Task<IEnumerable<User>> GetFollowers(string userId);
         Task<IEnumerable<User>> GetUsers(UserFilter filter);
+        Task<User> GetCurrentUserWithCourse();
+        Task<User> GetUserWithCourse(string userId);
+        Task<User?> GetUserByRefreshTokenHash(string refreshToken);
     }
 }

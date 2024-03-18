@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using DAL.Configs;
 using Microsoft.AspNetCore.Identity;
 using DAL.Entities.Relations;
+using System.Text.Json.Serialization;
 
 namespace DAL.Entities
 {
@@ -11,7 +12,6 @@ namespace DAL.Entities
     [Table("User")]
     public class User : IdentityUser
     {
-        [Required]
         public string? Name { get; set; }
         public string? ProfileImageUrl { get; set; }
         public long? Streak { get; set; } = 0;
@@ -24,6 +24,10 @@ namespace DAL.Entities
         public long? DailyGoalMs { get; set; }
         [Required]
         public bool? AccountInitialized { get; set; } = false;
+        [JsonIgnore]
+        public string? RefreshToken { get; set; }
+        [JsonIgnore]
+        public DateTime? RefreshTokenExpirationDate { get; set; }
         public List<User> Following { get; set; } = new();
         public List<User> Followers { get; set; } = new();
         public List<Course> Courses { get; set; } = new();

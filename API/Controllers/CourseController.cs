@@ -43,9 +43,10 @@ namespace LinguinoAPI.Controllers
 
         [HttpPut, Authorize]
         [Route("user/courses/{courseId}")]
-        public async Task<ActionResult<Course>> AddCourse(AddCourseDTO course, long courseId)
+        public async Task<ActionResult> AddCourse(AddCourseDTO course, long courseId)
         {
-            return Ok(await _courseService.AddUserWithTopics(course, courseId));
+            await _courseService.AddUserWithTopics(course, courseId);
+            return NoContent();
         }
 
         [HttpGet, Authorize]

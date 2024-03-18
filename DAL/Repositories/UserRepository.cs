@@ -4,6 +4,7 @@ using DAL.Exceptions;
 using DAL.Filters;
 using DAL.Identity;
 using DAL.Repositories.Contracts;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Repositories
@@ -20,6 +21,22 @@ namespace DAL.Repositories
         public User GetCurrentUser()
         {
             return _roleGuard.user;
+        }
+
+        public async Task<User> GetCurrentUserWithCourse()
+        {
+            var userId = _roleGuard.user.Id;
+            return await _dataContext.Set<User>().Include(u => u.SelectedCourse).FirstOrDefaultAsync(e => e.Id == userId);
+        }
+
+        public async Task<User> GetUserWithCourse(string userId)
+        {
+            var user = await _dataContext.Set<User>().Include(u => u.SelectedCourse).FirstOrDefaultAsync(e => e.Id == userId);
+            if (user != null)
+            {
+                return user;
+            }
+            else throw new InvalidIDException("User does not exist.");
         }
 
         public async Task Follow(string userId)
@@ -84,12 +101,19 @@ namespace DAL.Repositories
 
         public async Task<User?> GetUserWithStatsAndFollowers(string userId)
         {
-            return await _dataContext.Set<User>().Include(u => u.Followers).Include(u => u.Following).Include(u => u.LearningStats.Where(ls => (DateTime.Now - ls.Date).TotalDays <= 7)).FirstOrDefaultAsync(e => e.Id == userId);
+            var weekAgo = DateTime.Today.AddDays(-7);
+            return await _dataContext.Set<User>().Include(u => u.Followers).Include(u => u.Following).Include(u => u.LearningStats.Where(ls => ls.Date > weekAgo)).FirstOrDefaultAsync(e => e.Id == userId);
         }
 
         public async Task<User?> GetUserWithStats(string userId)
         {
-            return await _dataContext.Set<User>().Include(u => u.LearningStats.Where(ls => (DateTime.Now - ls.Date).TotalDays <= 7)).FirstOrDefaultAsync(e => e.Id == userId);
+            var weekAgo = DateTime.Today.AddDays(-7);
+            return await _dataContext.Set<User>().Include(u => u.LearningStats.Where(ls => ls.Date > weekAgo)).FirstOrDefaultAsync(e => e.Id == userId);
+        }
+
+        public async Task<User?> GetUserByRefreshTokenHash(string refreshToken)
+        {
+            return await _dataContext.Set<User>().FirstOrDefaultAsync(e => e.RefreshToken == refreshToken);
         }
     }
 }

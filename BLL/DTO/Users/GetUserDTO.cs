@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using AutoMapper.Configuration.Annotations;
+using BLL.DTO.Courses;
 using DAL.Entities;
 
 namespace BLL.DTO.Users
@@ -18,5 +20,7 @@ namespace BLL.DTO.Users
         public int? Level { get; set; }
         public DateTime? LastSessionDate { get; set; }
         public bool? AccountInitialized { get; set; }
+        [SourceMember(nameof(User.SelectedCourse))]
+        public GetCourseDTO? SelectedCourse { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Azure;
 using DAL.Data;
 using DAL.Entities;
+using DAL.Entities.Enums;
 using DAL.Entities.Relations;
 using DAL.Exceptions;
 using DAL.Filters;
@@ -388,6 +389,12 @@ namespace DAL.Repositories
                 if (lesson.LessonItems.Remove(item))
                     lesson.ItemsTotal--;
             }
+        }
+
+        public async Task<Lesson?> GetFirstInCourseByLevel(long courseId, LessonLevel level)
+        {
+            var lessons = await dataContext.Set<Lesson>().Where(l => l.CourseId == courseId && l.Level == level).OrderBy(l => l.OrderOnMap).ToListAsync();
+            return lessons.FirstOrDefault();
         }
     }
 

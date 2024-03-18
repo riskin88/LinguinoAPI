@@ -36,7 +36,7 @@ namespace BLL.Services
 
         public async Task<GetUserDTO> GetUser()
         {
-            var user = _unitOfWork.UserRepository.GetCurrentUser();
+            var user = await _unitOfWork.UserRepository.GetCurrentUserWithCourse();
             ResetStreak(user);
 
             var userDTO = _mapper.Map<GetUserDTO>(user);
@@ -91,6 +91,7 @@ namespace BLL.Services
             if (changeSettingsDTO.Username != null)
             {
                 user.UserName = changeSettingsDTO.Username;
+                _unitOfWork.UserManager.UpdateNormalizedUserNameAsync(user);
             }
 
             if (changeSettingsDTO.Name != null)
@@ -132,6 +133,20 @@ namespace BLL.Services
                 return userDTO;
             }
             else throw new InvalidIDException("User does not exist.");
+        }
+
+        public void AccountSetup(AccountSetupDTO accountSetupDTO)
+        {
+            var user = _unitOfWork.UserRepository.GetCurrentUser();
+
+            if (accountSetupDTO.DailyGoal != null)
+            {
+                user.DailyGoalMs = accountSetupDTO.DailyGoal;
+            }
+
+            user.AccountInitialized = true;
+
+            _unitOfWork.SaveChanges();
         }
     }
 }

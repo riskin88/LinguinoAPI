@@ -1,6 +1,7 @@
 ﻿
 using AutoMapper;
 using Azure.Core;
+using BLL.Config;
 using BLL.DTO.Auth;
 using BLL.DTO.Users;
 using BLL.Exceptions.Auth;
@@ -8,10 +9,16 @@ using BLL.Helpers;
 using BLL.Services.Auth;
 using BLL.Services.Contracts;
 using DAL.Entities;
+using DAL.Migrations;
 using DAL.Repositories.Contracts;
 using DAL.UnitOfWork;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging.Console;
+using Microsoft.Extensions.Options;
 using System.CodeDom.Compiler;
+using System.Data;
+using System.Security.Cryptography;
+using System.Text;
 
 
 namespace BLL.Services
@@ -22,34 +29,41 @@ namespace BLL.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IJwtService _jwtService;
         private readonly EmailHelper _emailHelper;
+        private readonly SecuritySettings _configuration;
 
-        public UserAuthService(IMapper mapper, IUnitOfWork unitOfWork, IJwtService jwtService, EmailHelper emailHelper)
+        public UserAuthService(IMapper mapper, IUnitOfWork unitOfWork, IJwtService jwtService, EmailHelper emailHelper, IOptions<SecuritySettings> configuration)
         {
             _mapper = mapper;
              _unitOfWork = unitOfWork;
             _jwtService = jwtService;
             _emailHelper = emailHelper;
+            _configuration = configuration.Value;
         }
 
-        public async Task<CreateUserRespDTO> RegisterUser(CreateUserDTO createUserDTO)
+        public async Task<AuthUserRespDTO> RegisterUser(CreateUserDTO createUserDTO)
         {
-            var result = await _unitOfWork.UserManager.CreateAsync(new User() { UserName = createUserDTO.UserName, Email = createUserDTO.Email }, createUserDTO.Password);
+            var result = await _unitOfWork.UserManager.CreateAsync(new User() { UserName = createUserDTO.Username, Email = createUserDTO.Email }, createUserDTO.Password);
             if (result.Succeeded)
             {
-                var user = await _unitOfWork.UserManager.FindByNameAsync(createUserDTO.UserName);
+                var user = await _unitOfWork.UserManager.FindByNameAsync(createUserDTO.Username);
                 await _unitOfWork.UserManager.AddToRoleAsync(user, "USER");
                 user.Name = GenerateRandomName();
 
                 var roles = await _unitOfWork.UserManager.GetRolesAsync(user);
-                var resp = _mapper.Map<CreateUserRespDTO>(user);
-                resp.IdToken = _jwtService.CreateToken(user, roles);
+                var resp = new AuthUserRespDTO();
+                var userFull = await _unitOfWork.UserRepository.GetUserWithCourse(user.Id);
+                var userDTO = _mapper.Map<GetUserDTO>(userFull);
+                resp.User = userDTO;
+                resp.IdToken = _jwtService.CreateAccessToken(user, roles);
+                resp.RefreshToken = CreateAndSaveRefreshToken(user);
+
                 _unitOfWork.SaveChanges();
                 return resp;
             }
             else throw new SignupErrorException(result.Errors.First().Code);
         }
 
-        public async Task<CreateUserRespDTO> LoginUser(LoginUserDTO loginUserDTO)
+        public async Task<AuthUserRespDTO> LoginUser(LoginUserDTO loginUserDTO)
         {
             var user = await _unitOfWork.UserManager.FindByEmailAsync(loginUserDTO.Email);
             if (user != null)
@@ -57,13 +71,35 @@ namespace BLL.Services
                 if (await _unitOfWork.UserManager.CheckPasswordAsync(user, loginUserDTO.Password))
                 {
                     var roles = await _unitOfWork.UserManager.GetRolesAsync(user);
-                    var resp = _mapper.Map<CreateUserRespDTO>(user);
-                    resp.IdToken = _jwtService.CreateToken(user, roles);
+                    var resp = new AuthUserRespDTO();
+                    var userFull = await _unitOfWork.UserRepository.GetUserWithCourse(user.Id);
+                    var userDTO = _mapper.Map<GetUserDTO>(userFull);
+                    resp.User = userDTO;
+                    resp.IdToken = _jwtService.CreateAccessToken(user, roles);
+                    resp.RefreshToken = CreateAndSaveRefreshToken(user);
+                    _unitOfWork.SaveChanges();
                     return resp;
                 }
 
             }
             throw new SignupErrorException("WRONG_EMAIL_OR_PASSWORD");
+        }
+
+        public async Task<RefreshTokenRespDTO> RefreshToken(string refreshToken)
+        {
+            var tokenHash = HashToken(refreshToken);
+            var user = await _unitOfWork.UserRepository.GetUserByRefreshTokenHash(tokenHash);
+            if (user != null && user.RefreshTokenExpirationDate >= DateTime.Now)
+            {
+                var resp = new RefreshTokenRespDTO();
+                var roles = await _unitOfWork.UserManager.GetRolesAsync(user);
+                resp.IdToken = _jwtService.CreateAccessToken(user, roles);
+                resp.RefreshToken = CreateAndSaveRefreshToken(user);
+                _unitOfWork.SaveChanges();
+                return resp;
+            }
+            else throw new InvalidTokenException("Invalid refresh token.");
+
         }
 
         public async Task ResetPasswordToken(string email)
@@ -111,6 +147,22 @@ namespace BLL.Services
                     throw new SignupErrorException(result.Errors.First().Code);
             }
             else throw new SignupErrorException("WRONG_EMAIL");
+        }
+
+        private string CreateAndSaveRefreshToken(User user)
+        {
+            var token = _jwtService.CreateRefreshToken();
+            var tokenHash = HashToken(token);
+            user.RefreshToken = tokenHash;
+            user.RefreshTokenExpirationDate = DateTime.UtcNow.AddMinutes(_configuration.RefreshTokenExpirationMinutes);
+            return token;
+        }
+
+        private string HashToken(string token)
+        {
+            var inputBytes = Encoding.UTF8.GetBytes(token);
+            var inputHash = SHA256.HashData(inputBytes);
+            return Convert.ToHexString(inputHash);
         }
 
         private static string GenerateRandomName()

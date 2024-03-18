@@ -14,5 +14,6 @@ namespace BLL.Services.Contracts
         GetUserSettingsDTO ChangeSettings(ChangeUserSettingsDTO changeSettingsDTO);
         Task<IEnumerable<GetUserBriefDTO>> GetUsers(UserFilter filter);
         Task<GetUserPublicDTO> GetUserPublicData(string userId);
+        void AccountSetup(AccountSetupDTO accountSetupDTO);
     }
 }

@@ -212,7 +212,7 @@ namespace BLL.Services
             // last session was before yesterday
             if (user.LastSessionDate == null || user.LastSessionDate < DateTime.Today.AddDays(-1))
             {
-                user.Streak = 0;
+                user.Streak = 1;
             }
             else
             {

@@ -4,6 +4,7 @@ namespace BLL.Services.Contracts
 {
     public interface IJwtService
     {
-        string CreateToken(User user, IList<string> roles);
+        string CreateAccessToken(User user, IList<string> roles);
+        string CreateRefreshToken();
     }
 }

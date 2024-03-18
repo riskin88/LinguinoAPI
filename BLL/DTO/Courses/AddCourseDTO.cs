@@ -1,4 +1,5 @@
 ﻿using DAL.Entities;
+using DAL.Entities.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -10,6 +11,7 @@ namespace BLL.DTO.Courses
 {
     public class AddCourseDTO
     {
-        public List<IdDTO> SelectedTopics { get; set; }
+        public LessonLevel? StartingLevel { get; set; }
+        public List<long> SelectedTopicIds { get; set; }
     }
 }
