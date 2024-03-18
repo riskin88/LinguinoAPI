@@ -9,13 +9,25 @@ using LinguinoAPI.DependencyInjection;
 using LinguinoAPI.Middleware;
 using AutoMapper;
 using Microsoft.OpenApi.Models;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
-builder.Services.AddDbContext<DataContext>(o => o.UseSqlServer(builder.Configuration.GetConnectionString("MSSQL_DB")));
+
+var connection = String.Empty;
+if (builder.Environment.IsDevelopment())
+{
+    builder.Configuration.AddEnvironmentVariables().AddJsonFile("appsettings.json");
+    connection = builder.Configuration.GetConnectionString("MSSQL_DB");
+}
+else
+{
+    connection = Environment.GetEnvironmentVariable("MSSQL_DB");
+}
+builder.Services.AddDbContext<DataContext>(o => o.UseSqlServer(connection));
 
 builder.Services.AddCustomServices(builder.Configuration);
 
