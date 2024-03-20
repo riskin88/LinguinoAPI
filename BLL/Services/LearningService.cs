@@ -66,8 +66,9 @@ namespace BLL.Services
                     // daily learning
                     else
                     {
-                        // TODO move time from config to user settings
-                        long totalTimeNew = (long)(_configuration.SessionLengthMs * _configuration.TimeForNewItems);
+                        var totalTime = _unitOfWork.UserRepository.GetCurrentUser().DailyGoalMs;
+                        totalTime ??= _configuration.SessionLengthMs;
+                        long totalTimeNew = (long)(totalTime * _configuration.TimeForNewItems);
                         var lessonId = await _unitOfWork.CourseRepository.GetActiveLessonId(courseId);
                         var itemsNew = await _unitOfWork.LessonItemRepository.GetNewInLessonOrdered(lessonId);
                         (IEnumerable<GetExerciseDTO> exercises, long time) res = await GetExercisesForOrderedItems(itemsNew, totalTimeNew, true);
@@ -79,7 +80,7 @@ namespace BLL.Services
                         });
 
                         // review
-                        long totalTimeReview = _configuration.SessionLengthMs - res.time;
+                        long totalTimeReview = totalTime.Value - res.time;
                         var itemsToReview = await _unitOfWork.LessonItemRepository.GetOverdueToReviewInCourseOrdered(courseId);
                         exerciseDTOs.AddRange((await GetExercisesForOrderedItems(itemsToReview, totalTimeReview, false)).Item1);
                     }
