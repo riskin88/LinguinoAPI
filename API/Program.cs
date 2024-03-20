@@ -28,7 +28,7 @@ else
 {
     connection = Environment.GetEnvironmentVariable("SQLAZURECONNSTR_AZURE_SQL_DB");
 }
-builder.Services.AddDbContext<DataContext>(o => o.UseSqlServer(connection));
+builder.Services.AddDbContext<DataContext>(o => o.UseSqlServer(connection, o => o.EnableRetryOnFailure()));
 
 using (EventLog eventLog = new EventLog("Application"))
 {
