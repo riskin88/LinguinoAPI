@@ -26,7 +26,7 @@ if (builder.Environment.IsDevelopment())
 }
 else
 {
-    connection = Environment.GetEnvironmentVariable("AZURE_SQL_DB");
+    connection = Environment.GetEnvironmentVariable("SQLAZURECONNSTR_AZURE_SQL_DB");
 }
 builder.Services.AddDbContext<DataContext>(o => o.UseSqlServer(connection));
 
@@ -34,7 +34,7 @@ using (EventLog eventLog = new EventLog("Application"))
 {
     eventLog.Source = "Application";
     eventLog.WriteEntry("connection: " + connection, EventLogEntryType.Information, 101, 1);
-    eventLog.WriteEntry("env: " + builder.Environment.ToString, EventLogEntryType.Information, 101, 1);
+    eventLog.WriteEntry("env: " + builder.Environment.EnvironmentName, EventLogEntryType.Information, 101, 1);
 }
 
 builder.Services.AddCustomServices(builder.Configuration);
