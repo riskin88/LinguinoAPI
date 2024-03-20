@@ -18,24 +18,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-var connection = String.Empty;
-if (builder.Environment.IsDevelopment())
-{
-    builder.Configuration.AddEnvironmentVariables().AddJsonFile("appsettings.json");
-    connection = builder.Configuration.GetConnectionString("MSSQL_DB");
-}
-else
-{
-    connection = Environment.GetEnvironmentVariable("SQLAZURECONNSTR_AZURE_SQL_DB");
-}
-builder.Services.AddDbContext<DataContext>(o => o.UseSqlServer(connection, o => o.EnableRetryOnFailure()));
 
-using (EventLog eventLog = new EventLog("Application"))
-{
-    eventLog.Source = "Application";
-    eventLog.WriteEntry("connection: " + connection, EventLogEntryType.Information, 101, 1);
-    eventLog.WriteEntry("env: " + builder.Environment.EnvironmentName, EventLogEntryType.Information, 101, 1);
-}
+var connection = builder.Configuration.GetConnectionString("MSSQL_DB");
+
+builder.Services.AddDbContext<DataContext>(o => o.UseSqlServer(connection, o => o.EnableRetryOnFailure()));
 
 builder.Services.AddCustomServices(builder.Configuration);
 
