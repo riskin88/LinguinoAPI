@@ -25,7 +25,7 @@ if (builder.Environment.IsDevelopment())
 }
 else
 {
-    connection = Environment.GetEnvironmentVariable("MSSQL_DB");
+    connection = Environment.GetEnvironmentVariable("AZURE_SQL_DB");
 }
 builder.Services.AddDbContext<DataContext>(o => o.UseSqlServer(connection));
 
