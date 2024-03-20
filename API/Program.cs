@@ -10,6 +10,7 @@ using LinguinoAPI.Middleware;
 using AutoMapper;
 using Microsoft.OpenApi.Models;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using System.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +29,13 @@ else
     connection = Environment.GetEnvironmentVariable("AZURE_SQL_DB");
 }
 builder.Services.AddDbContext<DataContext>(o => o.UseSqlServer(connection));
+
+using (EventLog eventLog = new EventLog("Application"))
+{
+    eventLog.Source = "Application";
+    eventLog.WriteEntry("connection: " + connection, EventLogEntryType.Information, 101, 1);
+    eventLog.WriteEntry("env: " + builder.Environment.ToString, EventLogEntryType.Information, 101, 1);
+}
 
 builder.Services.AddCustomServices(builder.Configuration);
 
