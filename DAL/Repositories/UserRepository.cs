@@ -29,6 +29,23 @@ namespace DAL.Repositories
             return await _dataContext.Set<User>().Include(u => u.SelectedCourse).FirstOrDefaultAsync(e => e.Id == userId);
         }
 
+        public async Task<User> GetCurrentUserWithSubscription()
+        {
+            var userId = _roleGuard.user.Id;
+            return await _dataContext.Set<User>().Include(u => u.Subscription).FirstOrDefaultAsync(e => e.Id == userId);
+        }
+
+
+        public async Task<User> GetUserByStripeSubscriptionId(string id)
+        {
+            var user = await _dataContext.Set<User>().Include(u => u.Subscription).Where(u => u.Subscription != null && u.Subscription.StripeSubscriptionId == id).FirstOrDefaultAsync();
+            if (user != null)
+            {
+                return user;
+            }
+            else throw new SubscriptionErrorException("Unknown subscription ID.");
+        }
+
         public async Task<User> GetUserWithCourse(string userId)
         {
             var user = await _dataContext.Set<User>().Include(u => u.SelectedCourse).FirstOrDefaultAsync(e => e.Id == userId);
@@ -38,6 +55,7 @@ namespace DAL.Repositories
             }
             else throw new InvalidIDException("User does not exist.");
         }
+
 
         public async Task Follow(string userId)
         {
@@ -115,5 +133,6 @@ namespace DAL.Repositories
         {
             return await _dataContext.Set<User>().FirstOrDefaultAsync(e => e.RefreshToken == refreshToken);
         }
+
     }
 }

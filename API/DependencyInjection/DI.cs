@@ -57,6 +57,7 @@ namespace LinguinoAPI.DependencyInjection
             services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
             services.Configure<LearningSettings>(configuration.GetSection("LearningSettings"));
             services.Configure<SecuritySettings>(configuration.GetSection("SecuritySettings"));
+            services.Configure<SubscriptionSettings>(configuration.GetSection("SubscriptionSettings"));
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -68,6 +69,7 @@ namespace LinguinoAPI.DependencyInjection
             services.AddScoped<ILessonItemService, LessonItemService>();
             services.AddScoped<IExerciseService, ExerciseService>();
             services.AddScoped<ILearningService, LearningService>();
+            services.AddScoped<ISubscriptionService, SubscriptionService>();
 
             services.AddScoped<IJwtService, JwtService>();
             services.AddScoped<EmailHelper>();

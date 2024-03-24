@@ -28,6 +28,7 @@ namespace DAL.Entities
         public string? RefreshToken { get; set; }
         [JsonIgnore]
         public DateTime? RefreshTokenExpirationDate { get; set; }
+        public Subscription? Subscription { get; set; }
         public List<User> Following { get; set; } = new();
         public List<User> Followers { get; set; } = new();
         public List<Course> Courses { get; set; } = new();

@@ -18,5 +18,7 @@ namespace DAL.Repositories.Contracts
         Task<User> GetCurrentUserWithCourse();
         Task<User> GetUserWithCourse(string userId);
         Task<User?> GetUserByRefreshTokenHash(string refreshToken);
+        Task<User> GetCurrentUserWithSubscription();
+        Task<User> GetUserByStripeSubscriptionId(string id);
     }
 }

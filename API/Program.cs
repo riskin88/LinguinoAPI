@@ -18,7 +18,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-
 var connection = builder.Configuration.GetConnectionString("MSSQL_DB");
 
 builder.Services.AddDbContext<DataContext>(o => o.UseSqlServer(connection, o => o.EnableRetryOnFailure()));
@@ -62,14 +61,17 @@ using (var serviceScope = app.Services.GetService<IServiceScopeFactory>().Create
     context.Database.Migrate();
 }
 
-    // Configure the HTTP request pipeline.
-    if (app.Environment.IsDevelopment())
-    {
-        app.UseSwagger();
-        app.UseSwaggerUI();
-    }
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseAuthentication();
 app.UseAuthorization();

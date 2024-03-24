@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -32,6 +33,10 @@ namespace DAL.Configs
             .WithMany()
             .HasForeignKey(uc => uc.SelectedCourseId)
             .IsRequired(false);
+            builder.HasOne(u => u.Subscription)
+            .WithOne(s => s.User)
+        .HasForeignKey<Subscription>(s => s.UserId)
+        .IsRequired();
         }
     }
 }

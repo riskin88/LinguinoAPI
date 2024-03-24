@@ -37,6 +37,7 @@ namespace LinguinoAPI.Middleware
             if (exception is LessonTypeMismatchException) statusCode = (int)HttpStatusCode.BadRequest;
             if (exception is AccessDeniedException) statusCode = (int)HttpStatusCode.Forbidden;
             if (exception is MyBadException) statusCode = (int)HttpStatusCode.InternalServerError;
+            if (exception is SubscriptionErrorException) statusCode = (int)HttpStatusCode.BadRequest;
 
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = statusCode;

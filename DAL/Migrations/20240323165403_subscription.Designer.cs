@@ -4,6 +4,7 @@ using DAL.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240323165403_subscription")]
+    partial class subscription
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -486,13 +489,9 @@ namespace DAL.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
 
                     b.ToTable("Subscription");
                 });
@@ -613,6 +612,9 @@ namespace DAL.Migrations
                     b.Property<long?>("Streak")
                         .HasColumnType("bigint");
 
+                    b.Property<long?>("SubscriptionId")
+                        .HasColumnType("bigint");
+
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
@@ -634,6 +636,10 @@ namespace DAL.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.HasIndex("SelectedCourseId");
+
+                    b.HasIndex("SubscriptionId")
+                        .IsUnique()
+                        .HasFilter("[SubscriptionId] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
                 });
@@ -1320,17 +1326,6 @@ namespace DAL.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("DAL.Entities.Subscription", b =>
-                {
-                    b.HasOne("DAL.Entities.User", "User")
-                        .WithOne("Subscription")
-                        .HasForeignKey("DAL.Entities.Subscription", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("DAL.Entities.Topic", b =>
                 {
                     b.HasOne("DAL.Entities.Course", "Course")
@@ -1348,7 +1343,13 @@ namespace DAL.Migrations
                         .WithMany()
                         .HasForeignKey("SelectedCourseId");
 
+                    b.HasOne("DAL.Entities.Subscription", "Subscription")
+                        .WithOne("User")
+                        .HasForeignKey("DAL.Entities.User", "SubscriptionId");
+
                     b.Navigation("SelectedCourse");
+
+                    b.Navigation("Subscription");
                 });
 
             modelBuilder.Entity("DAL.Entities.WordExample", b =>
@@ -1450,6 +1451,11 @@ namespace DAL.Migrations
                     b.Navigation("UserLessonItems");
                 });
 
+            modelBuilder.Entity("DAL.Entities.Subscription", b =>
+                {
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("DAL.Entities.Topic", b =>
                 {
                     b.Navigation("TopicLessons");
@@ -1462,8 +1468,6 @@ namespace DAL.Migrations
                     b.Navigation("LearningStats");
 
                     b.Navigation("LessonsCreated");
-
-                    b.Navigation("Subscription");
 
                     b.Navigation("UserCourses");
 
