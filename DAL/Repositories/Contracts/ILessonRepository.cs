@@ -28,7 +28,7 @@ namespace DAL.Repositories.Contracts
         Task<Lesson> GetForUser(long lessonId);
         Task AddToSelf(long lessonId);
         Task AddToUser(long lessonId, User user);
-        Task<bool> IsNotOwn(long lessonId);
+        Task<bool> UserHasAccess(long lessonId);
         Task<IEnumerable<User>> GetUsers(long lessonId);
         Task<UserLesson> GetUserLesson(long lessonId);
         Task<Lesson> GetWithItems(long lessonId);

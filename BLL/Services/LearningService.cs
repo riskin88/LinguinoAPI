@@ -41,7 +41,7 @@ namespace BLL.Services
                     // study specific lesson
                     if (filter.LessonId != null)
                     {
-                        if (!await _unitOfWork.LessonRepository.IsNotOwn(filter.LessonId.Value))
+                        if (await _unitOfWork.LessonRepository.UserHasAccess(filter.LessonId.Value))
                         {
                             // new
                             long totalTimeNew = (long)(_configuration.SessionLengthMs * _configuration.TimeForNewItems);

@@ -342,13 +342,18 @@ namespace DAL.Repositories
             else throw new InvalidIDException("Lesson does not exist.");
         }
 
-        public async Task<bool> IsNotOwn(long lessonId)
+        public async Task<bool> UserHasAccess(long lessonId)
         {
             var lesson = await dataContext.Set<Lesson>().FirstOrDefaultAsync(l => l.Id == lessonId);
             if (lesson != null)
             {
                 string userId = _roleGuard.user.Id;
-                if (lesson.IsCustom && lesson.AuthorId != userId)
+                if (!_roleGuard.roles.Contains("PREMIUM_USER"))
+                {
+                    if (lesson.Level < LessonLevel.C1)
+                        return false;
+                }
+                if (!lesson.IsCustom || lesson.AuthorId == userId)
                     return true;
                 else return false;
             }

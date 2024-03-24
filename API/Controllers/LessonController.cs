@@ -24,7 +24,7 @@ namespace LinguinoAPI.Controllers
             return Ok(await _lessonService.CreateBuiltinLesson(lessonDTO, courseId));
         }
 
-        [HttpPost, Authorize]
+        [HttpPost, Authorize(Roles = "PREMIUM_USER,ADMIN")]
         [Route("user/courses/{courseId}/lessons")]
         public async Task<ActionResult<CreateLessonRespDTO>> CreateCustomLesson(CreateCustomLessonDTO lessonDTO, long courseId)
         {

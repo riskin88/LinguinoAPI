@@ -147,7 +147,12 @@ namespace DAL.Repositories
             string userId = _roleGuard.user.Id;
             var userCourse = await GetUserCourse(courseId);
 
-            var lessons = await dataContext.Set<UserLesson>().Where(ul => ul.UserId == userId && ul.IsVisible && !ul.IsLearned).Select(ul => ul.Lesson).Where(l => !l.IsCustom && l.CourseId == courseId).OrderBy(l => l.OrderOnMap).ToListAsync();
+            var lessons = await dataContext.Set<UserLesson>().Where(ul => ul.UserId == userId && ul.IsVisible && !ul.IsLearned).Select(ul => ul.Lesson).Where(l => !l.IsCustom && l.CourseId == courseId).ToListAsync();
+            if (!_roleGuard.roles.Contains("PREMIUM_USER"))
+            {
+                lessons = lessons.Where(l => l.Level < Entities.Enums.LessonLevel.C1).ToList();
+            }
+            lessons = lessons.OrderBy(l => l.OrderOnMap).ToList();
             int startPosition = -1;
             if (userCourse.SelectedLesson != null)
             {
