@@ -12,6 +12,5 @@ namespace DAL.Entities.Relations
         public Course Course { get; set; } = null!;
         public Lesson? SelectedLesson { get; set; }
         public long? SelectedLessonId { get; set; }
-        public bool IsSelected { get; set; } = false;
     }
 }
