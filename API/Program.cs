@@ -11,6 +11,7 @@ using AutoMapper;
 using Microsoft.OpenApi.Models;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using System.Diagnostics;
+using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -53,6 +54,16 @@ builder.Services.AddSwaggerGen(option =>
     });
 });
 
+var MyAllowFrontendOrigins = "_myAllowFrontendOrigins";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowFrontendOrigins,
+                      builda =>
+                      {
+                          builda.WithOrigins(builder.Configuration["FrontendUrl"]);
+                      });
+});
+
 var app = builder.Build();
 app.UseMiddleware<ErrorHandlingMiddleware>();
 using (var serviceScope = app.Services.GetService<IServiceScopeFactory>().CreateScope())
@@ -71,6 +82,7 @@ if (app.Environment.IsDevelopment())
 if (!app.Environment.IsDevelopment())
 {
     app.UseHttpsRedirection();
+    app.UseCors(MyAllowFrontendOrigins);
 }
 
 app.UseAuthentication();
