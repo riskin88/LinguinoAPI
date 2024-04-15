@@ -25,7 +25,7 @@ namespace DAL.Repositories
             _roleGuard = roleGuard;
         }
 
-        public async Task AddLessonItem(long lessonId, LessonItem item)
+        public async Task<bool> AddLessonItem(long lessonId, LessonItem item)
         {
             var lesson = await GetWithItems(lessonId);
             if (lesson != null)
@@ -34,9 +34,9 @@ namespace DAL.Repositories
                 {
                     lesson.LessonItems.Add(item);
                     lesson.ItemsTotal++;
-                    var userLesson = await GetUserLesson(lessonId);
-                    userLesson.IsLearned = false;
+                    return true;
                 }
+                return false;
             }
             else throw new InvalidIDException("Lesson does not exist.");
 
@@ -386,14 +386,19 @@ namespace DAL.Repositories
             else throw new InvalidIDException("Lesson does not exist.");
         }
 
-        public async Task RemoveWord(long lessonId, Word item)
+        public async Task<bool> RemoveWord(long lessonId, Word item)
         {
             var lesson = await GetWithItems(lessonId);
             if (lesson != null)
             {
                 if (lesson.LessonItems.Remove(item))
+                {
                     lesson.ItemsTotal--;
+                    return true;
+                }
+                return false;
             }
+            else throw new InvalidIDException("Lesson does not exist.");
         }
 
         public async Task<Lesson?> GetFirstInCourseByLevel(long courseId, LessonLevel level)

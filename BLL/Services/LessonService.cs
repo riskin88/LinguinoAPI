@@ -73,19 +73,35 @@ namespace BLL.Services
                 {
                     var lesson = _mapper.Map<Lesson>(customLessonDTO);
                     lesson.IsCustom = true;
-                    lesson.Type = DAL.Entities.Enums.LessonType.VOCABULARY;
+                    lesson.Type = LessonType.VOCABULARY;
                     _unitOfWork.LessonRepository.Add(lesson);
                     lesson.Course = course;
                     _unitOfWork.LessonRepository.AddAuthor(lesson);
                     _unitOfWork.SaveChanges();
-                    
+                    var userLesson = await _unitOfWork.LessonRepository.GetUserLesson(lesson.Id);
                     foreach (var itemDTO in customLessonDTO.Items)
                     {
                         var word = await _unitOfWork.LessonItemRepository.GetWordById(itemDTO.Id);
                         if (word != null)
-                            await _unitOfWork.LessonRepository.AddLessonItem(lesson.Id, word);
+                        {
+                            if (await _unitOfWork.LessonRepository.AddLessonItem(lesson.Id, word))
+                            {
+                                var userItem = await _unitOfWork.LessonItemRepository.GetUserLessonItem(word.Id);
+                                if (userItem != null && userItem.ItemState == LessonItemState.REVIEW)
+                                {
+                                    userLesson.ItemsDone++;
+
+                                }
+                            }
+                        }
                         else throw new InvalidIDException("Word " + itemDTO.Id + " does not exist.");
                     }
+                    if (userLesson.ItemsDone >= userLesson.Lesson.ItemsTotal)
+                    {
+                        userLesson.IsLearned = true;
+                    }
+                    else
+                        userLesson.IsLearned = false;
 
                     // add record to the M:N join table
                     await _unitOfWork.LessonRepository.AddToSelf(lesson.Id);

@@ -7,7 +7,7 @@ namespace DAL.Repositories.Contracts
 {
     public interface ILessonRepository : IRepositoryBase<Lesson>
     {
-        Task AddLessonItem(long lessonId, LessonItem item);
+        Task<bool> AddLessonItem(long lessonId, LessonItem item);
         Task AddLessonItemWithOrder(long lessonId, LessonItem item, double? orderInLesson);
         void AddAuthor(Lesson lesson);
         Task AddTopic(long lessonId, Topic topic);
@@ -32,7 +32,7 @@ namespace DAL.Repositories.Contracts
         Task<IEnumerable<User>> GetUsers(long lessonId);
         Task<UserLesson> GetUserLesson(long lessonId);
         Task<Lesson> GetWithItems(long lessonId);
-        Task RemoveWord(long lessonId, Word item);
+        Task<bool> RemoveWord(long lessonId, Word item);
         Task<Lesson?> GetFirstInCourseByLevel(long courseId, LessonLevel level);
     }
 }

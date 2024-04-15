@@ -76,7 +76,23 @@ namespace BLL.Services
                         var item = await _unitOfWork.LessonItemRepository.GetWordById(wordId);
                         if (item != null)
                         {
-                            await _unitOfWork.LessonRepository.AddLessonItem(lessonId, item);
+                            if (await _unitOfWork.LessonRepository.AddLessonItem(lessonId, item))
+                            {
+                                var userItem = await _unitOfWork.LessonItemRepository.GetUserLessonItem(item.Id);
+                                var userLesson = await _unitOfWork.LessonRepository.GetUserLesson(lesson.Id);
+                                if (userItem != null && userItem.ItemState == LessonItemState.REVIEW)
+                                {
+                                    userLesson.ItemsDone++;
+
+                                }
+                                if (userLesson.ItemsDone >= userLesson.Lesson.ItemsTotal)
+                                {
+                                    userLesson.IsLearned = true;
+                                }
+                                else
+                                    userLesson.IsLearned = false;
+                            }
+                            
                         }
                         else throw new InvalidIDException("Word does not exist.");
                         var users = await _unitOfWork.LessonRepository.GetUsers(lessonId);
@@ -107,7 +123,23 @@ namespace BLL.Services
                         var item = await _unitOfWork.LessonItemRepository.GetWordById(wordId);
                         if (item != null)
                         {
-                            await _unitOfWork.LessonRepository.RemoveWord(lessonId, item);
+                            if(await _unitOfWork.LessonRepository.RemoveWord(lessonId, item)){
+                                var userItem = await _unitOfWork.LessonItemRepository.GetUserLessonItem(item.Id);
+                                var userLesson = await _unitOfWork.LessonRepository.GetUserLesson(lesson.Id);
+                                if (userItem != null && userItem.ItemState == LessonItemState.REVIEW)
+                                {
+                                    userLesson.ItemsDone--;
+                                }
+                                else if(userItem != null && userItem.ItemState == LessonItemState.NEW)
+                                {
+                                    if (userLesson.ItemsDone >= userLesson.Lesson.ItemsTotal)
+                                    {
+                                        userLesson.IsLearned = true;
+                                    }
+
+                                }
+                            }
+
                         }
                         else throw new InvalidIDException("Word does not exist.");
 
