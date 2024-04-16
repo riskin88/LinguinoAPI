@@ -71,13 +71,9 @@ using (var serviceScope = app.Services.GetService<IServiceScopeFactory>().Create
     var context = serviceScope.ServiceProvider.GetRequiredService<DataContext>();
     context.Database.Migrate();
 }
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    
+app.UseSwagger();
+app.UseSwaggerUI();
 
 if (!app.Environment.IsDevelopment())
 {
