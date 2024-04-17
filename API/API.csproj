@@ -8,6 +8,7 @@
     <DockerfileContext>.</DockerfileContext>
     <UserSecretsId>32fa8fa8-8d3c-44f5-8e51-bf5671a9f15a</UserSecretsId>
     <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
+    <ApplicationInsightsResourceId>/subscriptions/bd99cdb0-328c-4b1a-b817-da2e614af210/resourceGroups/linguino-api/providers/microsoft.insights/components/linguino</ApplicationInsightsResourceId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,6 +17,7 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.22.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.2" />
     <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="8.0.2" />
