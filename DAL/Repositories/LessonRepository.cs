@@ -143,7 +143,7 @@ namespace DAL.Repositories
             if (filter.Page != null && filter.Page > 0 && filter.Limit != null && filter.Limit > 0)
             {
                 int skip = (filter.Page.Value - 1) * filter.Limit.Value;
-                lessons = lessons.Skip(skip).Take(filter.Limit.Value);
+                lessons = lessons.OrderBy(l => l.OrderOnMap).Skip(skip).Take(filter.Limit.Value);
             }
             return await lessons.OrderBy(l => l.OrderOnMap).ToListAsync();
 
