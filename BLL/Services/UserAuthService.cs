@@ -53,6 +53,7 @@ namespace BLL.Services
                 var resp = new AuthUserRespDTO();
                 var userFull = await _unitOfWork.UserRepository.GetUserWithCourse(user.Id);
                 var userDTO = _mapper.Map<GetUserDTO>(userFull);
+                userDTO.Role = roles.FirstOrDefault();
                 resp.User = userDTO;
                 resp.IdToken = _jwtService.CreateAccessToken(user, roles);
                 resp.RefreshToken = CreateAndSaveRefreshToken(user);
@@ -74,6 +75,7 @@ namespace BLL.Services
                     var resp = new AuthUserRespDTO();
                     var userFull = await _unitOfWork.UserRepository.GetUserWithCourse(user.Id);
                     var userDTO = _mapper.Map<GetUserDTO>(userFull);
+                    userDTO.Role = roles.FirstOrDefault();
                     resp.User = userDTO;
                     resp.IdToken = _jwtService.CreateAccessToken(user, roles);
                     resp.RefreshToken = CreateAndSaveRefreshToken(user);

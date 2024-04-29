@@ -9,6 +9,7 @@ namespace BLL.DTO.Lessons
     [AutoMap(typeof(Lesson))]
     public class GetLessonDTO
     {
+        public long Id { get; set; }
         public string? Name { get; set; }
         public string? Description { get; set; }
         public LessonType? Type { get; set; }

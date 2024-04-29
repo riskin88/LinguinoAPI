@@ -11,8 +11,9 @@ namespace BLL.DTO.Courses
 {
     [AutoMap(typeof(Course))]
 
-    public class GetCourseDTO : EntityBase
+    public class GetCourseDTO
     {
+        public long Id { get; set; }
         public string? Language1 { get; set; }
         public string? Language2 { get; set; }
         public string? Name { get; set; }
