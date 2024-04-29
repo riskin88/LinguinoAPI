@@ -50,8 +50,6 @@ namespace DAL.Repositories
                 if (!lesson.LessonItems.Contains(item))
                 {
                     lesson.ItemsTotal++;
-                    var userLesson = await GetUserLesson(lessonId);
-                    userLesson.IsLearned = false;
                     lesson.LessonItems.Add(item);
                 }
                 dataContext.SaveChanges();
@@ -362,7 +360,7 @@ namespace DAL.Repositories
 
         public async Task<IEnumerable<User>> GetUsers(long lessonId)
         {
-            return await dataContext.Set<Course>().Where(e => e.Id == lessonId).Include(c => c.Users).SelectMany(c => c.Users).ToListAsync();
+            return await dataContext.Set<Lesson>().Where(e => e.Id == lessonId).Include(c => c.Users).SelectMany(c => c.Users).ToListAsync();
         }
 
         public async Task<UserLesson> GetUserLesson(long lessonId)
