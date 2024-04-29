@@ -166,7 +166,7 @@ namespace BLL.Services
         {
             if (await _unitOfWork.CourseRepository.IsEnrolled(courseId))
             {
-                var vocab = await _unitOfWork.LessonItemRepository.GetLessonItemsFromCourse(courseId, filter);
+                var vocab = await _unitOfWork.LessonItemRepository.GetVocabularyInCourse(courseId, filter);
                 return _mapper.Map<List<GetWordBriefDTO>>(vocab);
             }
             throw new UserNotInCourseException();

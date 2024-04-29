@@ -16,7 +16,7 @@ namespace DAL.Repositories.Contracts
         Task RemoveExercise(long lessonItemId, Exercise exercise);
         Task AddToUser(long lessonItemId, User user);
         Task<IEnumerable<UserLesson>> GetUserLessons(long lessonItemId);
-        Task<IEnumerable<Word>> GetLessonItemsFromCourse(long courseId, VocabularyFilter filter);
+        Task<IEnumerable<Word>> GetVocabularyInCourse(long courseId, VocabularyFilter filter);
         Task<bool> WordInCourse(long wordId, long courseId);
         bool IsFavorite(long lessonItemId);
     }

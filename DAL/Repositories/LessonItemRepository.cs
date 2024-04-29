@@ -147,18 +147,18 @@ namespace DAL.Repositories
                 return await dataContext.Set<LessonItem>().Where(li => li.Id == lessonItemId).SelectMany(li => li.Lessons).SelectMany(l => l.UserLessons).Include(l => l.Lesson).Where(ul => ul.UserId == userId).ToListAsync();
         }
 
-        public async Task<IEnumerable<Word>> GetLessonItemsFromCourse(long courseId, VocabularyFilter filter)
+        public async Task<IEnumerable<Word>> GetVocabularyInCourse(long courseId, VocabularyFilter filter)
         {
-            var course = GetById(courseId);
+            var course = await GetById(courseId);
             if (course != null)
             {
-                var vocab = await dataContext.Set<Course>().Include(c => c.Lessons).ThenInclude(l => l.LessonItems).Where(c => c.Id == courseId).SelectMany(c => c.Lessons).SelectMany(l => l.LessonItems).OfType<Word>().Distinct()
+                var vocab = await dataContext.Set<Course>().Where(c => c.Id == courseId).SelectMany(c => c.Lessons).SelectMany(l => l.LessonItems).OfType<Word>().Distinct()
                     .Where(w => filter.SearchName == null || (w.NameL1 != null && w.NameL1.StartsWith(filter.SearchName)) || (w.NameL2 != null && w.NameL2.StartsWith(filter.SearchName))).ToListAsync();
 
 
                 if (filter.Favorite != null)
                 {
-                    vocab = vocab.Where(w => filter.Favorite == IsFavorite(w.Id)).ToList(); ;
+                    vocab = vocab.Where(w => filter.Favorite == IsFavorite(w.Id)).ToList();
                 }
 
                 return vocab;
