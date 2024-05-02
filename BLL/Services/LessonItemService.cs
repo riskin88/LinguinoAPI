@@ -188,7 +188,7 @@ namespace BLL.Services
 
                         var userLessonItem = await _unitOfWork.LessonItemRepository.GetUserLessonItem(wordId);
                         wordDTO.LearningState = userLessonItem.ItemState;
-                        if (userLessonItem.ItemState == DAL.Entities.Enums.LessonItemState.REVIEW)
+                        if (userLessonItem.ItemState == LessonItemState.REVIEW)
                         {
                             wordDTO.DateToReview = userLessonItem.DateToReview.Value.Date;
                         }

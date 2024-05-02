@@ -125,6 +125,7 @@ namespace BLL.Services
             var user = await _unitOfWork.UserRepository.GetUserWithStatsAndFollowers(userId);
             if (user != null)
             {
+                ResetStreak(user);
                 var userDTO = _mapper.Map<GetUserPublicDTO>(user);
                 if (await _unitOfWork.UserRepository.IsFollowed(user.Id))
                     userDTO.IsFollowed = true;
