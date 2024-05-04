@@ -11,7 +11,7 @@ namespace DAL.Entities.Relations
         public Lesson Lesson { get; set; } = null!;
         public long ItemsDone { get; set; } = 0;
         public bool IsLearned { get; set; } = false;
-        public bool IsVisible { get; set; } = true;
+        public bool IsVisible { get; set; } = false;
         public bool IsFavorite { get; set; } = false;
         public LessonFeedback? Feedback { get; set; }
     }
