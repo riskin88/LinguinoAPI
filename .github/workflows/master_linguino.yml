@@ -24,6 +24,9 @@ jobs:
       - name: Build with dotnet
         run: dotnet build LinguinoAPI.sln --configuration Release
 
+      - name: Test with Unit tests
+        run: dotnet test LinguinoAPI.sln --verbosity normal
+
       - name: dotnet publish
         run: dotnet publish LinguinoAPI.sln -c Release -o "${{env.DOTNET_ROOT}}/myapp"
 
