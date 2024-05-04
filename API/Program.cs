@@ -63,23 +63,29 @@ builder.Services.AddCors(options =>
                           builda.WithOrigins(builder.Configuration["FrontendUrl"]);
                       });
 });
-builder.Services.AddApplicationInsightsTelemetry(new Microsoft.ApplicationInsights.AspNetCore.Extensions.ApplicationInsightsServiceOptions
+
+if (builder.Environment.IsProduction())
 {
-    ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]
-});
+    builder.Services.AddApplicationInsightsTelemetry(new Microsoft.ApplicationInsights.AspNetCore.Extensions.ApplicationInsightsServiceOptions
+    {
+        ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+    });
+}
 
 var app = builder.Build();
 app.UseMiddleware<ErrorHandlingMiddleware>();
+
+
 using (var serviceScope = app.Services.GetService<IServiceScopeFactory>().CreateScope())
 {
     var context = serviceScope.ServiceProvider.GetRequiredService<DataContext>();
     context.Database.Migrate();
 }
-    
+
 app.UseSwagger();
 app.UseSwaggerUI();
 
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsProduction())
 {
     app.UseHttpsRedirection();
     app.UseCors(MyAllowFrontendOrigins);
