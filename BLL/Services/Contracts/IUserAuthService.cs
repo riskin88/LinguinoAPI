@@ -14,8 +14,8 @@ namespace BLL.Services.Contracts
     {
         Task<AuthUserRespDTO> RegisterUser(CreateUserDTO user);
         Task<AuthUserRespDTO> LoginUser(LoginUserDTO loginUserDTO);
-        Task ResetPasswordToken(string email);
-        Task ChangePassword(ResetPasswordDTO resetPassword);
+        Task ResetPasswordToken(ResetPasswordDTO emailDTO);
+        Task ChangePassword(ChangePasswordDTO resetPassword);
         Task ChangeEmail(ChangeEmailDTO changeEmailDTO);
         Task ChangeEmailConfirm(ChangeEmailConfirmDTO changeEmailConfirmDTO);
         Task<RefreshTokenRespDTO> RefreshToken(string refreshToken);
