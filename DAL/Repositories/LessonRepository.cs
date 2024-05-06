@@ -348,7 +348,7 @@ namespace DAL.Repositories
                 string userId = _roleGuard.user.Id;
                 if (!_roleGuard.roles.Contains("PREMIUM_USER"))
                 {
-                    if (lesson.Level < LessonLevel.C1)
+                    if (lesson.Level >= LessonLevel.C1)
                         return false;
                 }
                 if (!lesson.IsCustom || lesson.AuthorId == userId)

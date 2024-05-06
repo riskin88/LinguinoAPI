@@ -21,10 +21,9 @@ namespace BLL.Helpers
             mailMessage.From = new MailAddress(_configuration.Address);
             mailMessage.To.Add(new MailAddress(userEmail));
 
-            NameValueCollection queryString = System.Web.HttpUtility.ParseQueryString(_configuration.ResetPasswordUrl);
-            queryString.Add("resetToken", token);
-            queryString.Add("email", userEmail);
-            var link = queryString.ToString();
+            UriBuilder builder = new UriBuilder(_configuration.ResetPasswordUrl);
+            builder.Query = "resetToken=" + token + "&email=" + userEmail;
+            var link = builder.ToString();
 
             mailMessage.Subject = "Password Reset";
             mailMessage.IsBodyHtml = true;
@@ -52,12 +51,9 @@ namespace BLL.Helpers
             mailMessage.From = new MailAddress(_configuration.Address);
             mailMessage.To.Add(new MailAddress(newEmail));
 
-            NameValueCollection queryString = System.Web.HttpUtility.ParseQueryString(_configuration.ChangeEmailUrl);
-            queryString.Add("token", token);
-            queryString.Add("oldEmail", oldEmail);
-            queryString.Add("newEmail", newEmail);
-            var link = queryString.ToString();
-            
+            UriBuilder builder = new UriBuilder(_configuration.ChangeEmailUrl);
+            builder.Query = "token=" + token + "&oldEmail=" + oldEmail + "&newEmail=" + newEmail;
+            var link = builder.ToString();            
 
             mailMessage.Subject = "Confirm Email Change";
             mailMessage.IsBodyHtml = true;

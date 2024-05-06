@@ -104,18 +104,18 @@ namespace BLL.Services
 
         }
 
-        public async Task ResetPasswordToken(string email)
+        public async Task ResetPasswordToken(ResetPasswordDTO emailDTO)
         {
-            var user = await _unitOfWork.UserManager.FindByEmailAsync(email);
+            var user = await _unitOfWork.UserManager.FindByEmailAsync(emailDTO.Email);
             if (user != null)
             {
                 var token = await _unitOfWork.UserManager.GeneratePasswordResetTokenAsync(user);
-                _emailHelper.SendEmailPasswordReset(email, token);
+                _emailHelper.SendEmailPasswordReset(emailDTO.Email, token);
             }
             else throw new SignupErrorException("WRONG_EMAIL");
         }
 
-        public async Task ChangePassword(ResetPasswordDTO resetPasswordDTO)
+        public async Task ChangePassword(ChangePasswordDTO resetPasswordDTO)
         {
             var user = await _unitOfWork.UserManager.FindByEmailAsync(resetPasswordDTO.Email);
             if (user != null)

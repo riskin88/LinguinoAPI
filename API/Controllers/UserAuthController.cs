@@ -38,17 +38,17 @@ namespace LinguinoAPI.Controllers
 
         [HttpPost]
         [Route("reset-password")]
-        public async Task<ActionResult> ResetPassword(string email)
+        public async Task<ActionResult> ResetPassword(ResetPasswordDTO emailDTO)
         {
-            await _userService.ResetPasswordToken(email);
+            await _userService.ResetPasswordToken(emailDTO);
             return Ok();
         }
 
         [HttpPost]
         [Route("change-password")]
-        public async Task<ActionResult> ChangePassword(ResetPasswordDTO resetPassword)
+        public async Task<ActionResult> ChangePassword(ChangePasswordDTO changePassword)
         {
-            await _userService.ChangePassword(resetPassword);
+            await _userService.ChangePassword(changePassword);
             return Ok();
         }
 

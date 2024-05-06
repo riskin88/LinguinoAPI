@@ -65,7 +65,7 @@ namespace LinguinoAPI.Controllers
         }
 
         [HttpGet, Authorize]
-        [Route("courses/{courseId}/topics")]
+        [Route("user/courses/{courseId}/topics")]
         public async Task<ActionResult<IEnumerable<TopicRespDTO>>> GetTopics(long courseId, [FromQuery] TopicFilter filter)
         {
             return Ok(await _courseService.GetTopics(courseId, filter));
