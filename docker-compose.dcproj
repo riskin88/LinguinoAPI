@@ -14,5 +14,12 @@
     </None>
     <None Include="docker-compose.yml" />
     <None Include=".dockerignore" />
+    <None Include="testdb\Dockerfile" />
+    <None Include="testdb\entrypoint.sh" />
+    <None Include="testdb\init.sql" />
+    <None Include="testdb\run-initialization.sh" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="TestDb\" />
   </ItemGroup>
 </Project>

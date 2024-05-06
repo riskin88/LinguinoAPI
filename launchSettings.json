@@ -3,8 +3,19 @@
     "Docker Compose": {
       "commandName": "DockerCompose",
       "commandVersion": "1.0",
-      "serviceActions": {
-        "api": "StartDebugging"
+      "composeProfile": {
+        "includes": [
+          "debug"
+        ]
+      }
+    },
+    "Docker Compose Test": {
+      "commandName": "DockerCompose",
+      "commandVersion": "1.0",
+      "composeProfile": {
+        "includes": [
+          "test"
+        ]
       }
     }
   }
