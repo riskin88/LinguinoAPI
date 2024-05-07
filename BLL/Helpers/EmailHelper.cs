@@ -22,7 +22,7 @@ namespace BLL.Helpers
             mailMessage.To.Add(new MailAddress(userEmail));
 
             UriBuilder builder = new UriBuilder(_configuration.ResetPasswordUrl);
-            builder.Query = "resetToken=" + token + "&email=" + userEmail;
+            builder.Query = "resetToken=" + Uri.EscapeDataString(token) + "&email=" + Uri.EscapeDataString(userEmail);
             var link = builder.ToString();
 
             mailMessage.Subject = "Password Reset";
@@ -52,7 +52,7 @@ namespace BLL.Helpers
             mailMessage.To.Add(new MailAddress(newEmail));
 
             UriBuilder builder = new UriBuilder(_configuration.ChangeEmailUrl);
-            builder.Query = "token=" + token + "&oldEmail=" + oldEmail + "&newEmail=" + newEmail;
+            builder.Query = "token=" + Uri.EscapeDataString(token) + "&oldEmail=" + Uri.EscapeDataString(oldEmail) + "&newEmail=" + Uri.EscapeDataString(newEmail);
             var link = builder.ToString();            
 
             mailMessage.Subject = "Confirm Email Change";
