@@ -43,12 +43,18 @@ namespace DAL.Repositories
             return await FindByCondition(c => c.Users.Contains(_roleGuard.user));
         }
 
-        public bool IsEnabled(Topic topic)
+        public async Task<bool> IsEnabled(long topicId)
         {
+            var topic = await dataContext.Set<Topic>().Include(t => t.Users).FirstOrDefaultAsync(t => t.Id == topicId);
             {
-                if (topic.Users.Contains(_roleGuard.user))
-                    return true;
-                else return false;
+                if (topic != null)
+                {
+                    if (topic.Users.Contains(_roleGuard.user))
+                        return true;
+                    else return false;
+                }
+
+                else throw new InvalidIDException("Topic does not exist.");
             }
         }
 
