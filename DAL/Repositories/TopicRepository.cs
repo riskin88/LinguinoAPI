@@ -50,7 +50,10 @@ namespace DAL.Repositories
                 if (topic != null)
                 {
                     if (topic.Users.Contains(_roleGuard.user))
-                        return true;
+                    {
+                        var userTopic = await GetUserTopic(topicId);
+                        return userTopic.IsEnabled;
+                    }
                     else return false;
                 }
 
