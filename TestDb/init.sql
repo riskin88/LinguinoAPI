@@ -820,11 +820,11 @@ SET IDENTITY_INSERT [dbo].[UserLessonItem] OFF
 GO
 SET IDENTITY_INSERT [dbo].[UserTopic] ON 
 GO
-INSERT [dbo].[UserTopic] ([Id], [UserId], [TopicId], [LessonsActive], [IsEnabled]) VALUES (20002, N'b5810e9d-77a2-475f-bb9d-403e022d19ee', 1, 0, 0)
+INSERT [dbo].[UserTopic] ([Id], [UserId], [TopicId], [LessonsActive], [IsEnabled]) VALUES (20002, N'b5810e9d-77a2-475f-bb9d-403e022d19ee', 1, 1, 0)
 GO
 INSERT [dbo].[UserTopic] ([Id], [UserId], [TopicId], [LessonsActive], [IsEnabled]) VALUES (20003, N'b5810e9d-77a2-475f-bb9d-403e022d19ee', 2, 1, 1)
 GO
-INSERT [dbo].[UserTopic] ([Id], [UserId], [TopicId], [LessonsActive], [IsEnabled]) VALUES (30002, N'dc547010-bb4f-4bfc-9fc3-fb63fba0687d', 1, 0, 0)
+INSERT [dbo].[UserTopic] ([Id], [UserId], [TopicId], [LessonsActive], [IsEnabled]) VALUES (30002, N'dc547010-bb4f-4bfc-9fc3-fb63fba0687d', 1, 1, 0)
 GO
 INSERT [dbo].[UserTopic] ([Id], [UserId], [TopicId], [LessonsActive], [IsEnabled]) VALUES (30003, N'dc547010-bb4f-4bfc-9fc3-fb63fba0687d', 2, 1, 1)
 GO
