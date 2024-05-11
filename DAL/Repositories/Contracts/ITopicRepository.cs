@@ -7,7 +7,7 @@ namespace DAL.Repositories.Contracts
     public interface ITopicRepository : IRepositoryBase<Topic>
     {
         public Task<IEnumerable<Topic>> GetOwn();
-        public bool IsEnabled(Topic topic);
+        public Task<bool> IsEnabled(long topicId);
         public Task<Topic?> GetWithCourse(long topicId);
         public Task<UserTopic> GetUserTopic(long topicId);
         public Task<IEnumerable<UserLesson>> GetUserLessons(long topicId);

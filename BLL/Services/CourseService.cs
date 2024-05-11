@@ -110,7 +110,7 @@ namespace BLL.Services
             foreach (var topic in courseTopics)
             {
                 var tmp = _mapper.Map<TopicRespDTO>(topic);
-                if (_unitOfWork.TopicRepository.IsEnabled(topic))
+                if (await _unitOfWork.TopicRepository.IsEnabled(topic.Id))
                     tmp.Enabled = true;
                 resp.Add(tmp);
             }
