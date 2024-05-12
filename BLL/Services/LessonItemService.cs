@@ -176,7 +176,7 @@ namespace BLL.Services
         {
             if (await _unitOfWork.CourseRepository.IsEnrolled(courseId))
             {
-                var word = await _unitOfWork.LessonItemRepository.GetWordById(wordId);
+                var word = await _unitOfWork.LessonItemRepository.GetWordWithExamples(wordId);
                 if (word != null)
                 {
                     if (await _unitOfWork.LessonItemRepository.WordInCourse(wordId, courseId))

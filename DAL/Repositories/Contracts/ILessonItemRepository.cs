@@ -1,4 +1,5 @@
-﻿using DAL.Entities;
+﻿using DAL.Data;
+using DAL.Entities;
 using DAL.Entities.Relations;
 using DAL.Filters;
 
@@ -12,6 +13,7 @@ namespace DAL.Repositories.Contracts
         Task<IEnumerable<LessonItem>> GetOverdueToReviewInCourseOrdered(long courseId);
         Task<IEnumerable<LessonItem>> GetToReviewInLessonOrdered(long lessonId);
         Task<Word?> GetWordById(long wordId);
+        Task<Word?> GetWordWithExamples(long wordId);
         Task<UserLessonItem> GetUserLessonItem(long itemId);
         Task RemoveExercise(long lessonItemId, Exercise exercise);
         Task AddToUser(long lessonItemId, User user);
