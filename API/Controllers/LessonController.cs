@@ -63,10 +63,10 @@ namespace LinguinoAPI.Controllers
 
         [HttpPatch, Authorize]
         [Route("/user/courses/{courseId}/lessons/{lessonId}")]
-        public async Task<ActionResult> ModifyLessonStatus(long courseId, long lessonId, LessonStatusDTO lessonStatusDTO)
+        public async Task<ActionResult<GetLessonDTO>> ModifyLessonStatus(long courseId, long lessonId, LessonStatusDTO lessonStatusDTO)
         {
             await _lessonService.ModifyLessonStatus(courseId, lessonId, lessonStatusDTO);
-            return NoContent();
+            return Ok(await _lessonService.GetLesson(courseId, lessonId));
         }
 
         [HttpDelete, Authorize]
@@ -79,7 +79,7 @@ namespace LinguinoAPI.Controllers
 
         [HttpPut, Authorize]
         [Route("/user/courses/{courseId}/lessons/{lessonId}")]
-        public async Task<ActionResult> ModifyCustomLesson(long courseId, long lessonId, ModifyLessonDTO modifyLessonDTO)
+        public async Task<ActionResult<GetLessonDTO>> ModifyCustomLesson(long courseId, long lessonId, ModifyLessonDTO modifyLessonDTO)
         {
             await _lessonService.ModifyCustomLesson(courseId, lessonId, modifyLessonDTO);
             return Ok(await _lessonService.GetLesson(courseId, lessonId));
@@ -87,10 +87,10 @@ namespace LinguinoAPI.Controllers
 
         [HttpPut, Authorize]
         [Route("user/courses/{courseId}/lessons/{lessonId}/feedback")]
-        public async Task<ActionResult> ChangeFeedback(long courseId, long lessonId, LessonFeedbackDTO feedbackDTO)
+        public async Task<ActionResult<GetLessonDTO>> ChangeFeedback(long courseId, long lessonId, LessonFeedbackDTO feedbackDTO)
         {
             await _lessonService.ChangeFeedback(courseId, lessonId, feedbackDTO);
-            return NoContent();
+            return Ok(await _lessonService.GetLesson(courseId, lessonId));
         }
 
     }

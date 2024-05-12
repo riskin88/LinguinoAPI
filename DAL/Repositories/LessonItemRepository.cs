@@ -85,9 +85,14 @@ namespace DAL.Repositories
             else throw new InvalidIDException("Lesson does not exist.");
         }
 
-        public Task<Word?> GetWordById(long wordId)
+        public async Task<Word?> GetWordById(long wordId)
         {
-           return  dataContext.Set<Word>().FirstOrDefaultAsync(e => e.Id == wordId);
+           return await dataContext.Set<Word>().FirstOrDefaultAsync(e => e.Id == wordId);
+        }
+
+        public async Task<Word?> GetWordWithExamples(long wordId)
+        {
+            return await dataContext.Set<Word>().Include(w => w.Examples).FirstOrDefaultAsync(e => e.Id == wordId);
         }
 
         public async Task<UserLessonItem> GetUserLessonItem (long itemId)
