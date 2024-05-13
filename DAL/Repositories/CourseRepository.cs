@@ -147,22 +147,28 @@ namespace DAL.Repositories
             string userId = _roleGuard.user.Id;
             var userCourse = await GetUserCourse(courseId);
 
-            var lessons = await dataContext.Set<UserLesson>().Where(ul => ul.UserId == userId && ul.IsVisible && !ul.IsLearned).Select(ul => ul.Lesson).Where(l => !l.IsCustom && l.CourseId == courseId).ToListAsync();
-            if (!_roleGuard.roles.Contains("PREMIUM_USER"))
-            {
-                lessons = lessons.Where(l => l.Level < Entities.Enums.LessonLevel.C1).ToList();
-            }
-            lessons = lessons.OrderBy(l => l.OrderOnMap).ToList();
+            var lessons = await dataContext.Set<Lesson>().Where(l => !l.IsCustom && l.CourseId == courseId).OrderBy(l => l.OrderOnMap).ToListAsync();
             int startPosition = -1;
             if (userCourse.SelectedLesson != null)
             {
                 startPosition = lessons.Select((value, idx) => new { Value = value, Index = idx })
               .FirstOrDefault(l => l.Value.Id == userCourse.SelectedLessonId)?.Index ?? -1;
             }
-
             lessons = lessons.Skip(startPosition).ToList();
 
-            var currentLesson = lessons.FirstOrDefault();
+            if (!_roleGuard.roles.Contains("PREMIUM_USER"))
+            {
+                lessons = lessons.Where(l => l.Level < Entities.Enums.LessonLevel.C1).ToList();
+            }
+
+
+
+            var visibleUnlearnedLessons = await dataContext.Set<UserLesson>().Where(ul => ul.UserId == userId && ul.IsVisible && !ul.IsLearned).Select(ul => ul.Lesson).Where(l => !l.IsCustom && l.CourseId == courseId).ToListAsync();
+            var availableLessons = lessons.Intersect(visibleUnlearnedLessons).ToList();
+            availableLessons = availableLessons.OrderBy(l => l.OrderOnMap).ToList();
+
+
+            var currentLesson = availableLessons.FirstOrDefault();
             if (currentLesson != null)
             {
                 return currentLesson.Id;
