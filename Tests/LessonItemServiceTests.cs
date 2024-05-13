@@ -131,7 +131,7 @@ namespace Tests
             mockCourseRepo.Setup(m => m.IsEnrolled(It.IsAny<long>()).Result).Returns(true);
 
             var mockLessonItemRepo = new Mock<ILessonItemRepository>();
-            mockLessonItemRepo.Setup(m => m.GetWordById(It.IsAny<long>()).Result).Returns(word);
+            mockLessonItemRepo.Setup(m => m.GetWordWithExamples(It.IsAny<long>()).Result).Returns(word);
             mockLessonItemRepo.Setup(m => m.WordInCourse(It.IsAny<long>(), It.IsAny<long>()).Result).Returns(true);
             mockLessonItemRepo.Setup(m => m.IsFavorite(It.IsAny<long>())).Returns(true);
             mockLessonItemRepo.Setup(m => m.GetUserLessonItem(It.IsAny<long>()).Result).Returns(userLessonItem);
