@@ -684,7 +684,7 @@ SET IDENTITY_INSERT [dbo].[LearningStepExercise] OFF
 GO
 SET IDENTITY_INSERT [dbo].[Lesson] ON 
 GO
-INSERT [dbo].[Lesson] ([Id], [Name], [Description], [Type], [Level], [CourseId], [AuthorId], [IsCustom], [BackgroundImageUrl], [VideoId], [OrderOnMap], [ItemsTotal], [Icon]) VALUES (1, N'string', N'string', 1, 5, 1, NULL, 0, NULL, NULL, 1, 1, NULL)
+INSERT [dbo].[Lesson] ([Id], [Name], [Description], [Type], [Level], [CourseId], [AuthorId], [IsCustom], [BackgroundImageUrl], [VideoId], [OrderOnMap], [ItemsTotal], [Icon]) VALUES (1, N'string', N'string', 1, 3, 1, NULL, 0, NULL, NULL, 1, 1, NULL)
 GO
 INSERT [dbo].[Lesson] ([Id], [Name], [Description], [Type], [Level], [CourseId], [AuthorId], [IsCustom], [BackgroundImageUrl], [VideoId], [OrderOnMap], [ItemsTotal], [Icon]) VALUES (2, N'nazev', N'popis', 0, NULL, 1, N'b5810e9d-77a2-475f-bb9d-403e022d19ee', 1, NULL, NULL, NULL, 3, NULL)
 GO
@@ -760,7 +760,7 @@ SET IDENTITY_INSERT [dbo].[UserCourse] ON
 GO
 INSERT [dbo].[UserCourse] ([Id], [UserId], [CourseId], [SelectedLessonId]) VALUES (10002, N'b5810e9d-77a2-475f-bb9d-403e022d19ee', 1, NULL)
 GO
-INSERT [dbo].[UserCourse] ([Id], [UserId], [CourseId], [SelectedLessonId]) VALUES (20002, N'dc547010-bb4f-4bfc-9fc3-fb63fba0687d', 1, 30002)
+INSERT [dbo].[UserCourse] ([Id], [UserId], [CourseId], [SelectedLessonId]) VALUES (20002, N'dc547010-bb4f-4bfc-9fc3-fb63fba0687d', 1, 20002)
 GO
 SET IDENTITY_INSERT [dbo].[UserCourse] OFF
 GO
