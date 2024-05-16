@@ -291,13 +291,21 @@ namespace BLL.Services
             {
                 var lessons = await _unitOfWork.LessonRepository.GetBuiltInLessonsFromCourseOrdered(courseId, filter);
                 var lessonDTOs = _mapper.Map<IEnumerable<Lesson>, List<GetMapLessonDTO>>(lessons);
-                var activeLessonId = await _unitOfWork.CourseRepository.GetActiveLessonId(courseId);
-                foreach (var lessonDTO in lessonDTOs)
+                try
                 {
-                    if (lessonDTO.Id == activeLessonId)
-                        lessonDTO.IsActive = true;
+                    var activeLessonId = await _unitOfWork.CourseRepository.GetActiveLessonId(courseId);
+                    foreach (var lessonDTO in lessonDTOs)
+                    {
+                        if (lessonDTO.Id == activeLessonId)
+                            lessonDTO.IsActive = true;
+                    }
+                    return lessonDTOs;
                 }
-                return lessonDTOs;
+                catch (MyBadException)
+                {
+                    return lessonDTOs;
+                }
+                
             }
             else throw new UserNotInCourseException();
         }
